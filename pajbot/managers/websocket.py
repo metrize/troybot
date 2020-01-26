@@ -40,11 +40,7 @@ class WebSocketServer:
                         except:
                             self.sendClose()
                             return
-                        switcher = {
-                            "auth": self._auth,
-                            "next_song": self._next_song,
-                            "ready": self._ready
-                        }
+                        switcher = {"auth": self._auth, "next_song": self._next_song, "ready": self._ready}
                         if (
                             "event" in message
                             and "data" in message

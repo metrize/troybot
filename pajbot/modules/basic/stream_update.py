@@ -72,7 +72,7 @@ class StreamUpdateModule(BaseModule):
                     None,
                     'Update the game to "Dota 2"',
                     chat="user:!game Dota 2\n" 'bot: @user updated the game to "Dota 2"',
-                ).parse()
+                ).parse(),
             ],
         )
 
@@ -88,6 +88,6 @@ class StreamUpdateModule(BaseModule):
                     None,
                     'Update the title to "Just A Title"',
                     chat="user:!title Just A Title\n" 'bot: @user updated the title to "Just A Title"',
-                ).parse()
+                ).parse(),
             ],
         )

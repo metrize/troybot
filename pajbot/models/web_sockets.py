@@ -26,12 +26,7 @@ class WebSocket(Base):
     widget = relationship("Widget")
 
     def jsonify(self):
-        return {
-            "id": self.id,
-            "salt": self.salt,
-            "widget_id": self.widget_id,
-            "widget_name": self.widget.name
-        }
+        return {"id": self.id, "salt": self.salt, "widget_id": self.widget_id, "widget_name": self.widget.name}
 
     def _new_salt(self, db_session, salt=None):
         if not salt:
@@ -71,10 +66,7 @@ class Widget(Base):
     name = Column(TEXT, nullable=False)
 
     def jsonify(self):
-        return {
-            "id": self.id,
-            "name": self.name
-        }
+        return {"id": self.id, "name": self.name}
 
     @staticmethod
     def _all(db_session):

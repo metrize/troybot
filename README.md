@@ -1,4 +1,4 @@
-# troybot [![CircleCI](https://circleci.com/gh/TroyDota/troybot/tree/master.svg?style=svg)(https://circleci.com/gh/TroyDota/troybot/tree/master)
+# troybot [![CircleCI](https://circleci.com/gh/TroyDota/troybot/tree/master.svg?style=svg)](https://circleci.com/gh/TroyDota/troybot/tree/master)
 
 pajbot is a twitch chat bot created by [pajlada](http://twitch.tv/pajlada).  
 [Website](https://pajbot.com)

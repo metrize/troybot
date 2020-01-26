@@ -1,5 +1,3 @@
-import logging
-
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 
@@ -8,8 +6,6 @@ from pajbot.models.playsound import Playsound
 from pajbot.models.sock import SocketClientManager
 from pajbot.modules import PlaysoundModule
 from pajbot.web.utils import requires_level
-
-log = logging.getLogger(__name__)
 
 class PlaysoundAPI(Resource):
     @requires_level(500)
@@ -55,9 +51,7 @@ class PlaysoundAPI(Resource):
             return "Bad volume argument", 400
 
         cost = args.get("cost", None)
-        log.info(cost)
         if not PlaysoundModule.validate_cost(cost):
-            log.info("Bad Cost")
             return "Bad cost argument", 400
 
         # cooldown is allowed to be null/None

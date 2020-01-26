@@ -1,15 +1,15 @@
 import json
 import logging
 import threading
-from pathlib import Path
+import urllib
 import re
+from pathlib import Path
 
 from twisted.internet import reactor
 from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
 
 from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory
 from pajbot.managers.db import DBManager
-import urllib
 
 log = logging.getLogger("pajbot")
 
@@ -150,9 +150,7 @@ class SongRequestWebSocketServer:
                         "history": SongrequestHistory._get_history(db_session, 15),
                         "paused": manager_ext.bot.songrequest_manager.paused,
                         "open": manager_ext.bot.songrequest_manager.module_opened,
-                        "volume": manager_ext.bot.songrequest_manager.volume
-                        * 100
-                        * (1 / (manager_ext.bot.songrequest_manager.settings["volume_multiplier"] / 100)),
+                        "volume": manager_ext.bot.songrequest_manager.volume_val(),
                     },
                 }
                 payload = json.dumps(data).encode("utf8")
@@ -186,7 +184,7 @@ class SongRequestWebSocketServer:
             def _volume(self, db_session, data):
                 if not self.isAuthed or "volume" not in data or not isfloat(data["volume"]):
                     return False
-                return manager_ext.bot.songrequest_manager.volume_function(float(data["volume"]))
+                return manager_ext.bot.songrequest_manager.volume_function(int(data["volume"]))
 
             def _close(self, db_session, data):
                 if not self.isAuthed:

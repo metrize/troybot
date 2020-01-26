@@ -24,7 +24,7 @@ class SongrequestManager:
         self.paused = None
         self.module_opened = None
         self.previous_queue = None
-        self.volume = None
+        self.true_volume = None
 
     def enable(self, settings, youtube):
         self.enabled = True
@@ -37,9 +37,15 @@ class SongrequestManager:
         self.paused = False
         self.module_opened = False
         self.previous_queue = 0
-        self.volume = self.settings["volume"] / 100
+        self.true_volume = int(self.settings["volume"])
         thread = threading.Thread(target=self.inc_current_song, daemon=True)
         thread.start()
+
+    def volume_val(self):
+        return int(self.true_volume * (100 / int(self.settings["volume_multiplier"])))
+
+    def to_true_volume(self, multiplied_volume):
+        return int((multiplied_volume*int(self.settings["volume_multiplier"]))/100)
 
     def disable(self):
         self.enabled = False
@@ -128,7 +134,7 @@ class SongrequestManager:
     def volume_function(self, volume):
         if not self.enabled:
             return False
-        self.volume = volume * (self.settings["volume_multiplier"] / 100)
+        self.true_volume = self.to_true_volume(volume)
         self._volume()
         return True
 
@@ -331,7 +337,6 @@ class SongrequestManager:
         self.paused = True
         if self.showVideo:
             self._show()
-        self._volume()
         self._playlist()
 
     def ready(self):
@@ -352,9 +357,9 @@ class SongrequestManager:
 
     def _volume(self):
         self.bot.songrequest_websocket_manager.emit(
-            "volume", {"volume": self.volume * 100 * (1 / (self.settings["volume_multiplier"] / 100))}
+            "volume", {"volume": self.volume_val()}
         )
-        self.bot.websocket_manager.emit("songrequest_volume", WIDGET_ID, {"volume": self.volume * 100})
+        self.bot.websocket_manager.emit("songrequest_volume", WIDGET_ID, {"volume": self.true_volume})
 
     def _seek(self, _time):
         self.bot.songrequest_websocket_manager.emit("seek", {"seek_time": _time})

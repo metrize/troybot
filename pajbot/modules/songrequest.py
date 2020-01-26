@@ -354,7 +354,7 @@ class SongrequestModule(BaseModule):
     def volume(self, bot, source, message, **rest):
         if not message:
             bot.say(
-                f"The current volume is {int(self.bot.songrequest_manager.volume*100*(1/(self.settings['volume_multiplier']/100)))}%"
+                f"The current volume is {self.bot.songrequest_manager.volume_val()}%"
             )
             return True
         try:
@@ -365,7 +365,7 @@ class SongrequestModule(BaseModule):
         except:
             bot.whisper(source, "Invalid volume setting enter a volume between 0-100")
             return False
-        self.bot.songrequest_manager.volume_function(val / 100)
+        self.bot.songrequest_manager.volume_function(val)
         bot.whisper(source, "Volume has been changed to " + message + "%")
         return True
 

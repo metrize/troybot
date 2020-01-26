@@ -11,6 +11,7 @@ log = logging.getLogger("pajbot")
 
 
 class WebSocketServer:
+
     clients = []
 
     def __init__(self, manager, port, secure=False, key_path=None, crt_path=None, unix_socket_path=None):
@@ -18,8 +19,7 @@ class WebSocketServer:
         from twisted.internet import reactor, ssl
 
         from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
-
-
+    
         class MyServerProtocol(WebSocketServerProtocol):
             def __init__(self):
                 WebSocketServerProtocol.__init__(self)

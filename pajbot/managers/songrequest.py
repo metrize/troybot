@@ -369,7 +369,7 @@ class SongrequestManager:
         )
         self.bot.websocket_manager.emit(
             "songrequest_volume", WIDGET_ID, {"volume": self.volume * 100}
-        )  
+        )
 
     def _seek(self, _time):
         self.bot.songrequest_websocket_manager.emit(

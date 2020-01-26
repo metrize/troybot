@@ -1,4 +1,4 @@
-# pajbot [![CircleCI](https://circleci.com/gh/pajbot/pajbot.svg?style=svg)](https://circleci.com/gh/pajbot/pajbot)
+# troybot [![CircleCI](https://circleci.com/gh/TroyDota/troybot/tree/master.svg?style=svg)(https://circleci.com/gh/TroyDota/troybot/tree/master)
 
 pajbot is a twitch chat bot created by [pajlada](http://twitch.tv/pajlada).  
 [Website](https://pajbot.com)
@@ -11,4 +11,4 @@ pajbot is a twitch chat bot created by [pajlada](http://twitch.tv/pajlada).
 
 ## Detailed install
 
-You can find a detailed installation guide for **pajbot** in the [`install-docs` directory](./install-docs) of this repository.
+You can find a detailed installation guide for **troybot** in the [`install-docs` directory](./install-docs) of this repository.

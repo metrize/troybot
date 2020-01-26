@@ -357,7 +357,7 @@ class SongrequestManager:
         self.bot.websocket_manager.emit("songrequest_volume", WIDGET_ID, {"volume": self.volume * 100})
 
     def _seek(self, _time):
-        self.bot.songrequest_websocket_manager.emit("seek", {"seek_time": time})
+        self.bot.songrequest_websocket_manager.emit("seek", {"seek_time": _time})
         self.bot.websocket_manager.emit("songrequest_seek", WIDGET_ID, {"seek_time": _time})
         self.paused = True
 

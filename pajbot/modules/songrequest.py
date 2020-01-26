@@ -6,15 +6,11 @@ import re
 import json
 import random
 
-from sqlalchemy import func
-
 from pajbot.managers.db import DBManager
 from pajbot.managers.handler import HandlerManager
-from pajbot.managers.schedule import ScheduleManager
 from pajbot.models.command import Command
 from pajbot.models.songrequest import SongrequestQueue
 from pajbot.models.songrequest import SongRequestSongInfo
-from pajbot.models.user import User
 from pajbot.modules import BaseModule
 from pajbot.modules import ModuleSetting
 from pajbot.streamhelper import StreamHelper
@@ -431,7 +427,7 @@ class SongrequestModule(BaseModule):
 
         with DBManager.create_session_scope() as db_session:
             SongrequestQueue._clear_backup_songs(db_session)
-            if self.settings["backup_playlist_id"] and self.settings["backup_playlist_id"] is not "":
+            if self.settings["backup_playlist_id"] and self.settings["backup_playlist_id"] != "":
                 backup_songs = self.getBackUpListSongs()
                 random.shuffle(backup_songs)
                 SongrequestQueue._load_backup_songs(db_session, backup_songs, self.youtube, self.settings)

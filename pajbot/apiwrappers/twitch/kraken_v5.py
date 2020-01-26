@@ -5,8 +5,6 @@ from pajbot.apiwrappers.twitch.base import BaseTwitchAPI
 from pajbot.models.emote import Emote
 from pajbot.models.user import User
 
-from pajbot.managers.db import DBManager
-
 log = logging.getLogger(__name__)
 
 

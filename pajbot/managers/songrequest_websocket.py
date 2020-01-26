@@ -1,19 +1,17 @@
 import json
 import logging
 import threading
-import time
 from pathlib import Path
+import re
 
 from twisted.internet import reactor
 from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
 
 from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory
-from pajbot.managers.handler import HandlerManager
 from pajbot.managers.db import DBManager
 import urllib
 
 log = logging.getLogger("pajbot")
-current_milli_time = lambda: int(round(time.time() * 1000))
 
 
 def find_youtube_id_in_string(string):

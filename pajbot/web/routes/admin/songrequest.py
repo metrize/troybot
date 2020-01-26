@@ -9,6 +9,7 @@ from pajbot.web.utils import requires_level
 
 log = logging.getLogger(__name__)
 
+
 def init(page):
     @page.route("/songrequest")
     @requires_level(500)

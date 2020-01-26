@@ -1,6 +1,5 @@
 # Imports #
 import socketio
-import json
 from currency_converter import CurrencyConverter
 from pajbot.managers.handler import HandlerManager
 from pajbot.managers.db import DBManager
@@ -29,7 +28,7 @@ class MyCustomNamespace(socketio.ClientNamespace):
                 with DBManager.create_session_scope() as db_session:
                     user = User.find_by_user_input(db_session, username)
                     if user is not None:
-                        log.info("User " + user + " donated $" + ammount)
+                        log.info(f"User {user} donated ${amount}")
                         HandlerManager.trigger("on_donate", user=user, amount=amount)
             except Exception as e:
                 log.error(e)

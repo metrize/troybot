@@ -1,12 +1,5 @@
 import logging
 from pajbot.managers.handler import HandlerManager
-from pajbot.managers.db import DBManager
-from pajbot.managers.schedule import ScheduleManager
-from pajbot import utils
-import time
-
-import sys
-import json
 
 log = logging.getLogger("pajbot")
 

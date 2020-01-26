@@ -5,7 +5,6 @@ from sqlalchemy.orm import joinedload
 from pajbot import utils
 from pajbot.exc import InvalidPointAmount
 from pajbot.managers.db import DBManager
-from pajbot.managers.handler import HandlerManager
 from pajbot.managers.schedule import ScheduleManager
 from pajbot.models.bet import BetBet, BetGameOutcome, BetGame
 from pajbot.models.command import Command

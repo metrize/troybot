@@ -1,8 +1,5 @@
 import logging
 
-from requests import HTTPError
-
-from pajbot.apiwrappers.response_cache import TwitchChannelEmotesSerializer
 from pajbot.apiwrappers.base import BaseAPI
 from pajbot.apiwrappers.authentication.access_token import SpotifyAccessToken
 

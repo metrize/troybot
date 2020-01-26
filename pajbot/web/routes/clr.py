@@ -12,6 +12,7 @@ config = None
 
 log = logging.getLogger("pajbot")
 
+
 @page.route("/overlay/<salt>")
 @nocache
 def overlay(salt):

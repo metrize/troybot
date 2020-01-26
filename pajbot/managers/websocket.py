@@ -3,7 +3,6 @@ import logging
 import threading
 from pathlib import Path
 
-from pajbot.managers.handler import HandlerManager
 from pajbot.managers.db import DBManager
 
 from pajbot.models.web_sockets import WebSocket
@@ -19,6 +18,7 @@ class WebSocketServer:
         from twisted.internet import reactor, ssl
 
         from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
+
 
         class MyServerProtocol(WebSocketServerProtocol):
             def __init__(self):

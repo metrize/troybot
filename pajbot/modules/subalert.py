@@ -5,7 +5,6 @@ from pajbot.managers.handler import HandlerManager
 from pajbot.models.user import User, UserBasics
 from pajbot.modules import BaseModule
 from pajbot.modules import ModuleSetting
-from decimal import *
 
 log = logging.getLogger(__name__)
 
@@ -177,10 +176,10 @@ class SubAlertModule(BaseModule):
         if self.settings["message_on_give_points"]:
             points_given = self.settings["grant_points_on_sub"]
             username = user
-            self.bot.say(self.settings["message_on_give_points_value"].format())
+            self.bot.say(self.settings["message_on_give_points_value"].format(points_given=points_given, username=username))
 
     def on_new_sub(self, user, sub_type, gifted_by=None):
-        """ 
+        """
         A new user just subscribed.
         Send the event to the websocket manager, and send a customized message in chat.
         Also increase the number of active subscribers in the database by one.
@@ -327,9 +326,7 @@ class SubAlertModule(BaseModule):
             return
         points_to_give = int(amount * self.settings["grant_points_on_donate"])
         user.points += points_to_give
-        TWOPLACES = Decimal(10) ** -2
-        amount = str(Decimal(str(amount)).quantize(TWOPLACES))
-        self.bot.whisper(user, "You have been given " + str(points_to_give) + " points for donating $" + str(amount))
+        self.bot.whisper(user, f"You have been given {points_to_give} points for donating ${amount:.2f}")
 
     def enable(self, bot):
         HandlerManager.add_handler("on_usernotice", self.on_usernotice)

@@ -11,7 +11,6 @@ from pajbot import utils
 from pajbot.managers.db import Base
 from pajbot.managers.db import DBManager
 from pajbot.streamhelper import StreamHelper
-from pajbot.models.user import User
 
 log = logging.getLogger("pajbot")
 
@@ -62,7 +61,7 @@ class SongrequestQueue(Base):
         all_songs_before_current = (
             db_session.query(SongrequestQueue)
             .filter(SongrequestQueue.queue < self.queue)
-            .filter(self.requested_by_id != None)
+            .filter(not self.requested_by_id)
             .all()
         )
         time = 0
@@ -157,7 +156,7 @@ class SongrequestQueue(Base):
 
     @staticmethod
     def _clear_backup_songs(db_session):
-        returnExe = db_session.execute(SongrequestQueue.__table__.delete().where(SongrequestQueue.requested_by == None))
+        returnExe = db_session.execute(SongrequestQueue.__table__.delete().where(not SongrequestQueue.requested_by))
         return returnExe
 
     @staticmethod

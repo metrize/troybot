@@ -11,6 +11,7 @@ from pajbot.models.web_sockets import WebSocket, Widget
 
 log = logging.getLogger(__name__)
 
+
 def init(page):
     @page.route("/overlays")
     @requires_level(500)

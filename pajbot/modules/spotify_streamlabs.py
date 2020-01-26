@@ -1,16 +1,6 @@
 import logging
 
-from datetime import timedelta
-
-import random
-
-from pajbot import utils
-from pajbot.managers.db import DBManager
-from pajbot.managers.handler import HandlerManager
-from pajbot.managers.schedule import ScheduleManager
 from pajbot.models.command import Command
-from pajbot.models.command import CommandExample
-from pajbot.models.user import User
 from pajbot.modules import BaseModule
 from pajbot.modules import ModuleSetting
 

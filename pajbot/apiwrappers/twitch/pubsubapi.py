@@ -1,7 +1,6 @@
 import websocket
 import json
 import threading
-import time
 import logging
 
 from pajbot.managers.handler import HandlerManager

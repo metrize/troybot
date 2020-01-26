@@ -1,11 +1,10 @@
 import logging
 
-from flask import session
 from flask import render_template
 
 from pajbot.managers.db import DBManager
 from pajbot.models.stream import StreamManager
-from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory, SongRequestSongInfo
+from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory
 
 log = logging.getLogger(__name__)
 

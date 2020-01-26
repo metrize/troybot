@@ -57,7 +57,7 @@ class AdminCommandsModule(BaseModule):
         # filter out invalid/deleted/etc. users
         chatter_basics = [e for e in chatter_basics if e is not None]
 
-        update_values = [{**basics.jsonify(), "add_points": num_points,} for basics in chatter_basics]
+        update_values = [{**basics.jsonify(), "add_points": num_points} for basics in chatter_basics]
 
         with DBManager.create_session_scope() as db_session:
             db_session.execute(

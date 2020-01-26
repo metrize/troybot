@@ -8,9 +8,7 @@ class Playsound(Base):
     __tablename__ = "playsound"
 
     name = Column(TEXT, primary_key=True, nullable=False)
-    # todo aliases?
     link = Column(TEXT, nullable=False)
-    # from 0 to 100
     volume = Column(INT, nullable=False, default=100)
     cost = Column(INT, nullable=True)
     cooldown = Column(INT, nullable=True)

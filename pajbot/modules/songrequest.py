@@ -60,7 +60,7 @@ class SongrequestModule(BaseModule):
     DESCRIPTION = "Request Songs"
     CATEGORY = "Feature"
     SETTINGS = [
-        ModuleSetting(key="youtube_key", label="Youtube developer key", type="text", required=True, default="",),
+        ModuleSetting(key="youtube_key", label="Youtube developer key", type="text", required=True, default=""),
         ModuleSetting(
             key="max_song_length",
             label="Max song length (in seconds)",
@@ -302,7 +302,7 @@ class SongrequestModule(BaseModule):
                     return True
                 bot.say(
                     self.settings["message_in_chat_when_next_song"].format(
-                        title=next_song.song_info.title, requestor="Backup Playlist", time_left=next_song.time_left,
+                        title=next_song.song_info.title, requestor="Backup Playlist", time_left=next_song.time_left
                     )
                 )
                 return True
@@ -377,37 +377,35 @@ class SongrequestModule(BaseModule):
 
     def load_commands(self, **options):
         self.commands["sr"] = self.commands["songrequest"] = Command.raw_command(
-            self.add_song, delay_all=0, delay_user=3, notify_on_error=True, cost=self.settings["point_cost"],
+            self.add_song, delay_all=0, delay_user=3, notify_on_error=True, cost=self.settings["point_cost"]
         )
         self.commands["song"] = Command.raw_command(
-            self.get_current_song, delay_all=0, delay_user=3, notify_on_error=True,
+            self.get_current_song, delay_all=0, delay_user=3, notify_on_error=True
         )
-        self.commands["next"] = Command.raw_command(
-            self.get_next_song, delay_all=0, delay_user=3, notify_on_error=True,
-        )
+        self.commands["next"] = Command.raw_command(self.get_next_song, delay_all=0, delay_user=3, notify_on_error=True)
         self.commands["opensr"] = Command.raw_command(
-            self.open_module, delay_all=0, delay_user=3, level=500, notify_on_error=True,
+            self.open_module, delay_all=0, delay_user=3, level=500, notify_on_error=True
         )
         self.commands["closesr"] = Command.raw_command(
-            self.close_module, delay_all=0, delay_user=3, level=500, notify_on_error=True,
+            self.close_module, delay_all=0, delay_user=3, level=500, notify_on_error=True
         )
         self.commands["skip"] = Command.raw_command(
-            self.skip, delay_all=0, delay_user=3, level=500, notify_on_error=True,
+            self.skip, delay_all=0, delay_user=3, level=500, notify_on_error=True
         )
         self.commands["pause"] = Command.raw_command(
-            self.pause, delay_all=0, delay_user=3, level=500, notify_on_error=True,
+            self.pause, delay_all=0, delay_user=3, level=500, notify_on_error=True
         )
         self.commands["resume"] = Command.raw_command(
-            self.resume, delay_all=0, delay_user=3, level=500, notify_on_error=True,
+            self.resume, delay_all=0, delay_user=3, level=500, notify_on_error=True
         )
         self.commands["volume"] = Command.raw_command(
-            self.volume, delay_all=0, delay_user=3, level=500, notify_on_error=True,
+            self.volume, delay_all=0, delay_user=3, level=500, notify_on_error=True
         )
         self.commands["showvideo"] = Command.raw_command(
-            self.show_video, delay_all=0, delay_user=3, level=500, notify_on_error=True,
+            self.show_video, delay_all=0, delay_user=3, level=500, notify_on_error=True
         )
         self.commands["hidevideo"] = Command.raw_command(
-            self.hide_video, delay_all=0, delay_user=3, level=500, notify_on_error=True,
+            self.hide_video, delay_all=0, delay_user=3, level=500, notify_on_error=True
         )
 
     def enable(self, bot):

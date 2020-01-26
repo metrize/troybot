@@ -55,12 +55,8 @@ class SpotifyApi(BaseAPI):
             "Authorization": "Basic "
             + str(base64.b64encode(f"{self.client_id}:{self.client_secret}".encode("utf-8")), "utf-8")
         }
-        data = {
-            "grant_type": "authorization_code",
-            "code": code,
-            "redirect_uri": self.redirect_uri,
-        }
-        response = self.post("/api/token", data=data, headers=headers, base_url="https://accounts.spotify.com",)
+        data = {"grant_type": "authorization_code", "code": code, "redirect_uri": self.redirect_uri}
+        response = self.post("/api/token", data=data, headers=headers, base_url="https://accounts.spotify.com")
 
         # {
         # "access_token": "NgCXRK...MzYjw",
@@ -77,11 +73,8 @@ class SpotifyApi(BaseAPI):
             "Authorization": "Basic "
             + str(base64.b64encode(f"{self.client_id}:{self.client_secret}".encode("utf-8")), "utf-8")
         }
-        data = {
-            "grant_type": "refresh_token",
-            "refresh_token": refresh_token,
-        }
-        response = self.post("/api/token", data=data, headers=headers, base_url="https://accounts.spotify.com",)
+        data = {"grant_type": "refresh_token", "refresh_token": refresh_token}
+        response = self.post("/api/token", data=data, headers=headers, base_url="https://accounts.spotify.com")
 
         # {
         # "access_token": "NgA6ZcYI...ixn8bUQ",

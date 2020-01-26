@@ -66,13 +66,13 @@ class StreamUpdateModule(BaseModule):
                 CommandExample(
                     None,
                     "Shows the game",
-                    chat="user:!game\n" 'bot: @user -> $(tb:broadcaster) is currently playing "Dota 2"',
+                    chat="user:!game\n" 'bot: @user -> $(tb:broadcaster) is currently playing "Dota 2"'
                 ).parse(),
                 CommandExample(
                     None,
                     'Update the game to "Dota 2"',
                     chat="user:!game Dota 2\n" 'bot: @user updated the game to "Dota 2"',
-                ).parse(),
+                ).parse()
             ],
         )
 
@@ -82,12 +82,12 @@ class StreamUpdateModule(BaseModule):
             description="Updates or Shows  the stream's title",
             examples=[
                 CommandExample(
-                    None, "Shows the title", chat="user:!title\n" 'bot: @user -> The current title is: $(tb:title)"',
+                    None, "Shows the title", chat="user:!title\n" 'bot: @user -> The current title is: $(tb:title)"'
                 ).parse(),
                 CommandExample(
                     None,
                     'Update the title to "Just A Title"',
                     chat="user:!title Just A Title\n" 'bot: @user updated the title to "Just A Title"',
-                ).parse(),
+                ).parse()
             ],
         )

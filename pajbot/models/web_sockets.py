@@ -30,7 +30,7 @@ class WebSocket(Base):
             "id": self.id,
             "salt": self.salt,
             "widget_id": self.widget_id,
-            "widget_name": self.widget.name,
+            "widget_name": self.widget.name
         }
 
     def _new_salt(self, db_session, salt=None):
@@ -47,7 +47,7 @@ class WebSocket(Base):
     def _create(db_session, widget_id, salt=None):
         if not salt:
             salt = salt_gen()
-        websocket = WebSocket(widget_id=widget_id, salt=salt,)
+        websocket = WebSocket(widget_id=widget_id, salt=salt)
         db_session.add(websocket)
         return websocket
 
@@ -73,7 +73,7 @@ class Widget(Base):
     def jsonify(self):
         return {
             "id": self.id,
-            "name": self.name,
+            "name": self.name
         }
 
     @staticmethod

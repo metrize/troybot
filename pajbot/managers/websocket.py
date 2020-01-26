@@ -43,7 +43,7 @@ class WebSocketServer:
                         switcher = {
                             "auth": self._auth,
                             "next_song": self._next_song,
-                            "ready": self._ready,
+                            "ready": self._ready
                         }
                         if (
                             "event" in message

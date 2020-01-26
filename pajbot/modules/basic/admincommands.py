@@ -306,7 +306,7 @@ ON CONFLICT (id) DO UPDATE SET
                     "Give a user points",
                     chat="user:!masspoints 500\n" "bot>user:Successfully gave everyone 500 points.",
                     description="This gives everyone 500 points",
-                ).parse(),
+                ).parse()
             ],
         )
         self.commands["setpoints"] = Command.raw_command(

@@ -331,6 +331,7 @@ class SongrequestManager:
         self.paused = True
         if self.showVideo:
             self._show()
+        self._volume()
         self._playlist()
 
     def ready(self):

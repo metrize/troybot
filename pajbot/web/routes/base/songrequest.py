@@ -62,8 +62,5 @@ def init(app):
                 songs_history.append(jsonify)
 
             return render_template(
-                "songrequest.html",
-                songs_queue=songs_queue,
-                songs_history=songs_history,
-                live=StreamManager.online,
+                "songrequest.html", songs_queue=songs_queue, songs_history=songs_history, live=StreamManager.online,
             )

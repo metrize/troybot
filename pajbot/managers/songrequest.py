@@ -252,11 +252,7 @@ class SongrequestManager:
                             if not current_song:
                                 self.load_song()
                             else:
-                                if (
-                                    (not current_song.requested_by)
-                                    and next_song
-                                    and next_song.requested_by
-                                ):
+                                if (not current_song.requested_by) and next_song and next_song.requested_by:
                                     self.load_song("Backup Playlist Skip")
                                 current_song.current_song_time += 1
                     except:
@@ -331,9 +327,7 @@ class SongrequestManager:
         self.bot.songrequest_websocket_manager.emit(
             "play", {"video_id": video_id, "video_title": video_title, "requested_by": requested_by_name}
         )
-        self.bot.websocket_manager.emit(
-            "songrequest_play", WIDGET_ID, {"video_id": video_id}
-        )
+        self.bot.websocket_manager.emit("songrequest_play", WIDGET_ID, {"video_id": video_id})
         self.paused = True
         if self.showVideo:
             self._show()
@@ -344,21 +338,13 @@ class SongrequestManager:
         self._volume()
 
     def _pause(self):
-        self.bot.songrequest_websocket_manager.emit(
-            "pause", {}
-        )
-        self.bot.websocket_manager.emit(
-            "songrequest_pause", WIDGET_ID, {}
-        )
+        self.bot.songrequest_websocket_manager.emit("pause", {})
+        self.bot.websocket_manager.emit("songrequest_pause", WIDGET_ID, {})
         self._hide()
 
     def _resume(self):
-        self.bot.songrequest_websocket_manager.emit(
-            "resume", {}
-        )
-        self.bot.websocket_manager.emit(
-            "songrequest_resume", WIDGET_ID, {}
-        )
+        self.bot.songrequest_websocket_manager.emit("resume", {})
+        self.bot.websocket_manager.emit("songrequest_resume", WIDGET_ID, {})
         self.paused = False
         if self.showVideo:
             self._show()
@@ -367,37 +353,25 @@ class SongrequestManager:
         self.bot.songrequest_websocket_manager.emit(
             "volume", {"volume": self.volume * 100 * (1 / (self.settings["volume_multiplier"] / 100))}
         )
-        self.bot.websocket_manager.emit(
-            "songrequest_volume", WIDGET_ID, {"volume": self.volume * 100}
-        )
+        self.bot.websocket_manager.emit("songrequest_volume", WIDGET_ID, {"volume": self.volume * 100})
 
     def _seek(self, _time):
-        self.bot.songrequest_websocket_manager.emit(
-            "seek", {"seek_time": time}
-        )
-        self.bot.websocket_manager.emit(
-            "songrequest_seek", WIDGET_ID, {"seek_time": _time}
-        )
+        self.bot.songrequest_websocket_manager.emit("seek", {"seek_time": time})
+        self.bot.websocket_manager.emit("songrequest_seek", WIDGET_ID, {"seek_time": _time})
         self.paused = True
 
     def _show(self):
-        self.bot.websocket_manager.emit(
-            "songrequest_show", WIDGET_ID, {}
-        )
+        self.bot.websocket_manager.emit("songrequest_show", WIDGET_ID, {})
         self.isVideoShowing = True
 
     def _hide(self):
-        self.bot.websocket_manager.emit(
-            "songrequest_hide", WIDGET_ID, {}
-        )
+        self.bot.websocket_manager.emit("songrequest_hide", WIDGET_ID, {})
         self.isVideoShowing = False
 
     def _playlist(self):
         with DBManager.create_session_scope() as db_session:
             playlist = SongrequestQueue._get_playlist(db_session, 15)
-            self.bot.songrequest_websocket_manager.emit(
-                "playlist", {"playlist": playlist}
-            )
+            self.bot.songrequest_websocket_manager.emit("playlist", {"playlist": playlist})
 
     def _playlist_history(self):
         with DBManager.create_session_scope() as db_session:
@@ -406,9 +380,5 @@ class SongrequestManager:
             )
 
     def _stop_video(self):
-        self.bot.songrequest_websocket_manager.emit(
-            "stop", {}
-        )
-        self.bot.websocket_manager.emit(
-            "songrequest_stop", WIDGET_ID, {}
-        )
+        self.bot.songrequest_websocket_manager.emit("stop", {})
+        self.bot.websocket_manager.emit("songrequest_stop", WIDGET_ID, {})

@@ -45,7 +45,12 @@ class WebSocketServer:
                             "next_song": self._next_song,
                             "ready": self._ready,
                         }
-                        if "event" in message and "data" in message and message["event"] in switcher and switcher[message["event"]](db_session, message["data"]):
+                        if (
+                            "event" in message
+                            and "data" in message
+                            and message["event"] in switcher
+                            and switcher[message["event"]](db_session, message["data"])
+                        ):
                             pass
                         else:
                             self.sendClose()

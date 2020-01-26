@@ -176,7 +176,9 @@ class SubAlertModule(BaseModule):
         if self.settings["message_on_give_points"]:
             points_given = self.settings["grant_points_on_sub"]
             username = user
-            self.bot.say(self.settings["message_on_give_points_value"].format(points_given=points_given, username=username))
+            self.bot.say(
+                self.settings["message_on_give_points_value"].format(points_given=points_given, username=username)
+            )
 
     def on_new_sub(self, user, sub_type, gifted_by=None):
         """

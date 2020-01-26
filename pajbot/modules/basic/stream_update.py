@@ -66,7 +66,7 @@ class StreamUpdateModule(BaseModule):
                 CommandExample(
                     None,
                     "Shows the game",
-                    chat="user:!game\n" 'bot: @user -> $(tb:broadcaster) is currently playing "Dota 2"'
+                    chat="user:!game\n" 'bot: @user -> $(tb:broadcaster) is currently playing "Dota 2"',
                 ).parse(),
                 CommandExample(
                     None,

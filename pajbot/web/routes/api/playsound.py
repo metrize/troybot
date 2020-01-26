@@ -53,6 +53,7 @@ class PlaysoundAPI(Resource):
 
         cost = args.get("cost", None)
         if not PlaysoundModule.validate_cost(cost):
+            log.info("Error Here!")
             return "Bad cost argument", 400
 
         # cooldown is allowed to be null/None

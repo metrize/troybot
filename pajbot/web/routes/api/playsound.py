@@ -7,6 +7,7 @@ from pajbot.models.sock import SocketClientManager
 from pajbot.modules import PlaysoundModule
 from pajbot.web.utils import requires_level
 
+
 class PlaysoundAPI(Resource):
     @requires_level(500)
     def put(self, playsound_name, **options):

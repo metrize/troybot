@@ -61,7 +61,7 @@ class SongrequestQueue(Base):
         all_songs_before_current = (
             db_session.query(SongrequestQueue)
             .filter(SongrequestQueue.queue < self.queue)
-            .filter(not self.requested_by_id)
+            .filter_by(requested_by_id=None)
             .all()
         )
         time = 0

@@ -313,13 +313,6 @@ function handleWebsocketData(json_data) {
         case 'notification':
             add_notification(data);
             break;
-        case 'timeout':
-            add_notification({message: '<span class="user">' + data.user + '</span> timed out <span class="victim">' + data.victim + '</span> EleGiggle'});
-            setTimeout(function () {
-                // TODO idk kev maybe this will just stay removed with new playsounds system
-                //play_sound('slap');
-            }, 100);
-            break;
         case 'new_emotes':
             add_emotes(data);
             break;
@@ -387,7 +380,7 @@ jQuery(function ($) {
             controls: [],
             listeners: {
                 play: function (e) {
-                    return false;    // required on v3
+                    return false;
                 },
                 seek: function (e) {
                     return false;
@@ -396,7 +389,7 @@ jQuery(function ($) {
                     return false;
                 }, 
                 restart: function (e) {
-                    return false;    // required on v3
+                    return false;
                 }           
             }
         });
@@ -404,7 +397,6 @@ jQuery(function ($) {
             player.play();
             player.pause();
             player.embed.a.closest("div").style.cssText = "";
-            player.volume = volume_g;
             hide();
             socket.send(JSON.stringify({"event" : "ready", "data" : {"salt": salt_value}}));
         });
@@ -436,10 +428,8 @@ function seek({seek_time}) {
     pause()
     socket.send(JSON.stringify({"event" : "ready", "data" : {"salt": salt_value}}));
 }
-var volume_g = 0
 function volume({volume}) {
-    volume_g = (volume/100);
-    player.volume = volume_g;
+    player.volume = (volume/100);
 }
 function hide() {
     $('#songrequest').hide();
@@ -451,7 +441,6 @@ function stop() {
     player.stop()
     play({video_id : ''})
 }
-
 
 let socket = null;
 
@@ -474,7 +463,6 @@ function connect_to_ws() {
         if (typeof e.data != "string") {
             return;
         }
-
         let json_data = JSON.parse(e.data);
         console.log("Received data:", json_data);
         handleWebsocketData(json_data);

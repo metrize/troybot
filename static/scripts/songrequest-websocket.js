@@ -83,7 +83,6 @@ $(document).mouseup(function(e){
     if (temp_volume != player.volume) {
         $('.plyr__volume').find('input')[0].style.cssText = "--value:"+(player.volume*100)+"%"
         $('.plyr__volume').find('input')[0].value = player.volume
-        console.log(JSON.stringify({'event' : 'VOLUME', 'data' : {'volume' : temp_volume}}))
         socket.send(JSON.stringify({'event' : 'VOLUME', 'data' : {'volume' : temp_volume}}))
     }
     if (seek != -1) {
@@ -202,6 +201,10 @@ function update_state() {
 
     }
 }
+$(window).focus(function() {
+    socket.close()
+    connect_to_ws()
+});
 
 function seek_to(data) {
     current_song_time = data['seek_time'];

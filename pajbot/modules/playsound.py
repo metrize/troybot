@@ -29,15 +29,6 @@ class PlaysoundModule(BaseModule):
             constraints={"min_value": 0, "max_value": 999999},
         ),
         ModuleSetting(
-            key="token_cost",
-            label="Token cost",
-            type="number",
-            required=True,
-            placeholder="Token cost",
-            default=0,
-            constraints={"min_value": 0, "max_value": 15},
-        ),
-        ModuleSetting(
             key="global_cd",
             label="Global playsound cooldown (seconds)",
             type="number",
@@ -164,10 +155,7 @@ class PlaysoundModule(BaseModule):
                 "volume": int(round(playsound.volume * self.settings["global_volume"] / 100)),
             }
 
-            if playsound.cost is None:
-                cost = self.settings["point_cost"]
-            else:
-                cost = playsound.cost
+            cost = playsound.cost if playsound.cost else self.settings["point_cost"]
 
             if source.points >= cost:
                 source.points = source.points - cost
@@ -447,7 +435,6 @@ class PlaysoundModule(BaseModule):
 
         self.commands["playsound"] = Command.raw_command(
             self.play_sound,
-            tokens_cost=0,
             cost=0,
             sub_only=self.settings["sub_only"],
             delay_all=0,

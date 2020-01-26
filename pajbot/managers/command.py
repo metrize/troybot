@@ -97,16 +97,10 @@ class CommandManager(UserDict):
         self.internal_commands["quit"] = Command.pajbot_command(
             self.bot,
             "quit",
-            level=1000,
+            level=2000,
             command="quit",
             description="Shut down the bot, this will most definitely restart it if set up properly",
         )
-
-        self.internal_commands["1quit"] = self.internal_commands["quit"]
-        self.internal_commands[
-            "ceaseallactionscurrentlybeingacteduponwiththecodeandiapologizeforbeingawhitecisgenderedmaleinthepatriarchy"
-        ] = self.internal_commands["quit"]
-
         self.internal_commands["twitterfollow"] = Command.dispatch_command(
             "twitter_follow",
             level=1000,
@@ -120,7 +114,6 @@ class CommandManager(UserDict):
                 ).parse()
             ],
         )
-
         self.internal_commands["twitterunfollow"] = Command.dispatch_command(
             "twitter_unfollow",
             level=1000,
@@ -134,7 +127,6 @@ class CommandManager(UserDict):
                 ).parse()
             ],
         )
-
         self.internal_commands["add"] = Command.multiaction_command(
             level=100,
             delay_all=0,

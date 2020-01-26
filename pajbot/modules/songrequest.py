@@ -275,9 +275,7 @@ class SongrequestModule(BaseModule):
                     return True
                 bot.say(
                     self.settings["message_in_chat_when_song_is_playing"].format(
-                        title=current_song.song_info.title,
-                        requestor="Backup Playlist",
-                        time_left=time_left,
+                        title=current_song.song_info.title, requestor="Backup Playlist", time_left=time_left
                     )
                 )
                 return True

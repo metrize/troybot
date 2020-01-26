@@ -138,14 +138,14 @@ class SongrequestModule(BaseModule):
         ),
         ModuleSetting(
             key="message_in_chat_when_song_is_playing_spotify",
-            label="Message sent when a song is playing, {title} is the title of the song, {requestor} is the person who requested, {time_left} is the time left for playing",
+            label="Message sent when a song is playing, {title} is the title of the song, {artists} is the list of artists",
             type="text",
             required=True,
             default="The current song is {title} by {artists}",
         ),
         ModuleSetting(
             key="message_in_chat_when_next_song",
-            label="Message sent when a next song is requested, {title} is the title of the song, {requestor} is the person who requested, {time_till} is the time left for playing",
+            label="Message sent when a next song is requested, {title} is the title of the song, {requestor} is the person who requested, {playing_in} is when the song will play",
             type="text",
             required=True,
             default="The next song is {title} requested by {requestor}",
@@ -257,13 +257,15 @@ class SongrequestModule(BaseModule):
     def get_current_song(self, bot, source, message, **rest):
         with DBManager.create_session_scope() as db_session:
             current_song = SongrequestQueue._get_current_song(db_session)
+            m, s = divmod(current_song.playing_in(db_session), 60)
+            time_left = f"{m:02d}:{s:02d}"
             if current_song:
                 if current_song.requestor:
                     bot.say(
                         self.settings["message_in_chat_when_song_is_playing"].format(
                             title=current_song.song_info.title,
                             requestor=current_song.requestor.username_raw,
-                            time_left=current_song.time_left,
+                            time_left=time_left,
                         )
                     )
                     return True
@@ -271,7 +273,7 @@ class SongrequestModule(BaseModule):
                     self.settings["message_in_chat_when_song_is_playing"].format(
                         title=current_song.song_info.title,
                         requestor="Backup Playlist",
-                        time_left=current_song.time_left,
+                        time_left=time_left,
                     )
                 )
                 return True
@@ -290,19 +292,21 @@ class SongrequestModule(BaseModule):
     def get_next_song(self, bot, source, message, **rest):
         with DBManager.create_session_scope() as db_session:
             next_song = SongrequestQueue._get_next_song(db_session)
+            m, s = divmod(next_song.playing_in(db_session), 60)
+            playing_in = f"{m:02d}:{s:02d}"
             if next_song:
                 if next_song.requestor:
                     bot.say(
                         self.settings["message_in_chat_when_next_song"].format(
                             title=next_song.song_info.title,
                             requestor=next_song.requestor.username_raw,
-                            time_left=next_song.time_left,
+                            time_left=playing_in,
                         )
                     )
                     return True
                 bot.say(
                     self.settings["message_in_chat_when_next_song"].format(
-                        title=next_song.song_info.title, requestor="Backup Playlist", time_left=next_song.time_left
+                        title=next_song.song_info.title, requestor="Backup Playlist", playing_in=playing_in
                     )
                 )
                 return True

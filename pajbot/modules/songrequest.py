@@ -259,11 +259,11 @@ class SongrequestModule(BaseModule):
     def get_current_song(self, bot, source, message, **rest):
         with DBManager.create_session_scope() as db_session:
             current_song = SongrequestQueue._get_current_song(db_session)
-            m, s = divmod(current_song.playing_in(db_session), 60)
-            m = int(m)
-            s = int(s)
-            time_left = f"{m:02d}:{s:02d}"
             if current_song:
+                m, s = divmod(current_song.playing_in(db_session), 60)
+                m = int(m)
+                s = int(s)
+                time_left = f"{m:02d}:{s:02d}"
                 if current_song.requestor:
                     bot.say(
                         self.settings["message_in_chat_when_song_is_playing"].format(
@@ -294,11 +294,11 @@ class SongrequestModule(BaseModule):
     def get_next_song(self, bot, source, message, **rest):
         with DBManager.create_session_scope() as db_session:
             next_song = SongrequestQueue._get_next_song(db_session)
-            m, s = divmod(next_song.playing_in(db_session), 60)
-            m = int(m)
-            s = int(s)
-            playing_in = f"{m:02d}:{s:02d}"
             if next_song:
+                m, s = divmod(next_song.playing_in(db_session), 60)
+                m = int(m)
+                s = int(s)
+                playing_in = f"{m:02d}:{s:02d}"
                 if next_song.requestor:
                     bot.say(
                         self.settings["message_in_chat_when_next_song"].format(

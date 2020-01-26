@@ -218,6 +218,8 @@ class SongrequestModule(BaseModule):
             songrequest_queue = SongrequestQueue._create(db_session, video_id, skip_after, source.id)
             db_session.commit()
             m, s = divmod(int(songrequest_queue.playing_in(db_session)), 60)
+            m = int(m)
+            s = int(s)
             playing_in = f"{m:02d}:{s:02d}"
             if self.settings["send_message_in_chat"]:
                 bot.say(
@@ -258,6 +260,8 @@ class SongrequestModule(BaseModule):
         with DBManager.create_session_scope() as db_session:
             current_song = SongrequestQueue._get_current_song(db_session)
             m, s = divmod(current_song.playing_in(db_session), 60)
+            m = int(m)
+            s = int(s)
             time_left = f"{m:02d}:{s:02d}"
             if current_song:
                 if current_song.requestor:
@@ -293,6 +297,8 @@ class SongrequestModule(BaseModule):
         with DBManager.create_session_scope() as db_session:
             next_song = SongrequestQueue._get_next_song(db_session)
             m, s = divmod(next_song.playing_in(db_session), 60)
+            m = int(m)
+            s = int(s)
             playing_in = f"{m:02d}:{s:02d}"
             if next_song:
                 if next_song.requestor:

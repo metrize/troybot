@@ -46,9 +46,9 @@ class SongrequestManager:
 
     def to_true_volume(self, multiplied_volume):
         log.info(multiplied_volume)
-        log.info(int(self.settings["volume_multiplier"])/100)
-        log.info(int(multiplied_volume * int(self.settings["volume_multiplier"])/100))
-        return int(multiplied_volume * int(self.settings["volume_multiplier"])/100)
+        log.info(int(self.settings["volume_multiplier"]) / 100)
+        log.info(int(multiplied_volume * int(self.settings["volume_multiplier"]) / 100))
+        return int(multiplied_volume * int(self.settings["volume_multiplier"]) / 100)
 
     def disable(self):
         self.enabled = False
@@ -359,9 +359,7 @@ class SongrequestManager:
             self._show()
 
     def _volume(self):
-        self.bot.songrequest_websocket_manager.emit(
-            "volume", {"volume": self.volume_val()}
-        )
+        self.bot.songrequest_websocket_manager.emit("volume", {"volume": self.volume_val()})
         self.bot.websocket_manager.emit("songrequest_volume", WIDGET_ID, {"volume": self.true_volume})
 
     def _seek(self, _time):

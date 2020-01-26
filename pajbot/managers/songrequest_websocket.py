@@ -184,7 +184,7 @@ class SongRequestWebSocketServer:
             def _volume(self, db_session, data):
                 if not self.isAuthed or "volume" not in data or not isfloat(data["volume"]):
                     return False
-                return manager_ext.bot.songrequest_manager.volume_function(int(data["volume"]*100))
+                return manager_ext.bot.songrequest_manager.volume_function(int(data["volume"] * 100))
 
             def _close(self, db_session, data):
                 if not self.isAuthed:

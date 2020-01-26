@@ -159,28 +159,28 @@ class SongrequestModule(BaseModule):
         ),
         ModuleSetting(
             key="send_message_on_open",
-            label="Message sent when a next song is requested but there isn't one",
+            label="Send message when song request is opened",
             type="boolean",
             required=True,
             default=True,
         ),
         ModuleSetting(
             key="message_sent_on_open",
-            label="Message sent when a next song is requested but there isn't one",
+            label="Message sent when song request is opened",
             type="text",
             required=True,
             default="Song Request has been opened!",
         ),
         ModuleSetting(
             key="send_message_on_close",
-            label="Message sent when a next song is requested but there isn't one",
+            label="Send message when song request is closed",
             type="boolean",
             required=True,
             default=True,
         ),
         ModuleSetting(
             key="message_sent_on_close",
-            label="Message sent when a next song is requested but there isn't one",
+            label="Message sent when song request is closed",
             type="text",
             required=True,
             default="Song Request has been closed!",
@@ -300,7 +300,7 @@ class SongrequestModule(BaseModule):
                         self.settings["message_in_chat_when_next_song"].format(
                             title=next_song.song_info.title,
                             requestor=next_song.requestor.username_raw,
-                            time_left=playing_in,
+                            playing_in=playing_in,
                         )
                     )
                     return True

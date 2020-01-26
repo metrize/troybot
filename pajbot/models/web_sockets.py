@@ -11,6 +11,7 @@ from pajbot.managers.db import Base
 
 log = logging.getLogger(__name__)
 
+
 def salt_gen():
     ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     return "".join(random.choice(ALPHABET) for i in range(8))

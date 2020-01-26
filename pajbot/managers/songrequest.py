@@ -45,7 +45,10 @@ class SongrequestManager:
         return int(self.true_volume * (100 / int(self.settings["volume_multiplier"])))
 
     def to_true_volume(self, multiplied_volume):
-        return int((multiplied_volume*int(self.settings["volume_multiplier"]))/100)
+        log.info(multiplied_volume)
+        log.info(int(self.settings["volume_multiplier"])/100)
+        log.info(int(multiplied_volume * int(self.settings["volume_multiplier"])/100))
+        return int(multiplied_volume * int(self.settings["volume_multiplier"])/100)
 
     def disable(self):
         self.enabled = False

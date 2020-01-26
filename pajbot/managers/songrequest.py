@@ -1,14 +1,16 @@
 import logging
-from pajbot.managers.db import DBManager
-from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory, SongRequestSongInfo
-from pajbot.managers.schedule import ScheduleManager
-from pajbot.models.user import User
 import threading
 import time
 
+from pajbot.managers.db import DBManager
+from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory, SongRequestSongInfo
+from pajbot.models.user import User
+
+
 current_milli_time = lambda: int(round(time.time() * 10))
 log = logging.getLogger("pajbot")
-WIDGET_ID = "4"
+
+WIDGET_ID = 4
 
 
 class SongrequestManager:
@@ -16,6 +18,15 @@ class SongrequestManager:
         self.bot = bot
         self.enabled = False
         self.current_song_id = None
+        self.showVideo = None
+        self.isVideoShowing = None
+        self.youtube = None
+        self.settings = None
+        self.previously_playing_spotify = None
+        self.paused = None
+        self.module_opened = None
+        self.previous_queue = None
+        self.volume = None
 
     def enable(self, settings, youtube):
         self.enabled = True
@@ -29,7 +40,6 @@ class SongrequestManager:
         self.module_opened = False
         self.previous_queue = 0
         self.volume = self.settings["volume"] / 100
-        self.scheduled_tasks = []
         thread = threading.Thread(target=self.inc_current_song, daemon=True)
         thread.start()
 
@@ -150,7 +160,7 @@ class SongrequestManager:
         SongrequestQueue._update_queue()
         return True
 
-    def request_function(self, video_id, requested_by):
+    def request_function(self, video_id, requested_by, queue=None):
         if not self.enabled:
             return False
         with DBManager.create_session_scope() as db_session:
@@ -165,10 +175,12 @@ class SongrequestManager:
             skip_after = (
                 self.settings["max_song_length"] if song_info.duration > self.settings["max_song_length"] else None
             )
-            SongrequestQueue._create(db_session, video_id, skip_after, requested_by_id)
+            song = SongrequestQueue._create(db_session, video_id, skip_after, requested_by_id)
+            if queue:
+                song._move_song(db_session, queue)
             db_session.commit()
         SongrequestQueue._update_queue()
-        return True
+        return 
 
     def replay_function(self, requested_by):
         if not self.enabled:
@@ -179,7 +191,7 @@ class SongrequestManager:
                 return
             requested_by_id = requested_by.id
             current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
-            self.request_function(current_song.video_id, current_song.requested_by_id)._move_song(db_session, 1)
+            self.request_function(current_song.video_id, current_song.requested_by_id, 1)
             db_session.commit()
         self.load_song(requested_by_id)
         SongrequestQueue._update_queue()
@@ -231,7 +243,6 @@ class SongrequestManager:
 
     def inc_current_song(self):
         while True:
-            start_time = current_milli_time()
             if not self.enabled:
                 break
             if self.current_song_id:
@@ -244,23 +255,17 @@ class SongrequestManager:
                                 self.load_song()
                             else:
                                 if (
-                                    (not current_song.requested_by or current_song.requested_by == "Backup Playlist")
+                                    (not current_song.requested_by)
                                     and next_song
                                     and next_song.requested_by
-                                    and next_song.requested_by != "Backup Playlist"
                                 ):
                                     self.load_song("Backup Playlist Skip")
-                                elif current_song.current_song_time >= current_song.duration:
-                                    time.sleep(4)
-                                    self.load_song()
                                 current_song.current_song_time += 1
                     except:
                         pass
             elif self.module_opened:
                 self.load_song()
-            adjust = 1 - (current_milli_time() - start_time + 0.005)
-            if adjust > 0:
-                time.sleep(adjust)
+            time.sleep(1)
 
     def load_song(self, skipped_by_id=None):
         if not self.enabled:
@@ -284,12 +289,6 @@ class SongrequestManager:
         SongrequestQueue._update_queue()
 
         self.current_song_id = None
-        for job in self.scheduled_tasks:
-            try:
-                job.remove()
-            except:
-                pass
-        self.scheduled_tasks = []
 
         if not self.module_opened:
             return False
@@ -331,56 +330,58 @@ class SongrequestManager:
         return False
 
     def _play(self, video_id, video_title, requested_by_name):
-        self.bot.websocket_manager.emit(
-            "songrequest_play", WIDGET_ID, {"video_id": video_id,},
-        )
         self.bot.songrequest_websocket_manager.emit(
             "play", {"video_id": video_id, "video_title": video_title, "requested_by": requested_by_name,},
         )
+        self.bot.websocket_manager.emit(
+            "songrequest_play", WIDGET_ID, {"video_id": video_id,},
+        )
         self.paused = True
-        self.scheduled_tasks.append(ScheduleManager.execute_delayed(3, self.resume_function))
-        self.scheduled_tasks.append(ScheduleManager.execute_delayed(3, self._volume))
         if self.showVideo:
             self._show()
         self._playlist()
 
+    def ready(self):
+        self.resume_function()
+        self._volume()
+
     def _pause(self):
-        self.bot.websocket_manager.emit(
-            "songrequest_pause", WIDGET_ID, {},
-        )
         self.bot.songrequest_websocket_manager.emit(
             "pause", {},
+        )
+        self.bot.websocket_manager.emit(
+            "songrequest_pause", WIDGET_ID, {},
         )
         self._hide()
 
     def _resume(self):
-        self.bot.websocket_manager.emit(
-            "songrequest_resume", WIDGET_ID, {},
-        )
         self.bot.songrequest_websocket_manager.emit(
             "resume", {},
+        )
+        self.bot.websocket_manager.emit(
+            "songrequest_resume", WIDGET_ID, {},
         )
         self.paused = False
         if self.showVideo:
             self._show()
 
     def _volume(self):
-        self.bot.websocket_manager.emit(
-            "songrequest_volume", WIDGET_ID, {"volume": self.volume * 100,},
-        )
         self.bot.songrequest_websocket_manager.emit(
             "volume", {"volume": self.volume * 100 * (1 / (self.settings["volume_multiplier"] / 100)),},
         )
-
-    def _seek(self, time):
         self.bot.websocket_manager.emit(
-            "songrequest_seek", WIDGET_ID, {"seek_time": time,},
+            "songrequest_volume", WIDGET_ID, {"volume": self.volume * 100,},
         )
+        
+
+    def _seek(self, _time):
         self.bot.songrequest_websocket_manager.emit(
             "seek", {"seek_time": time,},
         )
+        self.bot.websocket_manager.emit(
+            "songrequest_seek", WIDGET_ID, {"seek_time": _time,},
+        )
         self.paused = True
-        self.scheduled_tasks.append(ScheduleManager.execute_delayed(1, self.resume_function))
 
     def _show(self):
         self.bot.websocket_manager.emit(
@@ -408,9 +409,9 @@ class SongrequestManager:
             )
 
     def _stop_video(self):
-        self.bot.websocket_manager.emit(
-            "songrequest_stop", WIDGET_ID, {},
-        )
         self.bot.songrequest_websocket_manager.emit(
             "stop", {},
+        )
+        self.bot.websocket_manager.emit(
+            "songrequest_stop", WIDGET_ID, {},
         )

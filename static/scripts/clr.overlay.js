@@ -406,9 +406,10 @@ jQuery(function ($) {
             player.embed.a.closest("div").style.cssText = "";
             player.volume = volume_g;
             hide();
+            socket.send(JSON.stringify({"event" : "ready", "data" : {"salt": salt_value}}));
         });
         player.on('ended', function(event) {
-           hide();
+            socket.send(JSON.stringify({"event" : "next_song", "data" : {"salt": salt_value}}));
         });
     }
 });
@@ -433,6 +434,7 @@ function resume() {
 function seek({seek_time}) {
     player.currentTime = seek_time;
     pause()
+    socket.send(JSON.stringify({"event" : "ready", "data" : {"salt": salt_value}}));
 }
 var volume_g = 0
 function volume({volume}) {
@@ -463,7 +465,7 @@ function connect_to_ws() {
     socket.binaryType = "arraybuffer";
     socket.onopen = function () {
         console.log('WebSocket Connected!');
-        socket.send(widget_id); 
+        socket.send(JSON.stringify({"event" : "auth", "data": {"salt": salt_value}})); 
     };
     socket.onerror = function (event) {
         console.error("WebSocket error observed:", event);

@@ -116,7 +116,7 @@ def init(app):
         "user-read-currently-playing",
         "user-read-email",
         "user-read-private",
-    ]  # remove this later
+    ]
 
     @app.route("/streamer_login")
     def streamer_login():
@@ -178,9 +178,9 @@ def init(app):
     def login_error():
         return render_template("login_error.html")
 
-    @app.route("/login/spotify_auth")
-    def spotify_auth():
-        if spotify is not None:
+    if spotify is not None:
+        @app.route("/login/spotify_auth")
+        def spotify_auth():
             try:
                 resp = spotify.authorized_response(spotify=True)
             except OAuthException as e:
@@ -223,7 +223,6 @@ def init(app):
 
             next_url = get_next_url(request, "state")
             return redirect(next_url)
-        return render_template("login_error.html")
 
     @app.route("/login/authorized")
     def authorized():

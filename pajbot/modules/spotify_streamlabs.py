@@ -38,7 +38,7 @@ class SpotifyStreamLabs(BaseModule):
             type="text",
             required=True,
             placeholder="",
-            default="@{username}, the current song is {song_title}",
+            default="@{username}, the current song is {song_title} requested by @{requestor}",
         ),
         ModuleSetting(
             key="playing_spotify",

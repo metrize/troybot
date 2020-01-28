@@ -1,9 +1,8 @@
 import logging
+import base64
 
 from pajbot.apiwrappers.base import BaseAPI
 from pajbot.apiwrappers.authentication.access_token import SpotifyAccessToken
-
-import base64
 
 log = logging.getLogger(__name__)
 

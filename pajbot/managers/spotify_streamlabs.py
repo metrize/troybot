@@ -15,8 +15,6 @@ class SpotifyStreamLabsManager:
         self.isPaused = False
         self.spotifyPreviouslyPlaying = False
 
-    # BACKUP LIST FUNCTION START
-
     def change_state(self, state):
         self.isPaused = state
 

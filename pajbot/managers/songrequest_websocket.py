@@ -78,6 +78,7 @@ class SongRequestWebSocketServer:
                 self.isAuthed = False
                 self.user_id = None
                 self.user_name = None
+                self.login = None
                 WebSocketServerProtocol.__init__(self)
 
             def onOpen(self):
@@ -132,6 +133,7 @@ class SongRequestWebSocketServer:
                 user = manager_ext.bot.twitch_v5_api.user_from_access_token(
                     access_token, manager_ext.bot.twitch_helix_api, db_session
                 )
+                log.info(user.login if user else user)
                 if not user or user.level < 500:
                     return False
                 self.isAuthed = True

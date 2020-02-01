@@ -309,7 +309,7 @@ class SongrequestManager:
                 current_song.current_song_time = 0
                 self.current_song_id = current_song.id
                 song_info = current_song.song_info
-                self._play(current_song.video_id, song_info.title, current_song.requested_by.username_raw)
+                self._play(current_song.video_id, song_info.title, current_song.requested_by.username_raw if current_song.requested_by else "Backup list")
                 if self.settings["use_spotify"]:
                     is_playing, song_name, artistsArr = self.bot.spotify_api.state(self.bot.spotify_token_manager)
                     if is_playing:

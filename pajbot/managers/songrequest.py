@@ -120,14 +120,14 @@ class SongrequestManager:
             return True
         return False
 
-    def seek_function(self, time):
+    def seek_function(self, _time):
         if not self.enabled:
             return False
         if self.current_song_id:
             with DBManager.create_session_scope() as db_session:
                 current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
-                current_song.current_song_time = time
-                self._seek(time)
+                current_song.current_song_time = _time
+                self._seek(_time)
             return True
         return False
 

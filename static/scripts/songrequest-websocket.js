@@ -1,5 +1,7 @@
 let socket = null;
 var open = false;
+var stop_reload = false;
+
 function connect_to_ws() {
     if (socket != null) {
         return;
@@ -26,7 +28,8 @@ function connect_to_ws() {
     socket.onclose = function (e) {
         console.log(`WebSocket closed ${e.wasClean ? '' : 'un'}cleanly with reason ${e.code}: ${e.reason}`);
         socket = null;
-        location.reload();
+        if (!stop_reload) {location.reload();}
+        stop_reload = false;
     }
 
 }
@@ -203,6 +206,7 @@ function update_state() {
 $(window).focus(function() {
     socket.close()
     connect_to_ws()
+    stop_reload = true;
 });
 
 function seek_to(data) {

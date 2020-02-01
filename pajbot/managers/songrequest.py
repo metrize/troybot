@@ -284,8 +284,7 @@ class SongrequestManager:
                         self.previous_queue = 0
                         histroy = current_song._to_histroy(db_session, skipped_by_id)
                         if not histroy:
-                            log.info("Something went wrong changing song queue to song history")
-                            return False
+                            log.info("History not added because stream is offline!")
                     else:
                         current_song._remove(db_session)
                 self._stop_video()

@@ -88,7 +88,8 @@ class SongrequestQueue(Base):
     def _to_histroy(self, db_session, skipped_by_id=None):
         stream_id = StreamHelper.get_current_stream_id()
         if not stream_id:
-            stream_id = None
+            self._remove(db_session)
+            return None
         history = SongrequestHistory._create(
             db_session, stream_id, self.video_id, self.requested_by.id, skipped_by_id, self.skip_after
         )

@@ -288,7 +288,7 @@ class SongrequestManager:
                 self._stop_video()
                 self._hide()
                 db_session.commit()
-        self._playlist_history()
+            self._playlist_history()
         SongrequestQueue._update_queue()
 
         self.current_song_id = None

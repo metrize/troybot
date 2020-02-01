@@ -126,14 +126,14 @@ class SongRequestWebSocketServer:
                     pass
 
             def _close_conn(self):
-                self.sendClose()
+                log.info("Close requested!")
+                # self.sendClose()
 
             def _auth(self, db_session, data):
                 access_token = data["access_token"]
                 user = manager_ext.bot.twitch_v5_api.user_from_access_token(
                     access_token, manager_ext.bot.twitch_helix_api, db_session
                 )
-                log.info(user.login if user else user)
                 if not user or user.level < 500:
                     return False
                 self.isAuthed = True

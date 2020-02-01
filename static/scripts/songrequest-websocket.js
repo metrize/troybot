@@ -25,7 +25,6 @@ function connect_to_ws() {
     };
     socket.onclose = function (e) {
         console.log(`WebSocket closed ${e.wasClean ? '' : 'un'}cleanly with reason ${e.code}: ${e.reason}`);
-        failedAttempts++;
         socket = null;
         location.reload();
     }

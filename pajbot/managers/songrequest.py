@@ -258,7 +258,10 @@ class SongrequestManager:
                         with DBManager.create_session_scope() as db_session:
                             current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
                             next_song = SongrequestQueue._get_next_song(db_session)
-                            if not current_song or (current_song.skip_after and current_song.skip_after > current_song.current_song_time + 10):
+                            if not current_song or (
+                                current_song.skip_after
+                                and current_song.skip_after > current_song.current_song_time + 10
+                            ):
                                 self.load_song()
                             else:
                                 if (not current_song.requested_by) and next_song and next_song.requested_by:

@@ -179,6 +179,7 @@ def init(app):
         return render_template("login_error.html")
 
     if spotify is not None:
+
         @app.route("/login/spotify_auth")
         def spotify_auth():
             try:

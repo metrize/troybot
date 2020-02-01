@@ -348,7 +348,7 @@ function handleWebsocketData(json_data) {
             pause();
             break;
         case 'songrequest_resume':
-            resume();
+            resume(data);
             break;
         case 'songrequest_volume':
             volume(data);
@@ -419,9 +419,9 @@ function play({video_id}) {
 function pause() {
     player.pause();
 }
-function resume() {
-    console.log("resumed")
+function resume({volume}) {
     player.play();
+    volume({volume});
 }
 function seek({seek_time}) {
     player.currentTime = seek_time;

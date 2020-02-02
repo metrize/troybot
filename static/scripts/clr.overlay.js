@@ -370,7 +370,8 @@ function handleWebsocketData(json_data) {
 
 }
 
-var player
+var player;
+var volume_ext;
 jQuery(function ($) {
     'use strict'
     var supportsAudio = !!document.createElement('audio').canPlayType;
@@ -380,16 +381,13 @@ jQuery(function ($) {
             controls: [],
             listeners: {
                 play: function (e) {
-                    return false;
+                    player.volume = volume_ext/100;
                 },
                 seek: function (e) {
-                    return false;
+                    player.volume = volume_ext/100;
                 },
-                volume: function (e) {
-                    return false;
-                }, 
                 restart: function (e) {
-                    return false;
+                    player.volume = volume_ext/100;
                 }           
             }
         });
@@ -399,7 +397,6 @@ jQuery(function ($) {
             player.embed.a.closest("div").style.cssText = "";
             hide();
             socket.send(JSON.stringify({"event" : "ready", "data" : {"salt": salt_value}}));
-            console.log("ready")
         });
         player.on('ended', function(event) {
             socket.send(JSON.stringify({"event" : "next_song", "data" : {"salt": salt_value}}));
@@ -430,6 +427,7 @@ function seek({seek_time}) {
     socket.send(JSON.stringify({"event" : "ready", "data" : {"salt": salt_value}}));
 }
 function volume({volume}) {
+    volume_ext = volume;
     player.volume = (volume/100);
 }
 function hide() {

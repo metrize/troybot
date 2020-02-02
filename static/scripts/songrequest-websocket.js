@@ -154,9 +154,7 @@ jQuery(function ($) {
             
             player.volume = actual_volume;
             temp_volume = actual_volume;
-            sleep(1000).then(() => {
-                player.embed.mute()
-            });
+            player.embed.mute()
         });
         $('#btnPrev').on('click', function () {
             socket.send(JSON.stringify({'event' : 'PREVIOUS', 'data' : {}}))
@@ -212,9 +210,7 @@ function seek_to(data) {
     current_song_time = data['seek_time'];
     player.currentTime = current_song_time;
     pause()
-    sleep(200).then(() => {
-        player.embed.mute()
-    });
+    player.embed.mute()
     
 }
 

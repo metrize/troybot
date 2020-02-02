@@ -355,7 +355,7 @@ class SongrequestManager:
 
     def _resume(self):
         self.bot.songrequest_websocket_manager.emit("resume", {})
-        self.bot.websocket_manager.emit("songrequest_resume", WIDGET_ID, {"volume", self.true_volume})
+        self.bot.websocket_manager.emit("songrequest_resume", WIDGET_ID, {"volume": self.true_volume})
         self.paused = False
         if self.showVideo:
             self._show()

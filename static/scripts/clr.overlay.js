@@ -399,6 +399,7 @@ jQuery(function ($) {
             player.embed.a.closest("div").style.cssText = "";
             hide();
             socket.send(JSON.stringify({"event" : "ready", "data" : {"salt": salt_value}}));
+            console.log("ready")
         });
         player.on('ended', function(event) {
             socket.send(JSON.stringify({"event" : "next_song", "data" : {"salt": salt_value}}));

@@ -212,7 +212,7 @@ function seek_to(data) {
     current_song_time = data['seek_time'];
     player.currentTime = current_song_time;
     pause()
-    sleep(1000).then(() => {
+    sleep(200).then(() => {
         player.embed.mute()
     });
     

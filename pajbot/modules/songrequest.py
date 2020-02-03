@@ -264,11 +264,11 @@ class SongrequestModule(BaseModule):
                 m = int(m)
                 s = int(s)
                 time_left = f"{m:02d}:{s:02d}"
-                if current_song.requestor:
+                if current_song.requested_by:
                     bot.say(
                         self.settings["message_in_chat_when_song_is_playing"].format(
                             title=current_song.song_info.title,
-                            requestor=current_song.requestor.username_raw,
+                            requestor=current_song.requested_by.username_raw,
                             time_left=time_left,
                         )
                     )

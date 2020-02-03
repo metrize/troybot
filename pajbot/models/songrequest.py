@@ -91,7 +91,7 @@ class SongrequestQueue(Base):
             self._remove(db_session)
             return None
         history = SongrequestHistory._create(
-            db_session, stream_id, self.video_id, self.requested_by.id, skipped_by_id, self.skip_after
+            db_session, stream_id, self.video_id, self.requested_by.id if self.requested_by else None, skipped_by_id, self.skip_after
         )
         self._remove(db_session)
         return history
@@ -106,10 +106,6 @@ class SongrequestQueue(Base):
     @hybrid_property
     def link(self):
         return f"youtu.be/{self.video_id}"
-
-    @hybrid_property
-    def requestor(self):
-        return self.requested_by if self.requested_by else "Backup Playlist"
 
     @staticmethod
     def _from_id(db_session, id):

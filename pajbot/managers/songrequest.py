@@ -3,6 +3,8 @@ import threading
 import time
 
 from pajbot.managers.db import DBManager
+from pajbot.manager.schedule import ScheduleManager
+
 from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory, SongRequestSongInfo
 from pajbot.models.user import User
 
@@ -170,12 +172,12 @@ class SongrequestManager:
         with DBManager.create_session_scope() as db_session:
             requested_by = User.find_by_user_input(db_session, requested_by)
             if not requested_by:
-                return
+                return False
             requested_by_id = requested_by.id
             song_info = SongRequestSongInfo._create_or_get(db_session, video_id, self.youtube)
             if not song_info:
                 log.error("There was an error!")
-                return True
+                return False
             skip_after = (
                 self.settings["max_song_length"] if song_info.duration > self.settings["max_song_length"] else None
             )
@@ -184,7 +186,7 @@ class SongrequestManager:
                 song._move_song(db_session, queue)
             db_session.commit()
         SongrequestQueue._update_queue()
-        return
+        return True
 
     def replay_function(self, requested_by):
         if not self.enabled:
@@ -192,7 +194,7 @@ class SongrequestManager:
         with DBManager.create_session_scope() as db_session:
             requested_by = User.find_by_user_input(db_session, requested_by)
             if not requested_by:
-                return
+                return False
             requested_by_id = requested_by.id
             current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
             self.request_function(current_song.video_id, current_song.requested_by_id, 1)
@@ -207,7 +209,7 @@ class SongrequestManager:
         with DBManager.create_session_scope() as db_session:
             requested_by = User.find_by_user_input(db_session, requested_by)
             if not requested_by:
-                return
+                return False
             requested_by_id = requested_by.id
             SongrequestHistory._from_id(db_session, database_id).requeue(db_session, requested_by_id)
             db_session.commit()
@@ -347,6 +349,7 @@ class SongrequestManager:
 
     def ready(self):
         self.resume_function()
+        ScheduleManager.execute_delayed(1, self._volume)
 
     def _pause(self):
         self.bot.songrequest_websocket_manager.emit("pause", {})

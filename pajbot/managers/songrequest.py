@@ -349,7 +349,7 @@ class SongrequestManager:
 
     def ready(self):
         self.resume_function()
-        ScheduleManager.execute_delayed(1, self._volume)
+        ScheduleManager.execute_delayed(2, self._volume)
 
     def _pause(self):
         self.bot.songrequest_websocket_manager.emit("pause", {})

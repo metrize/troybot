@@ -3,7 +3,7 @@ import threading
 import time
 
 from pajbot.managers.db import DBManager
-from pajbot.manager.schedule import ScheduleManager
+from pajbot.managers.schedule import ScheduleManager
 
 from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory, SongRequestSongInfo
 from pajbot.models.user import User

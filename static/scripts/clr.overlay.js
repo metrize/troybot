@@ -381,13 +381,13 @@ jQuery(function ($) {
             controls: [],
             listeners: {
                 play: function (e) {
-                    player.volume = volume_ext/100;
+                    player.volume = volume_ext*0.01;
                 },
                 seek: function (e) {
-                    player.volume = volume_ext/100;
+                    player.volume = volume_ext*0.01;
                 },
                 restart: function (e) {
-                    player.volume = volume_ext/100;
+                    player.volume = volume_ext*0.01;
                 }           
             }
         });
@@ -428,7 +428,7 @@ function seek({seek_time}) {
 }
 function volume({volume}) {
     volume_ext = volume;
-    player.volume = (volume/100);
+    player.volume = volume_ext*0.01;
 }
 function hide() {
     $('#songrequest').hide();

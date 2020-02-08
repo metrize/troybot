@@ -63,6 +63,8 @@ from pajbot.modules.wolfram import WolframModule
 from pajbot.modules.bet import BetModule
 from pajbot.modules.spotify_streamlabs import SpotifyStreamLabs
 from pajbot.modules.discord_bot import DiscordModule
+from pajbot.modules.pnsl import PNSLModule
+
 
 available_modules = [
     AbCommandModule,
@@ -123,4 +125,5 @@ available_modules = [
     WinDuelsQuestModule,
     WinRaffleQuestModule,
     WolframModule,
+    PNSLModule,
 ]

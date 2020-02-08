@@ -73,7 +73,7 @@ class TwitchKrakenV5API(BaseTwitchAPI):
         from pajbot.managers.emote import EmoteManager
 
         resp = self.get("/chat/emoticon_images", params={"emotesets": "0"})
-        return [EmoteManager.twitch_emote(data["id"], data["code"]) for data in resp["emoticon_sets"]["0"]]
+        return [EmoteManager.twitch_emote(str(data["id"]), data["code"]) for data in resp["emoticon_sets"]["0"]]
 
     def user_from_access_token(self, access_token, twitch_helix_api, db_session):
         resp = self.get("", authorization=" ", headers={"Authorization": "OAuth " + access_token})

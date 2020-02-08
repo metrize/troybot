@@ -21,6 +21,9 @@ class TwitchEmotesAPI(BaseAPI):
 
         try:
             resp = self.get(["channels", channel_id])
+            if resp is None:
+                log.warning(f"No subscription plans found for channel {channel_name}")
+                return [], [], []
             plans = resp["plans"]
             if len(plans) <= 0:
                 log.warning(f"No subscription plans found for channel {channel_name}")

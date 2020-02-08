@@ -10,11 +10,13 @@ from pajbot.modules import ModuleSetting
 
 log = logging.getLogger(__name__)
 
+WIDGET_ID = 3
+
 
 class PlaysoundModule(BaseModule):
     ID = __name__.split(".")[-1]
     NAME = "Playsound"
-    DESCRIPTION = "Play a sound on stream with !#playsound"
+    DESCRIPTION = "Play a sound on stream with !playsound"
     CATEGORY = "Feature"
     SETTINGS = [
         ModuleSetting(
@@ -25,15 +27,6 @@ class PlaysoundModule(BaseModule):
             placeholder="Point cost",
             default=200,
             constraints={"min_value": 0, "max_value": 999999},
-        ),
-        ModuleSetting(
-            key="token_cost",
-            label="Token cost",
-            type="number",
-            required=True,
-            placeholder="Token cost",
-            default=0,
-            constraints={"min_value": 0, "max_value": 15},
         ),
         ModuleSetting(
             key="global_cd",
@@ -109,7 +102,7 @@ class PlaysoundModule(BaseModule):
             }
 
             log.debug(f"Playsound module is emitting payload: {json.dumps(payload)}")
-            self.bot.websocket_manager.emit("play_sound", payload)
+            self.bot.websocket_manager.emit("play_sound", WIDGET_ID, payload)
 
     def reset_global_cd(self):
         self.global_cooldown = False
@@ -127,7 +120,7 @@ class PlaysoundModule(BaseModule):
             if playsound is None:
                 bot.whisper(
                     source,
-                    f"The playsound you gave does not exist. Check out all the valid playsounds here: https://{self.bot.bot_domain}/playsounds",
+                    f"The playsound you gave does not exist. Check out all the valid playsounds here: https://{self.bot.config['web']['domain']}/playsounds",
                 )
                 return False
 
@@ -153,7 +146,7 @@ class PlaysoundModule(BaseModule):
             if not playsound.enabled:
                 bot.whisper(
                     source,
-                    f"The playsound you gave is disabled. Check out all the valid playsounds here: https://{self.bot.bot_domain}/playsounds",
+                    f"The playsound you gave is disabled. Check out all the valid playsounds here: https://{self.bot.config['web']['domain']}/playsounds",
                 )
                 return False
 
@@ -162,8 +155,16 @@ class PlaysoundModule(BaseModule):
                 "volume": int(round(playsound.volume * self.settings["global_volume"] / 100)),
             }
 
+            cost = playsound.cost if playsound.cost else self.settings["point_cost"]
+
+            if source.points >= cost:
+                source.points = source.points - cost
+            else:
+                bot.whisper(source, f"You only have {source.points} and you need {cost} to play {playsound.name}")
+                return False
+
             log.debug(f"Playsound module is emitting payload: {json.dumps(payload)}")
-            bot.websocket_manager.emit("play_sound", payload)
+            bot.websocket_manager.emit("play_sound", WIDGET_ID, payload)
 
             if self.settings["confirmation_whisper"]:
                 bot.whisper(source, f"Successfully played the sound {playsound_name} on stream!")
@@ -184,6 +185,7 @@ class PlaysoundModule(BaseModule):
         parser = ArgumentParser()
         parser.add_argument("--volume", dest="volume", type=int)
         # we parse this manually so we can allow "none" and things like that to unset the cooldown
+        parser.add_argument("--cost", dest="cost", type=str)
         parser.add_argument("--cooldown", dest="cooldown", type=str)
         parser.add_argument("--enabled", dest="enabled", action="store_true")
         parser.add_argument("--disabled", dest="enabled", action="store_false")
@@ -260,6 +262,28 @@ class PlaysoundModule(BaseModule):
                 return False
 
             playsound.cooldown = cooldown_int
+        return True
+
+    @staticmethod
+    def validate_cost(cost):
+        return cost is None or cost >= 0
+
+    def update_cost(self, bot, source, playsound, parsed_options):
+        if "cost" in parsed_options:
+            if parsed_options["cost"].lower() == "none":
+                cost_int = None
+            else:
+                try:
+                    cost_int = int(parsed_options["cost"])
+                except ValueError:
+                    bot.whisper(source.username, 'Error: Cost must be a number or the string "none".')
+                    return False
+
+            if not self.validate_cost(cost_int):
+                bot.whisper(source.username, "Error: Cost must be positive.")
+                return False
+
+            playsound.cost = cost_int
         return True
 
     @staticmethod
@@ -409,25 +433,24 @@ class PlaysoundModule(BaseModule):
         from pajbot.models.command import Command
         from pajbot.models.command import CommandExample
 
-        self.commands["#playsound"] = Command.raw_command(
+        self.commands["playsound"] = Command.raw_command(
             self.play_sound,
-            tokens_cost=self.settings["token_cost"],
-            cost=self.settings["point_cost"],
+            cost=0,
             sub_only=self.settings["sub_only"],
             delay_all=0,
             delay_user=0,
             description="Play a sound on stream!",
-            can_execute_with_whisper=self.settings["can_whisper"],
+            can_execute_with_whisper=False,
             examples=[
                 CommandExample(
                     None,
                     'Play the "doot" sample',
-                    chat="user:!#playsound doot\n" "bot>user:Successfully played the sound doot on stream!",
+                    chat="user:!playsound doot\n" "bot>user:Successfully played the sound doot on stream!",
                 ).parse()
             ],
         )
 
-        self.commands["#playsound"].long_description = 'Playsounds can be tried out <a href="/playsounds">here</a>'
+        self.commands["playsound"].long_description = 'Playsounds can be tried out <a href="/playsounds">here</a>'
 
         self.commands["add"] = Command.multiaction_command(
             level=100,

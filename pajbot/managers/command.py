@@ -97,16 +97,10 @@ class CommandManager(UserDict):
         self.internal_commands["quit"] = Command.pajbot_command(
             self.bot,
             "quit",
-            level=1000,
+            level=2000,
             command="quit",
             description="Shut down the bot, this will most definitely restart it if set up properly",
         )
-
-        self.internal_commands["1quit"] = self.internal_commands["quit"]
-        self.internal_commands[
-            "ceaseallactionscurrentlybeingacteduponwiththecodeandiapologizeforbeingawhitecisgenderedmaleinthepatriarchy"
-        ] = self.internal_commands["quit"]
-
         self.internal_commands["twitterfollow"] = Command.dispatch_command(
             "twitter_follow",
             level=1000,
@@ -115,12 +109,11 @@ class CommandManager(UserDict):
                 CommandExample(
                     None,
                     "Default usage",
-                    chat="user:!twitterfollow forsen\n" "bot>user:Now following Forsen",
-                    description="Follow Forsen on twitter so new tweets are output in chat.",
+                    chat="user:!twitterfollow forsensc2\n" "bot>user:Now following ForsenSC2",
+                    description="Follow ForsenSC2 on twitter so new tweets are output in chat.",
                 ).parse()
             ],
         )
-
         self.internal_commands["twitterunfollow"] = Command.dispatch_command(
             "twitter_unfollow",
             level=1000,
@@ -129,12 +122,11 @@ class CommandManager(UserDict):
                 CommandExample(
                     None,
                     "Default usage",
-                    chat="user:!twitterunfollow forsen\n" "bot>user:No longer following Forsen",
-                    description="Stop automatically printing tweets from Forsen",
+                    chat="user:!twitterunfollow forsensc2\n" "bot>user:No longer following ForsenSC2",
+                    description="Stop automatically printing tweets from ForsenSC2",
                 ).parse()
             ],
         )
-
         self.internal_commands["add"] = Command.multiaction_command(
             level=100,
             delay_all=0,

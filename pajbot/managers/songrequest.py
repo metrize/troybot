@@ -267,7 +267,7 @@ class SongrequestManager:
                                     self.load_song()
                                 current_song.current_song_time += 1
                     except Exception as e:
-                        log.exception(e)
+                        log.error(e)
             elif self.module_opened:
                 self.load_song()
             time.sleep(1)

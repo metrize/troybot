@@ -259,7 +259,7 @@ class SongrequestManager:
                             next_song = SongrequestQueue._get_next_song(db_session)
                             if not current_song or (
                                 current_song.skip_after
-                                and current_song.skip_after > current_song.current_song_time + 10
+                                and current_song.skip_after < current_song.current_song_time + 10
                             ):
                                 self.load_song()
                             else:

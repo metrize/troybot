@@ -84,8 +84,7 @@ class SongRequestWebSocketServer:
             def onOpen(self):
                 SongRequestWebSocketServer.clients.append(self)
 
-            def onMessage(self, payload, isBinary):
-                log.info(payload)
+            def onMessage(self, payload, isBinary):1
                 if manager_ext.bot.songrequest_manager.enabled:
                     with DBManager.create_session_scope() as db_session:
                         if not isBinary:
@@ -120,14 +119,12 @@ class SongRequestWebSocketServer:
                                 return
 
             def onClose(self, wasClean, code, reason):
-                log.info(f"{wasClean} --- {code} ----- {reason}")
                 try:
                     SongRequestWebSocketServer.clients.remove(self)
                 except:
                     pass
 
             def _close_conn(self):
-                log.info("Close requested!")
                 self.sendClose()
 
             def _auth(self, db_session, data):

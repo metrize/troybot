@@ -270,8 +270,8 @@ class SongrequestManager:
                                 if (not current_song.requested_by) and next_song and next_song.requested_by:
                                     self.load_song()
                                 current_song.current_song_time += 1
-                    except:
-                        pass
+                    except Exception as e:
+                        log.exception(e)
             elif self.module_opened:
                 self.load_song()
             time.sleep(1)

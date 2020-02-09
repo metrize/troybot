@@ -84,7 +84,7 @@ class SongRequestWebSocketServer:
             def onOpen(self):
                 SongRequestWebSocketServer.clients.append(self)
 
-            def onMessage(self, payload, isBinary):1
+            def onMessage(self, payload, isBinary):
                 if manager_ext.bot.songrequest_manager.enabled:
                     with DBManager.create_session_scope() as db_session:
                         if not isBinary:

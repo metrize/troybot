@@ -263,6 +263,7 @@ class SongrequestManager:
                             ):
                                 self.load_song()
                             else:
+                                log.info("")
                                 log.info(not current_song.requested_by)
                                 log.info(bool(next_song))
                                 log.info(bool(next_song.requested_by) if bool(next_song) else None)

@@ -285,14 +285,14 @@ ON CONFLICT (id) DO UPDATE SET
                 CommandExample(
                     None,
                     "Give a user points",
-                    chat="user:!editpoints pajlada 500\n" "bot>user:Successfully gave pajlada 500 points.",
-                    description="This creates 500 points and gives them to pajlada",
+                    chat="user:!editpoints troydota 500\n" "bot>user:Successfully gave troydota 500 points.",
+                    description="This creates 500 points and gives them to troydota",
                 ).parse(),
                 CommandExample(
                     None,
                     "Remove points from a user",
-                    chat="user:!editpoints pajlada -500\n" "bot>user:Successfully removed 500 points from pajlada.",
-                    description="This removes 500 points from pajlada. Users can go into negative points with this.",
+                    chat="user:!editpoints troydota -500\n" "bot>user:Successfully removed 500 points from troydota.",
+                    description="This removes 500 points from troydota. Users can go into negative points with this.",
                 ).parse(),
             ],
         )
@@ -317,8 +317,8 @@ ON CONFLICT (id) DO UPDATE SET
                 CommandExample(
                     None,
                     "Set a user's points",
-                    chat="user:!setpoints pajlada 500\n" "bot>user:Successfully set pajlada's points to 500.",
-                    description="This sets pajlada's points to 500.",
+                    chat="user:!setpoints troydota 500\n" "bot>user:Successfully set troydota's points to 500.",
+                    description="This sets troydota's points to 500.",
                 ).parse()
             ],
         )

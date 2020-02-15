@@ -15,8 +15,10 @@ log = logging.getLogger(__name__)
 
 
 def generate_winner_list(winners):
-    """ Takes a list of winners, and combines them into a string. """
-    return ", ".join(winner.name for winner in winners)
+    """ Takes a list of winners, and combines them into a alphabetically-sorted string. """
+    stringList = [winner.name for winner in winners]
+    stringList.sort(key=str.lower)
+    return ", ".join(stringList)
 
 
 def format_win(points_amount):
@@ -80,7 +82,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=3000,
-            constraints={"min_value": 0, "max_value": 35000},
         ),
         ModuleSetting(
             key="max_length",
@@ -89,7 +90,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=120,
-            constraints={"min_value": 0, "max_value": 1200},
         ),
         ModuleSetting(
             key="allow_negative_raffles", label="Allow negative raffles", type="boolean", required=True, default=True
@@ -101,7 +101,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=3000,
-            constraints={"min_value": 1, "max_value": 35000},
         ),
         ModuleSetting(
             key="multi_enabled",
@@ -117,7 +116,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=100000,
-            constraints={"min_value": 0, "max_value": 1000000},
         ),
         ModuleSetting(
             key="multi_max_length",
@@ -126,7 +124,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=600,
-            constraints={"min_value": 0, "max_value": 1200},
         ),
         ModuleSetting(
             key="multi_allow_negative_raffles",
@@ -142,7 +139,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=10000,
-            constraints={"min_value": 1, "max_value": 100000},
         ),
         ModuleSetting(
             key="multi_raffle_on_sub",
@@ -175,7 +171,7 @@ class RaffleModule(BaseModule):
     def load_commands(self, **options):
         self.commands["singleraffle"] = Command.raw_command(
             self.raffle,
-            delay_all=0,
+            delay_all=7200,
             delay_user=0,
             level=500,
             description="Start a raffle for points",
@@ -215,7 +211,7 @@ class RaffleModule(BaseModule):
         if self.settings["multi_enabled"]:
             self.commands["multiraffle"] = Command.raw_command(
                 self.multi_raffle,
-                delay_all=0,
+                delay_all=7200,
                 delay_user=0,
                 level=500,
                 description="Start a multi-raffle for points",
@@ -246,7 +242,7 @@ class RaffleModule(BaseModule):
 
     def raffle(self, bot, source, message, **rest):
         if self.raffle_running is True:
-            bot.say(f"{source}, a raffle is already running OMGScoots")
+            bot.say(f"{source}, a raffle is already running Bruh")
             return False
 
         self.raffle_users = set()
@@ -282,7 +278,9 @@ class RaffleModule(BaseModule):
             bot.execute_delayed(0.75, bot.websocket_manager.emit, "notification", {"message": "Type !join to enter!"})
 
         arguments = {"length": self.raffle_length, "points": self.raffle_points}
+
         bot.say(self.get_phrase("message_start", **arguments))
+
         arguments = {"length": round(self.raffle_length * 0.75), "points": self.raffle_points}
         bot.execute_delayed(self.raffle_length * 0.25, bot.say, self.get_phrase("message_running", **arguments))
         arguments = {"length": round(self.raffle_length * 0.50), "points": self.raffle_points}
@@ -324,9 +322,10 @@ class RaffleModule(BaseModule):
                 self.bot.websocket_manager.emit(
                     "notification", {"message": f"{winner} {format_win(self.raffle_points)} points in the raffle!"}
                 )
-                self.bot.me(f"The raffle has finished! {winner} {format_win(self.raffle_points)} points! PogChamp")
 
-            winner.points += self.raffle_points
+            self.bot.me(f"The raffle has finished! {winner} {format_win(self.raffle_points)} points! PogChamp")
+
+            winner.points = winner.points + self.raffle_points
 
             HandlerManager.trigger("on_raffle_win", winner=winner, points=self.raffle_points)
 
@@ -354,6 +353,7 @@ class RaffleModule(BaseModule):
 
         arguments = {"length": self.raffle_length, "points": self.raffle_points}
         self.bot.say(self.get_phrase("message_start_multi", **arguments))
+
         arguments = {"length": round(self.raffle_length * 0.75), "points": self.raffle_points}
         self.bot.execute_delayed(
             self.raffle_length * 0.25, self.bot.say, self.get_phrase("message_running_multi", **arguments)
@@ -371,7 +371,7 @@ class RaffleModule(BaseModule):
 
     def multi_raffle(self, bot, source, message, **rest):
         if self.raffle_running is True:
-            bot.say(f"{source}, a raffle is already running OMGScoots")
+            bot.say(f"{source}, a raffle is already running Bruh")
             return False
 
         points = 100

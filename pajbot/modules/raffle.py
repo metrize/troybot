@@ -177,7 +177,7 @@ class RaffleModule(BaseModule):
     def load_commands(self, **options):
         self.commands["singleraffle"] = Command.raw_command(
             self.raffle,
-            delay_all=int(self.settings["global_cooldown"]),,
+            delay_all=int(self.settings["global_cooldown"]),
             delay_user=0,
             level=500,
             description="Start a raffle for points",

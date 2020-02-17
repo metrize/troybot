@@ -74,17 +74,23 @@ $(window).on('load', function() {
     });
 
     function getFormData(form) {
-        let data = $(form).serializeArray().reduce((obj, item) => {
-            obj[item.name] = item.value;
+        let data = $(form)
+            .serializeArray()
+            .reduce((obj, item) => {
+                obj[item.name] = item.value;
 
-            if (item.name === "volume" || item.name === "cooldown" || item.name == "cost") {
-                let val = parseInt(item.value);
-                if (isNaN(val)) {
-                    val = null;
+                if (
+                    item.name === 'volume' ||
+                    item.name === 'cooldown' ||
+                    item.name == 'cost'
+                ) {
+                    let val = parseInt(item.value);
+                    if (isNaN(val)) {
+                        val = null;
+                    }
+                    return obj;
                 }
-                return obj;
-            }
-        }, {});
+            }, {});
 
         // if the checkbox is checked, 'enabled' becomes 'on'
         // otherwise it's just not present (undefined)

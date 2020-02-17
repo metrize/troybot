@@ -80,7 +80,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=3000,
-            constraints={"min_value": 0, "max_value": 35000},
         ),
         ModuleSetting(
             key="max_length",
@@ -89,7 +88,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=120,
-            constraints={"min_value": 0, "max_value": 1200},
         ),
         ModuleSetting(
             key="allow_negative_raffles", label="Allow negative raffles", type="boolean", required=True, default=True
@@ -101,7 +99,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=3000,
-            constraints={"min_value": 1, "max_value": 35000},
         ),
         ModuleSetting(
             key="multi_enabled",
@@ -117,7 +114,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=100000,
-            constraints={"min_value": 0, "max_value": 1000000},
         ),
         ModuleSetting(
             key="multi_max_length",
@@ -126,7 +122,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=600,
-            constraints={"min_value": 0, "max_value": 1200},
         ),
         ModuleSetting(
             key="multi_allow_negative_raffles",
@@ -142,7 +137,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=10000,
-            constraints={"min_value": 1, "max_value": 100000},
         ),
         ModuleSetting(
             key="multi_raffle_on_sub",
@@ -162,6 +156,14 @@ class RaffleModule(BaseModule):
         ModuleSetting(
             key="show_on_clr", label="Show raffles on the clr overlay", type="boolean", required=True, default=True
         ),
+        ModuleSetting(
+            key="global_cooldown",
+            label="Cooldown for making a new raffle",
+            type="number",
+            required=True,
+            placeholder="",
+            default=0,
+        ),
     ]
 
     def __init__(self, bot):
@@ -175,7 +177,7 @@ class RaffleModule(BaseModule):
     def load_commands(self, **options):
         self.commands["singleraffle"] = Command.raw_command(
             self.raffle,
-            delay_all=0,
+            delay_all=int(self.settings["global_cooldown"]),
             delay_user=0,
             level=500,
             description="Start a raffle for points",
@@ -215,7 +217,7 @@ class RaffleModule(BaseModule):
         if self.settings["multi_enabled"]:
             self.commands["multiraffle"] = Command.raw_command(
                 self.multi_raffle,
-                delay_all=0,
+                delay_all=int(self.settings["global_cooldown"]),
                 delay_user=0,
                 level=500,
                 description="Start a multi-raffle for points",
@@ -324,8 +326,7 @@ class RaffleModule(BaseModule):
                 self.bot.websocket_manager.emit(
                     "notification", {"message": f"{winner} {format_win(self.raffle_points)} points in the raffle!"}
                 )
-
-            self.bot.me(f"The raffle has finished! {winner} {format_win(self.raffle_points)} points! PogChamp")
+                self.bot.me(f"The raffle has finished! {winner} {format_win(self.raffle_points)} points! PogChamp")
 
             winner.points += self.raffle_points
 

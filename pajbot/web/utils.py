@@ -1,5 +1,3 @@
-import base64
-import binascii
 import datetime
 import json
 import logging
@@ -12,9 +10,9 @@ from PIL import Image
 from flask import abort
 from flask import make_response
 from flask import request
+from flask import redirect
 from flask import session
 from flask_restful import reqparse
-from flask_scrypt import generate_password_hash
 
 import pajbot.exc
 import pajbot.managers
@@ -31,12 +29,12 @@ from pajbot.apiwrappers.twitch.badges import BadgeNotFoundError
 log = logging.getLogger(__name__)
 
 
-def requires_level(level):
+def requires_level(level, redirect_url="/"):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if "user" not in session:
-                abort(403)
+                return redirect("/login?n=" + redirect_url)
             with DBManager.create_session_scope() as db_session:
                 user = db_session.query(User).filter_by(id=session["user"]["id"]).one_or_none()
                 if user is None:
@@ -208,28 +206,6 @@ def jsonify_list(key, query, base_url=None, default_limit=None, max_limit=None, 
 paginate_parser = reqparse.RequestParser()
 paginate_parser.add_argument("limit", type=int, required=False)
 paginate_parser.add_argument("offset", type=int, required=False)
-
-
-def pleblist_login(in_password, bot_config):
-    """ Throws an InvalidLogin exception if the login was not good """
-    salted_password = generate_password_hash(
-        bot_config["web"]["pleblist_password"], bot_config["web"]["pleblist_password_salt"]
-    )
-
-    try:
-        user_password = base64.b64decode(in_password)
-    except binascii.Error:
-        raise pajbot.exc.InvalidLogin("Invalid password")
-    if not user_password == salted_password:
-        raise pajbot.exc.InvalidLogin("Invalid password")
-
-
-def create_pleblist_login(bot_config):
-    """ Throws an InvalidLogin exception if the login was not good """
-    salted_password = generate_password_hash(
-        bot_config["web"]["pleblist_password"], bot_config["web"]["pleblist_password_salt"]
-    )
-    return base64.b64encode(salted_password).decode("utf8")
 
 
 def seconds_to_vodtime(t):

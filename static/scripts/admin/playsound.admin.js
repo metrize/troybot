@@ -74,17 +74,13 @@ $(window).on('load', function() {
     });
 
     function getFormData(form) {
-        let data = $(form)
-            .serializeArray()
-            .reduce((obj, item) => {
-                obj[item.name] = item.value;
+        let data = $(form).serializeArray().reduce((obj, item) => {
+            obj[item.name] = item.value;
 
-                if (item.name === 'volume' || item.name === 'cooldown') {
-                    let val = parseInt(item.value);
-                    if (isNaN(val)) {
-                        val = null;
-                    }
-                    obj[item.name] = val;
+            if (item.name === "volume" || item.name === "cooldown" || item.name == "cost") {
+                let val = parseInt(item.value);
+                if (isNaN(val)) {
+                    val = null;
                 }
                 return obj;
             }, {});

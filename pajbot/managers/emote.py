@@ -22,6 +22,7 @@ class GenericChannelEmoteManager:
         self._channel_emotes = []
         self.streamer = StreamHelper.get_streamer()
         self.streamer_id = StreamHelper.get_streamer_id()
+
         self.global_lookup_table = {}
         self.channel_lookup_table = {}
 

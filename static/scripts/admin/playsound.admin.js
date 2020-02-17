@@ -83,7 +83,8 @@ $(window).on('load', function() {
                     val = null;
                 }
                 return obj;
-            }, {});
+            }
+        }, {});
 
         // if the checkbox is checked, 'enabled' becomes 'on'
         // otherwise it's just not present (undefined)

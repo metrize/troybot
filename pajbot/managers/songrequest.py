@@ -306,10 +306,9 @@ class SongrequestManager:
                 current_song.queue = 0
                 current_song.current_song_time = 0
                 self.current_song_id = current_song.id
-                song_info = current_song.song_info
                 self._play(
                     current_song.video_id,
-                    song_info.title,
+                    current_song.song_info.title,
                     current_song.requested_by.username_raw if current_song.requested_by else "Backup list",
                 )
                 if self.settings["use_spotify"]:

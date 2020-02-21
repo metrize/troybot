@@ -77,14 +77,12 @@ class DiscordBotManager(object):
         self.thread = None
         self.discord_task = self.schedule_task_periodically(300, self.check_discord_roles)
 
-        queued_subs = self.redis.get("queued-subs-discord")
-        unlinkinfo = self.redis.get("unlinks-subs-discord")
+        queued_subs = self.redis.get(f"{self.bot.streamer}:queued-subs-discord")
+        unlinkinfo = self.redis.get(f"{self.bot.streamer}:unlinks-subs-discord")
         if unlinkinfo is None or "array" in json.loads(unlinkinfo):
-            data = {}
-            self.redis.set("unlinks-subs-discord", json.dumps(data))
+            self.redis.set(f"{self.bot.streamer}:unlinks-subs-discord", json.dumps({}))
         if queued_subs is None or "array" in json.loads(queued_subs):
-            data = {}
-            self.redis.set("queued-subs-discord", json.dumps(data))
+            self.redis.set(f"{self.bot.streamer}:queued-subs-discord", json.dumps({}))
 
     def add_command(self, *args, **kwargs):
         cmd = Command(*args, **kwargs)
@@ -285,8 +283,8 @@ class DiscordBotManager(object):
         quick_dict_discord = {}
         subs_to_return = {}
 
-        queued_subs = json.loads(self.redis.get("queued-subs-discord"))
-        unlinkinfo = json.loads(self.redis.get("unlinks-subs-discord"))
+        queued_subs = json.loads(self.redis.get(f"{self.bot.streamer}:queued-subs-discord"))
+        unlinkinfo = json.loads(self.redis.get(f"{self.bot.streamer}:unlinks-subs-discord"))
 
         messages_add = []
         messages_remove = []
@@ -310,7 +308,7 @@ class DiscordBotManager(object):
                         f"\n\nAccount Data Unlinked: Tier {tier} sub removal notification:\nTwitch: {user} (<https://twitch.tv/{user.login}>){discord}\nSteam: <https://steamcommunity.com/profiles/{steam_id}>"
                     )
 
-            self.redis.set("unlinks-subs-discord", json.dumps({}))
+            self.redis.set(f"{self.bot.streamer}:unlinks-subs-discord", json.dumps({}))
 
             all_connections = db_session.query(UserConnections).all()
 
@@ -451,7 +449,7 @@ class DiscordBotManager(object):
                 if return_message != "":
                     await self.private_message(member, return_message)
                     return_message = ""
-        self.redis.set("queued-subs-discord", json.dumps(subs_to_return))
+        self.redis.set(f"{self.bot.streamer}:queued-subs-discord", json.dumps(subs_to_return))
 
     async def run_periodically(self, wait_time, func, *args):
         while True:

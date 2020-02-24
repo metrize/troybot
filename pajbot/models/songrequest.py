@@ -157,6 +157,7 @@ class SongrequestQueue(Base):
 
     @staticmethod
     def _clear_backup_songs(db_session):
+        SongRequestQueueManager.delete_backup_songs()
         return db_session.query(SongrequestQueue).filter_by(requested_by=None).delete(synchronize_session='evaluate')
 
     @staticmethod

@@ -98,13 +98,10 @@ class SongRequestQueueManager:
 
     @staticmethod
     def get_id_index(_id, queue):
-        song_queue = SongRequestQueueManager.song_queues.get(queue, None)
-        if song_queue is None:
-            log.error(f"invalid queue {queue}")
-            return False
+        song_queue = SongRequestQueueManager.song_queues.get(queue, None) + SongRequestQueueManager.song_queues.get("backup-song-queue", None)
 
         if _id not in song_queue:
-            return False
+            return -1
 
         return song_queue.index(_id)
 

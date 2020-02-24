@@ -1,6 +1,5 @@
 import logging
-import threading
-import time
+import random
 
 from pajbot.managers.db import DBManager
 from pajbot.managers.schedule import ScheduleManager
@@ -31,6 +30,7 @@ class SongrequestManager:
         self.previous_queue = None
         self.true_volume = None
         self.current_song_schedule = None
+        self.schedule_job_id = None
 
     def enable(self, settings, youtube):
         self.enabled = True
@@ -45,6 +45,7 @@ class SongrequestManager:
         self.previous_queue = 0
         self.true_volume = int(self.settings["volume"])
         self.current_song_schedule = None
+        self.schedule_job_id = None
 
     def volume_val(self):
         return int(self.true_volume * (100 / int(self.settings["volume_multiplier"])))
@@ -138,8 +139,8 @@ class SongrequestManager:
             with DBManager.create_session_scope() as db_session:
                 song = SongrequestQueue._from_id(db_session, self.current_song_id)
                 song.date_resumed = utils.now()
-
-                self.current_song_schedule = ScheduleManager.execute_delayed(song.time_left, self.load_song_schedule, pass_job_id=True)
+                self.schedule_job_id = random.randint(1, 100000)
+                self.current_song_schedule = ScheduleManager.execute_delayed(song.time_left, self.load_song_schedule, args=[self.schedule_job_id])
 
             return True
         return False
@@ -269,10 +270,8 @@ class SongrequestManager:
         self._playlist()
         return True
 
-    def load_song_schedule(self, job_id, **kwargs):
-        if "job_id" not in kwargs:
-            return
-        if not self.current_song_schedule or self.current_song_schedule.job.id != kwargs["job_id"]:
+    def load_song_schedule(self, *args):
+        if not self.current_song_schedule or self.schedule_job_id != args[0]:
             return
         self.load_song()
 
@@ -314,7 +313,8 @@ class SongrequestManager:
                     current_song.requested_by.username_raw if current_song.requested_by else "Backup list",
                 )
                 current_song.date_resumed = utils.now()
-                self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left, self.load_song_schedule, pass_job_id=True)
+                self.schedule_job_id = random.randint(1, 100000)
+                self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left, self.load_song_schedule, args=[self.schedule_job_id])
                 if self.settings["use_spotify"]:
                     is_playing, song_name, artistsArr = self.bot.spotify_api.state(self.bot.spotify_token_manager)
                     if is_playing:

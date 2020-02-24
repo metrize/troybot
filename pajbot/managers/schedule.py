@@ -52,14 +52,9 @@ class ScheduleManager:
 
         if scheduler is None:
             raise ValueError("No scheduler available")
-        if pass_job_id:
-            kwargs["job_id"] = None
         job = scheduler.add_job(
             method, "date", run_date=utils.now() + datetime.timedelta(seconds=delay), args=args, kwargs=kwargs
         )
-        if pass_job_id:
-            kwargs["job_id"] = job.id
-            job.modify(kwargs=kwargs)
         return ScheduledJob(job)
 
     @staticmethod

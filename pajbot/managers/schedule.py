@@ -23,9 +23,6 @@ class ScheduledJob:
     def remove(self, *args, **kwargs):
         if self.job:
             self.job.remove(*args, **kwargs)
-            log.info("job removed")
-        else:
-            log.info("Job not found")
 
 
 class ScheduleManager:

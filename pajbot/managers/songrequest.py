@@ -96,7 +96,6 @@ class SongrequestManager:
         if self.current_song_schedule is not None:
             self.current_song_schedule.remove()
             self.current_song_schedule = None
-            log.info("schedule removed")
 
     def previous_function(self, requested_by):
         if not self.enabled:
@@ -140,7 +139,7 @@ class SongrequestManager:
                 song = SongrequestQueue._from_id(db_session, self.current_song_id)
                 song.date_resumed = utils.now()
 
-                self.current_song_schedule = ScheduleManager.execute_delayed(song.time_left, self.load_song)
+                self.current_song_schedule = ScheduleManager.execute_every(song.time_left, self.load_song)
 
             return True
         return False
@@ -308,7 +307,7 @@ class SongrequestManager:
                     current_song.requested_by.username_raw if current_song.requested_by else "Backup list",
                 )
                 current_song.date_resumed = utils.now()
-                self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left, self.load_song)
+                self.current_song_schedule = ScheduleManager.execute_every(current_song.time_left, self.load_song)
                 if self.settings["use_spotify"]:
                     is_playing, song_name, artistsArr = self.bot.spotify_api.state(self.bot.spotify_token_manager)
                     if is_playing:

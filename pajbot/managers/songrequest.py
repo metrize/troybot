@@ -205,6 +205,9 @@ class SongrequestManager:
             if queue:
                 song._move_song(db_session, queue)
             db_session.commit()
+            current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
+            if not current_song or not current_song.requested_by:
+                self.load_song()
         return True
 
     def replay_function(self, requested_by):
@@ -231,6 +234,9 @@ class SongrequestManager:
             requested_by_id = requested_by.id
             SongrequestHistory._from_id(db_session, database_id).requeue(db_session, requested_by_id)
             db_session.commit()
+            current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
+            if not current_song or not current_song.requested_by:
+                self.load_song()
         self._playlist()
         return True
 

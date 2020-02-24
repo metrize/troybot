@@ -221,6 +221,9 @@ class SongrequestModule(BaseModule):
             m = int(m)
             s = int(s)
             playing_in = f"{m:02d}:{s:02d}"
+            current_song = SongrequestQueue._from_id(db_session, self.bot.songrequest_manager.current_song_id)
+            if not current_song or not current_song.requested_by:
+                self.bot.songrequest_manager.load_song()
             if self.settings["send_message_in_chat"]:
                 bot.say(
                     self.settings["message_in_chat"].format(
@@ -231,6 +234,7 @@ class SongrequestModule(BaseModule):
                         playing_in=playing_in,
                     )
                 )
+            
         self.bot.songrequest_manager._playlist()
         return True
 

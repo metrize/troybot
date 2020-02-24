@@ -57,6 +57,8 @@ class SongrequestQueue(Base):
 
     def playing_in(self, db_session):
         all_song_ids_before_current = SongRequestQueueManager._songs_before(self.id, "song-queue")
+        if SongRequestQueueManager.song_playing_id:
+            all_song_ids_before_current.append(SongRequestQueueManager.song_playing_id)
         queued_unordered_songs = SongrequestQueue._from_list_id(db_session, all_song_ids_before_current)
         time = 0
         for song in queued_unordered_songs:

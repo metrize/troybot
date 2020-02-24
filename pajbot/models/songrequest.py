@@ -91,7 +91,6 @@ class SongrequestQueue(Base):
         return self.skip_after if self.skip_after else self.song_info.duration
 
     def _remove(self, db_session):
-        SongRequestQueueManager.remove_song_id(self.id)
         db_session.delete(self)
 
     def _to_histroy(self, db_session, skipped_by_id=None):

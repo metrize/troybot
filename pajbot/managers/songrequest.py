@@ -333,7 +333,6 @@ class SongrequestManager:
                         None,
                         backup=True
                     )
-                log.info(current_song.date_resumed)
                 db_session.commit()
                 self._playlist()
                 return True

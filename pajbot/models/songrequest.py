@@ -124,8 +124,8 @@ class SongrequestQueue(Base):
     @staticmethod
     def _pop_next_song(db_session):
         next_id = SongRequestQueueManager.get_next_song()
-        log.info(SongRequestQueueManager.remove_song_id(next_id))
-        return db_session.query(SongrequestQueue).filter_by(id=SongRequestQueueManager.get_next_song()).one_or_none()
+        SongRequestQueueManager.remove_song_id(next_id)
+        return db_session.query(SongrequestQueue).filter_by(id=next_id).one_or_none()
 
     @staticmethod
     def _create(db_session, video_id, skip_after, requested_by_id, queue=None, backup=False):

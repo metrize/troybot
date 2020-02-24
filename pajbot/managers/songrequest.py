@@ -97,9 +97,9 @@ class SongrequestManager:
         try:
             if self.current_song_schedule is not None:
                 self.current_song_schedule.remove()
-                self.current_song_schedule = None
         except:
             pass
+        self.current_song_schedule = None
 
     def previous_function(self, requested_by):
         if not self.enabled:

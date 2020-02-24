@@ -78,7 +78,7 @@ class SongrequestQueue(Base):
 
     @hybrid_property
     def time_left(self):
-        return self.duration - (self.played_for - (utils.now() - self.date_resumed).total_seconds()) if self.playing else self.duration
+        return self.duration - (self.played_for + (utils.now() - self.date_resumed).total_seconds()) if self.playing else self.duration
 
     @hybrid_property
     def current_song_time(self):

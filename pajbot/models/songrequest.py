@@ -153,7 +153,7 @@ class SongrequestQueue(Base):
 
     @staticmethod
     def _clear_backup_songs(db_session):
-        return db_session.query(SongrequestQueue).filter(requested_by=None).delete(synchronize_session='evaluate')
+        return db_session.query(SongrequestQueue).filter_by(requested_by=None).delete(synchronize_session='evaluate')
 
     @staticmethod
     def _load_backup_songs(db_session, songs, youtube, settings):

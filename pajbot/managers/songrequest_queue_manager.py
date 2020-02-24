@@ -107,6 +107,7 @@ class SongRequestQueueManager:
 
     @staticmethod
     def _get_init_redis(name):
+        SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.bot.streamer}:{name}", "[]")
         queue = SongRequestQueueManager.redis.get(f"{SongRequestQueueManager.bot.streamer}:{name}")
         if queue:
             queue = json.loads(queue)

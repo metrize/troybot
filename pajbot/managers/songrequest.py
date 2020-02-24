@@ -300,6 +300,7 @@ class SongrequestManager:
                     current_song.song_info.title,
                     current_song.requested_by.username_raw if current_song.requested_by else "Backup list",
                 )
+                current_song.date_resumed = utils.now()
                 self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left, self.load_song)
                 if self.settings["use_spotify"]:
                     is_playing, song_name, artistsArr = self.bot.spotify_api.state(self.bot.spotify_token_manager)

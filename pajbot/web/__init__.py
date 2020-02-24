@@ -38,6 +38,7 @@ def init(args):
     from pajbot.managers.db import DBManager
     from pajbot.managers.redis import RedisManager
     from pajbot.managers.schedule import ScheduleManager
+    from pajbot.managers.songrequest_queue_manager import SongRequestQueueManager
     from pajbot.models.module import ModuleManager
     from pajbot.models.sock import SocketClientManager
     from pajbot.streamhelper import StreamHelper
@@ -47,7 +48,7 @@ def init(args):
     from pajbot.web.utils import download_sub_badge
 
     ScheduleManager.init()
-
+    
     config = load_config(args.config)
     # ScheduleManager.init()
     api_client_credentials = ClientCredentials(
@@ -64,6 +65,7 @@ def init(args):
     app_token_manager = AppAccessTokenManager(id_api, RedisManager.get())
     twitch_helix_api = TwitchHelixAPI(RedisManager.get(), app_token_manager)
     twitch_badges_api = TwitchBadgesAPI(RedisManager.get())
+    
 
     if "web" not in config:
         log.error("Missing [web] section in config.ini")
@@ -77,6 +79,7 @@ def init(args):
             config.write(configfile)
 
     streamer = config["main"]["streamer"]
+    SongRequestQueueManager.init(streamer)
     streamer_user_id = twitch_helix_api.get_user_id(streamer)
     if streamer_user_id is None:
         raise ValueError("The streamer login name you entered under [main] does not exist on twitch.")

@@ -134,7 +134,7 @@ class Bot:
         self.twitch_tmi_api = TwitchTMIAPI()
         self.app_token_manager = AppAccessTokenManager(self.twitch_id_api, RedisManager.get())
 
-        SongRequestQueueManager.init(self)
+        SongRequestQueueManager.init(self.streamer)
 
         self.twitch_helix_api = TwitchHelixAPI(RedisManager.get(), self.app_token_manager)
         self.twitch_v5_api = TwitchKrakenV5API(self.api_client_credentials, RedisManager.get())

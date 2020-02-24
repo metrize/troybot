@@ -8,16 +8,16 @@ log = logging.getLogger("pajbot")
 
 class SongRequestQueueManager:
 
-    bot = None
+    streamer_name = None
     redis = None
     song_playing_id = None
     song_queues = {}
 
     @staticmethod
-    def init(bot):
-        SongRequestQueueManager.bot = bot
+    def init(streamer_name):
+        SongRequestQueueManager.streamer_name = streamer_name
         SongRequestQueueManager.redis = RedisManager.get()
-        SongRequestQueueManager.song_playing_id = SongRequestQueueManager.redis.get(f"{SongRequestQueueManager.bot.streamer}:song-playing-id")
+        SongRequestQueueManager.song_playing_id = SongRequestQueueManager.redis.get(f"{SongRequestQueueManager.streamer_name}:song-playing-id")
         SongRequestQueueManager.song_queues = {
             "song-queue": SongRequestQueueManager._get_init_redis("song-queue"),
             "backup-song-queue": SongRequestQueueManager._get_init_redis("backup-song-queue")
@@ -26,7 +26,7 @@ class SongRequestQueueManager:
     @staticmethod
     def update_song_playing_id(song_playing_id):
         SongRequestQueueManager.song_playing_id = song_playing_id
-        SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.bot.streamer}:song-playing-id", song_playing_id)
+        SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.streamer_name}:song-playing-id", song_playing_id)
 
     @staticmethod
     def inset_song(_id, queue, index=None):
@@ -107,11 +107,11 @@ class SongRequestQueueManager:
 
     @staticmethod
     def _get_init_redis(name):
-        queue = SongRequestQueueManager.redis.get(f"{SongRequestQueueManager.bot.streamer}:{name}")
+        queue = SongRequestQueueManager.redis.get(f"{SongRequestQueueManager.streamer_name}:{name}")
         if queue:
             queue = json.loads(queue)
         else:
-            SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.bot.streamer}:{name}", "[]")
+            SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.streamer_name}:{name}", "[]")
             queue = []
         return queue
 
@@ -121,7 +121,7 @@ class SongRequestQueueManager:
         if song_queue is None:
             log.error(f"invalid queue {queue}")
             return
-        SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.bot.streamer}:{queue}", json.dumps(song_queue))
+        SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.streamer_name}:{queue}", json.dumps(song_queue))
 
     @staticmethod
     def _songs_before(_id, queue):
@@ -172,5 +172,5 @@ class SongRequestQueueManager:
 
     @staticmethod
     def delete_backup_songs():
-        SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.bot.streamer}:backup-song-queue", "[]")
+        SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.streamer_name}:backup-song-queue", "[]")
         SongRequestQueueManager.song_queues["backup-song-queue"] = []

@@ -151,7 +151,7 @@ class SongRequestQueueManager:
     @staticmethod
     def get_next_songs(limit):
         song_queue = SongRequestQueueManager._get_init_redis("song-queue")
-        backup_song_queue = SongRequestQueueManager._get_init_redis"backup-song-queue")
+        backup_song_queue = SongRequestQueueManager._get_init_redis("backup-song-queue")
         if not limit:
             return song_queue + backup_song_queue
 

@@ -132,7 +132,7 @@ class SongRequestQueueManager:
             return False
 
         if _id not in song_queue:
-            return False
+            return []
 
         return song_queue[:song_queue.index(_id)]
 

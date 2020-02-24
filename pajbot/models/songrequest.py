@@ -116,7 +116,7 @@ class SongrequestQueue(Base):
 
     @staticmethod
     def _from_list_id(db_session, _ids):
-        return db_session.query(SongrequestQueue).filter(SongrequestQueue.id.in_(tuple(_ids))).all()
+        return db_session.query(SongrequestQueue).filter(SongrequestQueue.id.in_(_ids)).all()
 
     @staticmethod
     def _from_id(db_session, _id):

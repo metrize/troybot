@@ -3,6 +3,7 @@ import logging
 from flask import render_template
 
 from pajbot.managers.db import DBManager
+from pajbot.managers.songrequest_queue_manager import SongRequestQueueManager
 from pajbot.models.stream import StreamManager
 from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory
 
@@ -16,13 +17,9 @@ def init(app):
             playing_in = 0
             track_number = 1
             songs_queue = []
-            queue = (
-                db_session.query(SongrequestQueue)
-                .filter(SongrequestHistory.song_info.has(banned=False))
-                .order_by(SongrequestQueue.queue)
-                .limit(50)
-                .all()
-            )
+            queue_ids = SongRequestQueueManager.get_next_songs(50)
+            current_song = SongrequestQueue._get_current_song(db_session)
+            queue = ([current_song] if current_song else []) + SongrequestQueue.sort(queue_ids, SongrequestQueue._from_list_id(db_session, queue_ids))
             for song in queue:
                 if song.song_info is None:
                     continue
@@ -30,7 +27,7 @@ def init(app):
                 m, s = divmod(playing_in, 60)
                 m = int(m)
                 s = int(s)
-                jsonify["playing_in"] = f"{m:02d}:{s:02d}" if playing_in != 0 else "Currently playing"
+                jsonify["playing_in"] = f"{m:02d}:{s:02d}" if playing_in != 0 else ("Currently playing" if song == current_song else "Song Request Closed")
                 m, s = divmod(jsonify["video_length"], 60)
                 m = int(m)
                 s = int(s)

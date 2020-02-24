@@ -169,3 +169,7 @@ class SongRequestQueueManager:
 
         else:
             return song_queue[:limit]
+
+    @staticmethod
+    def delete_backup_songs():
+        SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.bot.streamer}:backup-song-queue", "[]")

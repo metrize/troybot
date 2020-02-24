@@ -42,6 +42,7 @@ class SongrequestQueue(Base):
             "date_added": self.date_added,
             "skip_after": self.skip_after,
             "playing": self.playing,
+            "current_song_time": self.current_song_time,
             "requested_by": self.requested_by.username_raw if self.requested_by_id else None,
         }
 
@@ -51,6 +52,7 @@ class SongrequestQueue(Base):
             "video_title": self.song_info.title,
             "video_length": self.duration,
             "requested_by": self.requested_by.username_raw if self.requested_by_id else None,
+            "current_song_time": self.current_song_time,
             "database_id": self.id,
             "link": f"http://www.youtube.com/watch?v={self.video_id}",
         }

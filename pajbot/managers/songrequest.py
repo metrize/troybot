@@ -96,6 +96,7 @@ class SongrequestManager:
         if self.current_song_schedule is not None:
             self.current_song_schedule.remove()
             self.current_song_schedule = None
+            log.info("schedule removed")
 
     def previous_function(self, requested_by):
         if not self.enabled:

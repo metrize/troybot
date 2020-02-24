@@ -144,7 +144,7 @@ class SongrequestQueue(Base):
 
     @staticmethod
     def _get_current_song(db_session):
-        return db_session.query(SongrequestQueue).filter_by(id=SongRequestQueueManager.song_playing_id).one_or_none()
+        return db_session.query(SongrequestQueue).filter_by(id=SongRequestQueueManager.song_playing_id).one_or_none() if SongRequestQueueManager.song_playing_id else None
 
     @staticmethod
     def _get_next_song(db_session):

@@ -289,6 +289,7 @@ class SongrequestManager:
             self._playlist_history()
 
         self.current_song_id = None
+        SongRequestQueueManager.update_song_playing_id(None)
         self.remove_schedule()
 
         if not self.module_opened:

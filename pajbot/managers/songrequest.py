@@ -332,6 +332,7 @@ class SongrequestManager:
                         None,
                         backup=True
                     )
+                db_session.merge(current_song)
                 db_session.commit()
                 self._playlist()
                 return True

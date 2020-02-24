@@ -148,6 +148,8 @@ class SongrequestQueue(Base):
 
     @staticmethod
     def _get_next_song(db_session):
+        log.info(SongRequestQueueManager.song_playing_id)
+        log.info(SongRequestQueueManager.song_queues)
         next_id = SongRequestQueueManager.get_next_song()
         if not next_id:
             return None

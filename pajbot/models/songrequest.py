@@ -75,6 +75,14 @@ class SongrequestQueue(Base):
         return self.duration - (self.played_for - (utils.now() - self.date_resumed).total_seconds()) if self.playing else self.duration
 
     @hybrid_property
+    def current_song_time(self):
+        return self.duration - self.time_left
+
+    @current_song_time.setter
+    def current_song_time(self, val):
+        self.played_for += val - self.current_song_time
+
+    @hybrid_property
     def duration(self):
         return self.skip_after if self.skip_after else self.song_info.duration
 

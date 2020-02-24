@@ -67,6 +67,10 @@ class SongrequestQueue(Base):
         return time
 
     @hybrid_property
+    def queue(self):
+        return SongRequestQueueManager.get_id_index(self.id)
+
+    @hybrid_property
     def playing(self):
         return self.id == SongRequestQueueManager.song_playing_id
 

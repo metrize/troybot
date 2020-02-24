@@ -27,7 +27,7 @@ def init(app):
                 m, s = divmod(playing_in, 60)
                 m = int(m)
                 s = int(s)
-                jsonify["playing_in"] = f"{m:02d}:{s:02d}" if playing_in != 0 else ("Currently playing" if song == current_song else "Song Request Closed")
+                jsonify["playing_in"] = f"{m:02d}:{s:02d}" if playing_in != 0 else ("Currently playing" if current_song else "Song Request Closed")
                 m, s = divmod(jsonify["video_length"], 60)
                 m = int(m)
                 s = int(s)

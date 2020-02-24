@@ -223,7 +223,7 @@ class SongrequestHistory(Base):
             "stream_id": self.stream_id,
             "video_title": self.song_info.title,
             "video_length": self.duration,
-            "requested_by": self.requested_by.username_raw if self.requested_by_id else None,
+            "requested_by": self.requested_by.username_raw if self.requested_by_id else "Backup Playlist",
             "date_finished": self.date_finished,
             "database_id": self.id,
             "link": f"http://www.youtube.com/watch?v={self.video_id}",

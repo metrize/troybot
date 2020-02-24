@@ -173,4 +173,4 @@ class SongRequestQueueManager:
     @staticmethod
     def delete_backup_songs():
         SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.bot.streamer}:backup-song-queue", "[]")
-        backup_song_queue = []
+        SongRequestQueueManager.backup_song_queue = []

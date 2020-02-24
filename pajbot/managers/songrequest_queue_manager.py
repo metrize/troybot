@@ -25,6 +25,7 @@ class SongRequestQueueManager:
 
     @staticmethod
     def force_reload():
+        SongRequestQueueManager.song_playing_id = SongRequestQueueManager.redis.get(f"{SongRequestQueueManager.streamer_name}:song-playing-id")
         SongRequestQueueManager.song_queues = {
             "song-queue": SongRequestQueueManager._get_init_redis("song-queue"),
             "backup-song-queue": SongRequestQueueManager._get_init_redis("backup-song-queue")

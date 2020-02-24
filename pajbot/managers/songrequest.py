@@ -289,7 +289,6 @@ class SongrequestManager:
             self._playlist_history()
 
         self.current_song_id = None
-        SongRequestQueueManager.update_song_playing_id("")
         self.remove_schedule()
 
         if not self.module_opened:
@@ -325,6 +324,8 @@ class SongrequestManager:
                 db_session.commit()
                 self._playlist()
                 return True
+            if not current_song:
+                SongRequestQueueManager.update_song_playing_id("")
             if self.settings["use_spotify"]:
                 if self.previously_playing_spotify:
                     self.bot.spotify_api.play(self.bot.spotify_token_manager)

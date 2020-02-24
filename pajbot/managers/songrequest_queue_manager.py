@@ -97,8 +97,8 @@ class SongRequestQueueManager:
         return False
 
     @staticmethod
-    def get_id_index(_id, queue):
-        song_queue = SongRequestQueueManager.song_queues.get(queue, None) + SongRequestQueueManager.song_queues.get("backup-song-queue", None)
+    def get_id_index(_id):
+        song_queue = SongRequestQueueManager.song_queues.get("song-queue", None) + SongRequestQueueManager.song_queues.get("backup-song-queue", None)
 
         if _id not in song_queue:
             return -1

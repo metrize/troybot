@@ -17,6 +17,7 @@ def init(app):
             playing_in = 0
             track_number = 1
             songs_queue = []
+            SongRequestQueueManager.force_reload()
             queue_ids = SongRequestQueueManager.get_next_songs(50)
             current_song = SongrequestQueue._get_current_song(db_session)
             queue = ([current_song] if current_song else []) + SongrequestQueue.sort(queue_ids, SongrequestQueue._from_list_id(db_session, queue_ids))

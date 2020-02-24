@@ -31,7 +31,7 @@ class SongRequestQueueManager:
     @staticmethod
     def inset_song(_id, queue, index=None):
         song_queue = SongRequestQueueManager.song_queues.get(queue, None)
-        if not song_queue:
+        if song_queue is None:
             log.error(f"invalid queue {queue}")
             return False
 
@@ -50,7 +50,7 @@ class SongRequestQueueManager:
     @staticmethod
     def move_song(from_index, to_index, queue):
         song_queue = SongRequestQueueManager.song_queues.get(queue, None)
-        if not song_queue:
+        if song_queue is None:
             log.error(f"invalid queue {queue}")
             return False
 
@@ -68,8 +68,11 @@ class SongRequestQueueManager:
     @staticmethod
     def remove_song(index, queue):
         song_queue = SongRequestQueueManager.song_queues.get(queue, None)
-        if not song_queue:
+        if song_queue is None:
             log.error(f"invalid queue {queue}")
+            return False
+
+        if len(song_queue) - 1 < index or index < 0:
             return False
 
         song_queue.pop(index)
@@ -96,7 +99,7 @@ class SongRequestQueueManager:
     @staticmethod
     def get_id_index(_id, queue):
         song_queue = SongRequestQueueManager.song_queues.get(queue, None)
-        if not song_queue:
+        if song_queue is None:
             log.error(f"invalid queue {queue}")
             return False
 
@@ -118,7 +121,7 @@ class SongRequestQueueManager:
     @staticmethod
     def _update_redis(queue):
         song_queue = SongRequestQueueManager.song_queues.get(queue, None)
-        if not song_queue:
+        if song_queue is None:
             log.error(f"invalid queue {queue}")
             return
         SongRequestQueueManager.redis.set(f"{SongRequestQueueManager.bot.streamer}:{queue}", json.dumps(song_queue))
@@ -126,7 +129,7 @@ class SongRequestQueueManager:
     @staticmethod
     def _songs_before(_id, queue):
         song_queue = SongRequestQueueManager.song_queues.get(queue, None)
-        if not song_queue:
+        if song_queue is None:
             log.error(f"invalid queue {queue}")
             return False
 
@@ -138,7 +141,7 @@ class SongRequestQueueManager:
     @staticmethod
     def _get_id(index, queue):
         song_queue = SongRequestQueueManager.song_queues.get(queue, None)
-        if not song_queue:
+        if song_queue is None:
             log.error(f"invalid queue {queue}")
             return False
 

@@ -127,6 +127,7 @@ class SongrequestQueue(Base):
         next_id = SongRequestQueueManager.get_next_song()
         SongRequestQueueManager.remove_song_id(next_id)
         return db_session.query(SongrequestQueue).filter_by(id=SongRequestQueueManager.get_next_song()).one_or_none()
+
     @staticmethod
     def _create(db_session, video_id, skip_after, requested_by_id, queue=None, backup=False):
         songrequestqueue = SongrequestQueue(
@@ -146,6 +147,7 @@ class SongrequestQueue(Base):
 
     @staticmethod
     def _get_next_song(db_session):
+        log.info(SongRequestQueueManager.song_queues)
         next_id = SongRequestQueueManager.get_next_song()
         if not next_id:
             return None
@@ -160,7 +162,7 @@ class SongrequestQueue(Base):
         for song in songs:
             song_info = SongRequestSongInfo._create_or_get(db_session, song, youtube)
             if song_info:
-                SongrequestQueue._create(db_session, song, None, None)
+                SongrequestQueue._create(db_session, song, None, None, backup=True)
 
     @staticmethod
     def _get_playlist(db_session, limit=None):

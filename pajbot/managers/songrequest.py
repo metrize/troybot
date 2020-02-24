@@ -274,7 +274,6 @@ class SongrequestManager:
         return True
 
     def load_song_schedule(self, *args):
-        log.info(f"{self.schedule_job_id} == {args[0]}")
         if not self.current_song_schedule or self.schedule_job_id != args[0]:
             return
         self.load_song()

@@ -58,7 +58,8 @@ class ScheduleManager:
             method, "date", run_date=utils.now() + datetime.timedelta(seconds=delay), args=args, kwargs=kwargs
         )
         if pass_job_id:
-            job.modify(kwargs=job.kwargs.update({"job_id": job.id}))
+            kwargs["job_id"] = job.id
+            job.modify(kwargs=kwargs)
         return ScheduledJob(job)
 
     @staticmethod

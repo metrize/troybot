@@ -269,7 +269,7 @@ class SongrequestManager:
         self._playlist()
         return True
 
-    def load_song_schedule(self, **kwargs):
+    def load_song_schedule(self, job_id, **kwargs):
         if "job_id" not in kwargs:
             return
         if not self.current_song_schedule or self.current_song_schedule.job.id != kwargs["job_id"]:

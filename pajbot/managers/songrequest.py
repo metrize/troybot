@@ -139,7 +139,7 @@ class SongrequestManager:
                 song = SongrequestQueue._from_id(db_session, self.current_song_id)
                 song.date_resumed = utils.now()
 
-                self.current_song_schedule = ScheduleManager.execute_every(song.time_left, self.load_song)
+                self.current_song_schedule = ScheduleManager.execute_delayed(song.time_left, self.load_song_schedule, pass_job_id=True)
 
             return True
         return False
@@ -269,6 +269,11 @@ class SongrequestManager:
         self._playlist()
         return True
 
+    def load_song_schedule(self, job_id):
+        if not self.current_song_schedule or self.current_song_schedule.job.id != job_id:
+            return
+        self.load_song()
+
     def load_song(self, skipped_by_id=None):
         if not self.enabled:
             return False
@@ -307,7 +312,7 @@ class SongrequestManager:
                     current_song.requested_by.username_raw if current_song.requested_by else "Backup list",
                 )
                 current_song.date_resumed = utils.now()
-                self.current_song_schedule = ScheduleManager.execute_every(current_song.time_left, self.load_song)
+                self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left, self.load_song_schedule, pass_job_id=True)
                 if self.settings["use_spotify"]:
                     is_playing, song_name, artistsArr = self.bot.spotify_api.state(self.bot.spotify_token_manager)
                     if is_playing:

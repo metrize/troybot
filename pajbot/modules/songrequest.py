@@ -303,7 +303,7 @@ class SongrequestModule(BaseModule):
                     bot.say(
                         self.settings["message_in_chat_when_next_song"].format(
                             title=next_song.song_info.title,
-                            requestor=next_song.requestor.username_raw,
+                            requestor=next_song.requested_by.username_raw,
                             playing_in=playing_in,
                         )
                     )
@@ -436,7 +436,6 @@ class SongrequestModule(BaseModule):
                 random.shuffle(backup_songs)
                 SongrequestQueue._load_backup_songs(db_session, backup_songs, self.youtube, self.settings)
             db_session.commit()
-        SongrequestQueue._update_queue()
         self.bot.songrequest_manager.enable(self.settings, self.youtube)
         HandlerManager.add_handler("on_stream_stop", self.bot.songrequest_manager.close_module_function)
 

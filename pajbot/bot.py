@@ -46,6 +46,7 @@ from pajbot.managers.songrequest_websocket import SongRequestWebSocketManager
 from pajbot.managers.websocket import WebSocketManager
 from pajbot.managers.spotify_streamlabs import SpotifyStreamLabsManager
 from pajbot.managers.discord_bot import DiscordBotManager
+from pajbot.managers.songrequest_queue_manager import SongRequestQueueManager
 from pajbot.migration.db import DatabaseMigratable
 from pajbot.migration.migrate import Migration
 from pajbot.migration.redis import RedisMigratable
@@ -132,6 +133,8 @@ class Bot:
         self.twitch_id_api = TwitchIDAPI(self.api_client_credentials)
         self.twitch_tmi_api = TwitchTMIAPI()
         self.app_token_manager = AppAccessTokenManager(self.twitch_id_api, RedisManager.get())
+
+        SongRequestQueueManager.init(self)
 
         self.twitch_helix_api = TwitchHelixAPI(RedisManager.get(), self.app_token_manager)
         self.twitch_v5_api = TwitchKrakenV5API(self.api_client_credentials, RedisManager.get())

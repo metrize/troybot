@@ -1,4 +1,5 @@
 import logging
+import json
 
 from sqlalchemy import Column, INT, TEXT, BOOLEAN, REAL
 from sqlalchemy import ForeignKey
@@ -9,7 +10,7 @@ from sqlalchemy import func
 
 from pajbot import utils
 from pajbot.managers.db import Base
-from pajbot.managers.db import DBManager
+from pajbot.managers.songrequest_queue_manager import SongRequestQueueManager
 from pajbot.streamhelper import StreamHelper
 
 log = logging.getLogger("pajbot")
@@ -19,13 +20,12 @@ class SongrequestQueue(Base):
     __tablename__ = "songrequest_queue"
 
     id = Column(INT, primary_key=True)
-    queue = Column(INT, nullable=False)
     video_id = Column(TEXT, ForeignKey("songrequest_song_info.video_id", ondelete="CASCADE"), nullable=False)
     date_added = Column(UtcDateTime(), nullable=False)
     skip_after = Column(INT, nullable=True)  # skipped after
-    playing = Column(BOOLEAN, nullable=True)
     requested_by_id = Column(INT, ForeignKey("user.id"), nullable=True)
-    current_song_time = Column(REAL, nullable=False, default=0)
+    date_resumed = Column(UtcDateTime(), nullable=False)
+    played_for = Column(REAL, default=0, nullable=False)
     song_info = relationship("SongRequestSongInfo", foreign_keys=[video_id])
     requested_by = relationship("User", foreign_keys=[requested_by_id])
 
@@ -38,7 +38,6 @@ class SongrequestQueue(Base):
     def jsonify(self):
         return {
             "id": self.id,
-            "queue": self.queue,
             "video_id": self.video_id,
             "date_added": self.date_added,
             "skip_after": self.skip_after,
@@ -53,19 +52,14 @@ class SongrequestQueue(Base):
             "video_length": self.duration,
             "requested_by": self.requested_by.username_raw if self.requested_by_id else None,
             "database_id": self.id,
-            "current_song_time": self.current_song_time,
             "link": f"http://www.youtube.com/watch?v={self.video_id}",
         }
 
     def playing_in(self, db_session):
-        all_songs_before_current = (
-            db_session.query(SongrequestQueue)
-            .filter(SongrequestQueue.queue < self.queue)
-            .filter(SongrequestQueue.requested_by_id is not None)
-            .all()
-        )
+        all_song_ids_before_current = SongRequestQueueManager._songs_before(self.id, "song-queue")
+        queued_unordered_songs = SongrequestQueue._from_list_id(db_session, all_song_ids_before_current)
         time = 0
-        for song in all_songs_before_current:
+        for song in queued_unordered_songs:
             if not song.playing:
                 time += song.skip_after if song.skip_after else song.song_info.duration
             else:
@@ -73,16 +67,19 @@ class SongrequestQueue(Base):
         return time
 
     @hybrid_property
+    def playing(self):
+        return self.id == SongRequestQueueManager.song_playing_id
+
+    @hybrid_property
     def time_left(self):
-        if self.playing:
-            return self.duration - self.current_song_time
-        return self.duration
+        return self.duration - (self.played_for - (utils.now() - self.date_resumed).total_seconds()) if self.playing else self.duration
 
     @hybrid_property
     def duration(self):
         return self.skip_after if self.skip_after else self.song_info.duration
 
     def _remove(self, db_session):
+        SongRequestQueueManager.remove_song_id(self.id)
         db_session.delete(self)
 
     def _to_histroy(self, db_session, skipped_by_id=None):
@@ -101,51 +98,29 @@ class SongrequestQueue(Base):
         self._remove(db_session)
         return history
 
-    def _move_song(self, db_session, queue_id):
-        if self.queue > queue_id:
-            SongrequestQueue._shift_songs(db_session, lower_bound=queue_id, upper_bound=self.queue, shift_by=+1)
-        else:
-            SongrequestQueue._shift_songs(db_session, lower_bound=self.queue, upper_bound=queue_id, shift_by=-1)
-        self.queue = queue_id
-
     @hybrid_property
     def link(self):
         return f"youtu.be/{self.video_id}"
 
     @staticmethod
-    def _from_id(db_session, id):
-        return db_session.query(SongrequestQueue).filter_by(id=id).one_or_none()
+    def _from_list_id(db_session, _ids):
+        return db_session.query(SongrequestQueue).filter(SongrequestQueue.id.in_(tuple(_ids))).all()
 
     @staticmethod
-    def _get_next_queue(db_session):
-        current = db_session.query(func.max(SongrequestQueue.queue).label("max")).one().max
-        return (current if current else 0) + 1
+    def _from_id(db_session, _id):
+        return db_session.query(SongrequestQueue).filter_by(id=_id).one_or_none()
 
     @staticmethod
-    def _create(db_session, video_id, skip_after, requested_by_id, queue=None):
-        if not queue:
-            if requested_by_id:
-                queue_min_not_playing_backup = list(
-                    db_session.query(SongrequestQueue)
-                    .filter_by(playing=False)
-                    .filter_by(requested_by_id=None)
-                    .values(func.min(SongrequestQueue.queue))
-                )[0][0]
-                if queue_min_not_playing_backup:
-                    return SongrequestQueue._insert_song(
-                        db_session, video_id, skip_after, requested_by_id, queue_min_not_playing_backup
-                    )
-        if not queue:
-            queue = SongrequestQueue._get_next_queue(db_session)
+    def _create(db_session, video_id, skip_after, requested_by_id, queue=None, backup=False):
         songrequestqueue = SongrequestQueue(
-            queue=queue,
             video_id=video_id,
             date_added=utils.now(),
             skip_after=skip_after,
-            playing=False,
             requested_by_id=requested_by_id,
         )
         db_session.add(songrequestqueue)
+        db_session.commit()
+        SongRequestQueueManager.inset_song(songrequestqueue.id, "backup-song-queue" if backup else "song-queue", queue)
         return songrequestqueue
 
     @staticmethod
@@ -154,23 +129,15 @@ class SongrequestQueue(Base):
 
     @staticmethod
     def _get_next_song(db_session):
-        return db_session.query(SongrequestQueue).filter_by(queue=1).one_or_none()
+        next_id = SongRequestQueueManager.get_next_song()
+        if not next_id:
+            return None
+        return db_session.query(SongrequestQueue).filter_by(id=next_id).one_or_none()
 
     @staticmethod
     def _clear_backup_songs(db_session):
         returnExe = db_session.execute(SongrequestQueue.__table__.delete().where(not SongrequestQueue.requested_by))
         return returnExe
-
-    @staticmethod
-    def _update_queue():
-        with DBManager.create_session_scope() as db_session:
-            queued_songs = (
-                db_session.query(SongrequestQueue).filter_by(playing=False).order_by(SongrequestQueue.queue).all()
-            )
-            pos = 1
-            for song in queued_songs:
-                song.queue = pos
-                pos += 1
 
     @staticmethod
     def _load_backup_songs(db_session, songs, youtube, settings):
@@ -180,32 +147,10 @@ class SongrequestQueue(Base):
                 SongrequestQueue._create(db_session, song, None, None)
 
     @staticmethod
-    def _shift_songs(db_session, lower_bound=None, upper_bound=None, shift_by=1):
-        if not lower_bound:
-            lower_bound = 1
-        if not upper_bound:
-            upper_bound = SongrequestQueue._get_next_queue(db_session) - 1
-        queued_songs = (
-            db_session.query(SongrequestQueue)
-            .order_by(SongrequestQueue.queue)
-            .filter(SongrequestQueue.queue >= lower_bound)
-            .filter(SongrequestQueue.queue <= upper_bound)
-            .all()
-        )
-        for song in queued_songs:
-            song.queue += shift_by
-
-    @staticmethod
-    def _insert_song(db_session, video_id, skip_after, requested_by, queue_id):
-        SongrequestQueue._shift_songs(db_session, lower_bound=queue_id)
-        return SongrequestQueue._create(db_session, video_id, skip_after, requested_by, queue_id)
-
-    @staticmethod
     def _get_playlist(db_session, limit=None):
-        queued_songs = db_session.query(SongrequestQueue).filter_by(playing=False).order_by(SongrequestQueue.queue)
-        if limit:
-            queued_songs = queued_songs.limit(limit)
-        queued_songs = queued_songs.all()
+        queued_song_ids = SongRequestQueueManager.get_next_songs(limit)
+        queued_unordered_songs = SongrequestQueue._from_list_id(db_session, queued_song_ids)
+        queued_songs = SongrequestQueue.sort(queued_song_ids, queued_unordered_songs)
         songs = []
         for song in queued_songs:
             songs.append(
@@ -219,6 +164,12 @@ class SongrequestQueue(Base):
             )
         return songs
 
+    @staticmethod
+    def sort(order, unordered):
+        queued_songs = []
+        for song in unordered:
+            queued_songs.insert(order.index(song.id), song)
+        return queued_songs
 
 class SongrequestHistory(Base):
     __tablename__ = "songrequest_history"
@@ -233,9 +184,6 @@ class SongrequestHistory(Base):
     song_info = relationship("SongRequestSongInfo", foreign_keys=[video_id])
     requested_by = relationship("User", foreign_keys=[requested_by_id])
     skipped_by = relationship("User", foreign_keys=[skipped_by_id])
-
-    def __init__(self, **options):
-        super().__init__(**options)
 
     def jsonify(self):
         return {
@@ -298,7 +246,7 @@ class SongrequestHistory(Base):
         previous = SongrequestHistory._get_previous(db_session, position)
         if not previous:
             return False
-        return SongrequestQueue._insert_song(db_session, previous.video_id, previous.skip_after, requested_by_id, 1)
+        return SongrequestQueue._create(db_session, previous.video_id, previous.skip_after, requested_by_id, 1)
 
     @staticmethod
     def _get_list(db_session, size):
@@ -374,8 +322,6 @@ class SongRequestSongInfo(Base):
 
         try:
             video_response = youtube.videos().list(id=str(video_id), part="snippet,contentDetails").execute()
-        except HttpError:
-            return False
         except:
             return False
 

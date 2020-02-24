@@ -4,9 +4,12 @@ import time
 
 from pajbot.managers.db import DBManager
 from pajbot.managers.schedule import ScheduleManager
+from pajbot.managers.songrequest_queue_manager import SongRequestQueueManager
 
 from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory, SongRequestSongInfo
 from pajbot.models.user import User
+
+import pajbot.utils as utils
 
 log = logging.getLogger("pajbot")
 
@@ -27,6 +30,7 @@ class SongrequestManager:
         self.module_opened = None
         self.previous_queue = None
         self.true_volume = None
+        self.current_song_schedule = None
 
     def enable(self, settings, youtube):
         self.enabled = True
@@ -40,8 +44,7 @@ class SongrequestManager:
         self.module_opened = False
         self.previous_queue = 0
         self.true_volume = int(self.settings["volume"])
-        thread = threading.Thread(target=self.inc_current_song, daemon=True)
-        thread.start()
+        self.current_song_schedule = None
 
     def volume_val(self):
         return int(self.true_volume * (100 / int(self.settings["volume_multiplier"])))
@@ -86,7 +89,13 @@ class SongrequestManager:
         if not self.enabled and self.current_song_id:
             return False
         self.load_song(skipped_by_id)
+        self.remove_schedule()
         return True
+
+    def remove_schedule(self):
+        if self.current_song_schedule:
+            self.current_song_schedule.remove()
+            self.current_song_schedule = None
 
     def previous_function(self, requested_by):
         if not self.enabled:
@@ -99,6 +108,7 @@ class SongrequestManager:
             SongrequestHistory._insert_previous(db_session, requested_by_id, self.previous_queue)
             db_session.commit()
         self.previous_queue += 1
+        self.remove_schedule()
         self.load_song(requested_by_id)
         return True
 
@@ -108,7 +118,15 @@ class SongrequestManager:
         if not self.paused:
             self.paused = True
             self._pause()
+            self.remove_schedule()
+            if self.current_song_id:
+                return True
+
+            with DBManager.create_session_scope() as db_session:
+                song = SongrequestQueue._from_id(db_session, self.current_song_id)
+                song.played_for = (utils.now() - song.date_resumed).total_seconds()
             return True
+
         return False
 
     def resume_function(self):
@@ -117,8 +135,12 @@ class SongrequestManager:
         if self.paused:
             self.paused = False
             self._resume()
-            if not self.current_song_id and self.module_opened:
-                self.load_song()
+            with DBManager.create_session_scope() as db_session:
+                song = SongrequestQueue._from_id(db_session, self.current_song_id)
+                song.date_resumed = utils.now()
+
+                self.current_song_schedule = ScheduleManager.execute_delayed(song.time_left, self.load_song)
+
             return True
         return False
 
@@ -152,7 +174,6 @@ class SongrequestManager:
             song._move_song(db_session, 1)
             db_session.commit()
         self.load_song(skipped_by_id)
-        SongrequestQueue._update_queue()
         return True
 
     def move_function(self, database_id, to_id):
@@ -163,7 +184,6 @@ class SongrequestManager:
             song._move_song(db_session, to_id)
             db_session.commit()
         self._playlist()
-        SongrequestQueue._update_queue()
         return True
 
     def request_function(self, video_id, requested_by, queue=None):
@@ -185,7 +205,6 @@ class SongrequestManager:
             if queue:
                 song._move_song(db_session, queue)
             db_session.commit()
-        SongrequestQueue._update_queue()
         return True
 
     def replay_function(self, requested_by):
@@ -200,7 +219,6 @@ class SongrequestManager:
             self.request_function(current_song.video_id, current_song.requested_by_id, 1)
             db_session.commit()
         self.load_song(requested_by_id)
-        SongrequestQueue._update_queue()
         return True
 
     def requeue_function(self, database_id, requested_by):
@@ -213,7 +231,6 @@ class SongrequestManager:
             requested_by_id = requested_by.id
             SongrequestHistory._from_id(db_session, database_id).requeue(db_session, requested_by_id)
             db_session.commit()
-        SongrequestQueue._update_queue()
         self._playlist()
         return True
 
@@ -243,34 +260,8 @@ class SongrequestManager:
             song = SongrequestQueue._from_id(db_session, database_id)
             song._remove(db_session)
             db_session.commit()
-        SongrequestQueue._update_queue()
         self._playlist()
         return True
-
-    def inc_current_song(self):
-        while True:
-            if not self.enabled:
-                break
-            if self.current_song_id:
-                if not self.paused:
-                    try:
-                        with DBManager.create_session_scope() as db_session:
-                            current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
-                            next_song = SongrequestQueue._get_next_song(db_session)
-                            if not current_song or (
-                                current_song.skip_after
-                                and current_song.skip_after < current_song.current_song_time + 10
-                            ):
-                                self.load_song()
-                            else:
-                                if (not current_song.requested_by) and next_song and next_song.requested_by:
-                                    self.load_song()
-                                current_song.current_song_time += 1
-                    except Exception as e:
-                        log.error(e)
-            elif self.module_opened:
-                self.load_song()
-            time.sleep(1)
 
     def load_song(self, skipped_by_id=None):
         if not self.enabled:
@@ -290,9 +281,9 @@ class SongrequestManager:
                 self._hide()
                 db_session.commit()
             self._playlist_history()
-        SongrequestQueue._update_queue()
 
         self.current_song_id = None
+        self.remove_schedule()
 
         if not self.module_opened:
             return False
@@ -300,17 +291,16 @@ class SongrequestManager:
         with DBManager.create_session_scope() as db_session:
             current_song = SongrequestQueue._get_current_song(db_session)
             if not current_song:
-                current_song = SongrequestQueue._get_next_song(db_session)
+                current_song = SongrequestQueue._pop_next_song(db_session)
             if current_song:
-                current_song.playing = True
-                current_song.queue = 0
-                current_song.current_song_time = 0
+                SongRequestQueueManager.update_song_playing_id(current_song.id)
                 self.current_song_id = current_song.id
                 self._play(
                     current_song.video_id,
                     current_song.song_info.title,
                     current_song.requested_by.username_raw if current_song.requested_by else "Backup list",
                 )
+                self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left, self.load_song)
                 if self.settings["use_spotify"]:
                     is_playing, song_name, artistsArr = self.bot.spotify_api.state(self.bot.spotify_token_manager)
                     if is_playing:
@@ -322,11 +312,10 @@ class SongrequestManager:
                         current_song.video_id,
                         current_song.skip_after,
                         None,
-                        SongrequestQueue._get_next_queue(db_session),
+                        backup=True
                     )
                 db_session.commit()
                 self._playlist()
-                SongrequestQueue._update_queue()
                 return True
             if self.settings["use_spotify"]:
                 if self.previously_playing_spotify:

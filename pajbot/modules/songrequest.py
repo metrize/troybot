@@ -249,10 +249,10 @@ class SongrequestModule(BaseModule):
                 return False
 
         # 2. Make sure the stream is live
-        stream_id = StreamHelper.get_current_stream_id()
-        if stream_id is None or stream_id is False:
-            self.bot.whisper(source, "You cannot request songs while the stream is offline.")
-            return False
+        # stream_id = StreamHelper.get_current_stream_id()
+        # if stream_id is None or stream_id is False:
+        #     self.bot.whisper(source, "You cannot request songs while the stream is offline.")
+        #     return False
 
         return self.create_song_request_queue(youtube_id, bot, source)
 
@@ -299,7 +299,7 @@ class SongrequestModule(BaseModule):
                 m = int(m)
                 s = int(s)
                 playing_in = f"{m:02d}:{s:02d}"
-                if next_song.requestor:
+                if next_song.requested_by:
                     bot.say(
                         self.settings["message_in_chat_when_next_song"].format(
                             title=next_song.song_info.title,

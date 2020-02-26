@@ -56,21 +56,12 @@ class SongRequestQueueManager:
         return True
 
     @staticmethod
-    def move_song(from_index, to_index, queue):
-        song_queue = SongRequestQueueManager.song_queues.get(queue, None)
-        if song_queue is None:
-            log.error(f"invalid queue {queue}")
-            return False
-
-        if len(song_queue) - 1 < to_index or len(song_queue) - 1 < from_index or (from_index < 0 or to_index < 0 or from_index == to_index):
-            log.error(f"invalid queue index")
-            return False
-
-        data = song_queue[from_index]
-        song_queue.insert(to_index, data)
-        song_queue.pop(from_index)
-
-        SongRequestQueueManager._update_redis(queue)
+    def move_song(_id, to_index):
+        song_queue = SongRequestQueueManager.song_queues.get("song-queue", None)
+        if _id in song_queue:
+            song_queue.pop(song_queue.index(_id))
+            song_queue.insert(to_index, _id)
+        SongRequestQueueManager._update_redis("song-queue")
         return True
 
     @staticmethod

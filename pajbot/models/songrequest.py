@@ -80,7 +80,7 @@ class SongrequestQueue(Base):
 
     @hybrid_property
     def time_left(self):
-        return self.duration - (self.played_for + (utils.now() - self.date_resumed).total_seconds()) if self.playing else self.duration
+        return self.duration - (self.played_for + (utils.now() - self.date_resumed).total_seconds() if bool(self.playing) else 0)
 
     @hybrid_property
     def current_song_time(self):
@@ -96,6 +96,13 @@ class SongrequestQueue(Base):
 
     def _remove(self, db_session):
         db_session.delete(self)
+
+    def _move_song(self, to_id):
+        to_id -= 1
+        if not self.requested_by:
+            return
+
+        SongRequestQueueManager.move_song(self.id, to_id)
 
     def _to_histroy(self, db_session, skipped_by_id=None):
         stream_id = StreamHelper.get_current_stream_id()

@@ -143,7 +143,7 @@ class SongrequestManager:
                 song = SongrequestQueue._from_id(db_session, self.current_song_id)
                 song.date_resumed = utils.now()
                 self.schedule_job_id = random.randint(1, 100000)
-                self.current_song_schedule = ScheduleManager.execute_delayed(song.time_left, self.load_song_schedule, args=[self.schedule_job_id])
+                self.current_song_schedule = ScheduleManager.execute_delayed(song.time_left + 10, self.load_song_schedule, args=[self.schedule_job_id])
 
             return True
         return False
@@ -207,7 +207,7 @@ class SongrequestManager:
             )
             song = SongrequestQueue._create(db_session, video_id, skip_after, requested_by_id)
             if queue:
-                song._move_song(db_session, queue)
+                song._move_song(queue)
             db_session.commit()
             current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
             if not current_song or not current_song.requested_by:
@@ -318,7 +318,7 @@ class SongrequestManager:
                 )
                 current_song.date_resumed = utils.now()
                 self.schedule_job_id = random.randint(1, 100000)
-                self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left, self.load_song_schedule, args=[self.schedule_job_id])
+                self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left + 10, self.load_song_schedule, args=[self.schedule_job_id])
                 if self.settings["use_spotify"]:
                     is_playing, song_name, artistsArr = self.bot.spotify_api.state(self.bot.spotify_token_manager)
                     if is_playing:

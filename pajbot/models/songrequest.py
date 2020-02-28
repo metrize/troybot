@@ -218,7 +218,7 @@ class SongrequestHistory(Base):
             "id": self.id,
             "stream_id": self.stream_id,
             "video_id": self.video_id,
-            "date_finished": self.date_finished,
+            "date_finished": str(self.date_finished),
             "requested_by": self.requested_by.username_raw if self.requested_by_id else None,
             "skipped_by": self.skipped_by.username_raw if self.skipped_by_id else None,
             "skip_after": self.skip_after,
@@ -230,7 +230,7 @@ class SongrequestHistory(Base):
             "requested_by": self.requested_by.username_raw if self.requested_by_id else "Backup Playlist",
             "skipped_by": self.skipped_by.username_raw if self.skipped_by_id else None,
             "database_id": self.id,
-            "date_finished": self.date_finished,
+            "date_finished": str(self.date_finished),
             "skip_after": self.skip_after
         }
 

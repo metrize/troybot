@@ -52,8 +52,16 @@ class SongrequestQueue(Base):
             "requested_by": self.requested_by.username_raw if self.requested_by_id else "Backup Playlist",
             "current_song_time": self.current_song_time,
             "database_id": self.id,
-            "skip_after": self.skip_after
+            "skip_after": self.skip_after,
+            "formatted_duration": self.formatted_duration,
         }
+
+    @property
+    def formatted_duration(self):
+        m, s = divmod(self.duration, 60)
+        m = int(m)
+        s = int(s)
+        return f"{m:02d}:{s:02d}"
 
     def playing_in(self, db_session):
         all_song_ids_before_current = SongRequestQueueManager._songs_before(self.id, "song-queue")
@@ -231,8 +239,16 @@ class SongrequestHistory(Base):
             "skipped_by": self.skipped_by.username_raw if self.skipped_by_id else None,
             "database_id": self.id,
             "date_finished": str(self.date_finished),
-            "skip_after": self.skip_after
+            "skip_after": self.skip_after,
+            "formatted_duration": self.formatted_duration,
         }
+
+    @property
+    def formatted_duration(self):
+        m, s = divmod(self.duration, 60)
+        m = int(m)
+        s = int(s)
+        return f"{m:02d}:{s:02d}"
 
     @hybrid_property
     def link(self):

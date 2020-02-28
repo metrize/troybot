@@ -245,7 +245,7 @@ class SongrequestManager:
         if not self.module_state["enabled"]:
             return False
         if not self.module_state["video_showing"]:
-            self.module_state["video_showing"]: = True
+            self.module_state["video_showing"] = True
             if not self.paused:
                 self._show()
             return True

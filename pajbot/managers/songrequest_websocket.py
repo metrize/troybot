@@ -85,30 +85,29 @@ class SongRequestWebSocketServer:
                 SongRequestWebSocketServer.clients.append(self)
 
             def onMessage(self, payload, isBinary):
-                if manager_ext.bot.songrequest_manager.enabled:
-                    with DBManager.create_session_scope() as db_session:
-                        if not isBinary:
-                            try:
-                                json_msg = json.loads(payload)
-                            except:
-                                self._close_conn()
-                                return
-                            if "event" not in json_msg or "data" not in json_msg:
-                                self._close_conn()
-                                return
-                            switcher = {
-                                "AUTH": self._auth,
-                                "PAUSE": self._pause,
-                                "RESUME": self._resume,
-                                "NEXT": self._next,
-                                "PREVIOUS": self._previous,
-                                "SEEK": self._seek,
-                                "VOLUME": self._volume,
-                            }
-                            method = switcher.get(json_msg["event"], None)
-                            if not method or not method(db_session, json_msg["data"]):
-                                self._close_conn()
-                                return
+                with DBManager.create_session_scope() as db_session:
+                    if not isBinary:
+                        try:
+                            json_msg = json.loads(payload)
+                        except:
+                            self._close_conn()
+                            return
+                        if "event" not in json_msg or "data" not in json_msg:
+                            self._close_conn()
+                            return
+                        switcher = {
+                            "AUTH": self._auth,
+                            "PAUSE": self._pause,
+                            "RESUME": self._resume,
+                            "NEXT": self._next,
+                            "PREVIOUS": self._previous,
+                            "SEEK": self._seek,
+                            "VOLUME": self._volume,
+                        }
+                        method = switcher.get(json_msg["event"], None)
+                        if not method or not method(db_session, json_msg["data"]):
+                            self._close_conn()
+                            return
 
             def onClose(self, wasClean, code, reason):
                 try:

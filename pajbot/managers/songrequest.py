@@ -77,7 +77,7 @@ class SongrequestManager:
             return False
         if not self.module_state["requests_open"]:
             self.module_state["requests_open"] = True
-            self.paused = False
+            self.module_state["paused"] = False
             if not self.current_song_id:
                 self.load_song()
             return True
@@ -250,7 +250,7 @@ class SongrequestManager:
             return False
         if not self.module_state["video_showing"]:
             self.module_state["video_showing"] = True
-            if not self.paused:
+            if not self.module_state["paused"]:
                 self._show()
             return True
         return False
@@ -351,7 +351,7 @@ class SongrequestManager:
             "play", {"video_id": video_id, "video_title": video_title, "requested_by": requested_by_name}
         )
         self.bot.websocket_manager.emit("songrequest_play", WIDGET_ID, {"video_id": video_id})
-        self.paused = True
+        self.module_state["paused"] = True
         if self.module_state["video_showing"]:
             self._show()
         self._playlist()
@@ -368,7 +368,7 @@ class SongrequestManager:
     def _resume(self):
         self.bot.songrequest_websocket_manager.emit("resume", {})
         self.bot.websocket_manager.emit("songrequest_resume", WIDGET_ID, {"volume": self.volume})
-        self.paused = False
+        self.module_state["paused"] = False
         if self.module_state["video_showing"]:
             self._show()
 
@@ -379,7 +379,7 @@ class SongrequestManager:
     def _seek(self, _time):
         self.bot.songrequest_websocket_manager.emit("seek", {"seek_time": _time})
         self.bot.websocket_manager.emit("songrequest_seek", WIDGET_ID, {"seek_time": _time})
-        self.paused = True
+        self.module_state["paused"] = True
 
     def _show(self):
         self.bot.websocket_manager.emit("songrequest_show", WIDGET_ID, {})

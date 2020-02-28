@@ -74,7 +74,7 @@ function initialize_player(data) {
     // playlist
     console.log(data["history_list"])
     data["playlist"].forEach(function(song) {
-        $('#currentqueuebody tr:last').after(`<tr>
+        $('#currentqueuebody').apppend(`<tr>
         <td>
           <div class="d-flex justify-content-between">
             <div class="p-2 align-self-center">
@@ -173,7 +173,7 @@ function initialize_player(data) {
     });
     // backup_playlist
     data["backup_playlist"].forEach(function(song) {
-        $('#backupqueuebody tr:last').after(`<tr>
+        $('#backupqueuebody').apppend(`<tr>
         <td>
           <div class="d-flex justify-content-between">
             <div class="p-2 align-self-center">
@@ -272,7 +272,7 @@ function initialize_player(data) {
     });
     // history_list
     data["history_list"].forEach(function(song) {
-        $('#backupqueuebody tr:last').after(`<tr>
+        $('#backupqueuebody').apppend(`<tr>
         <td>
           <div class="d-flex justify-content-between">
             <div class="p-2 align-self-center">

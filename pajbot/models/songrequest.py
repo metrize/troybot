@@ -48,13 +48,11 @@ class SongrequestQueue(Base):
 
     def webjsonify(self):
         return {
-            "video_id": self.video_id,
-            "video_title": self.song_info.title,
-            "video_length": self.duration,
-            "requested_by": self.requested_by.username_raw if self.requested_by_id else None,
+            "song_info": self.song_info.jsonify(),
+            "requested_by": self.requested_by.username_raw if self.requested_by_id else "Backup Playlist",
             "current_song_time": self.current_song_time,
             "database_id": self.id,
-            "link": f"http://www.youtube.com/watch?v={self.video_id}",
+            "skip_after": self.skip_after
         }
 
     def playing_in(self, db_session):
@@ -176,20 +174,22 @@ class SongrequestQueue(Base):
 
     @staticmethod
     def _get_playlist(db_session, limit=None):
-        queued_song_ids = SongRequestQueueManager.get_next_songs(limit)
+        queued_song_ids = SongRequestQueueManager.get_next_songs(limit=limit, queue="song-queue")
         queued_unordered_songs = SongrequestQueue._from_list_id(db_session, queued_song_ids)
         queued_songs = SongrequestQueue.sort(queued_song_ids, queued_unordered_songs)
         songs = []
         for song in queued_songs:
-            songs.append(
-                {
-                    "video_id": song.video_id,
-                    "video_title": song.song_info.title,
-                    "video_length": song.duration,
-                    "requested_by": song.requested_by.username_raw if song.requested_by_id else None,
-                    "database_id": song.id,
-                }
-            )
+            songs.append(song.webjsonify())
+        return songs
+
+    @staticmethod
+    def _get_backup_playlist(db_session, limit=None):
+        queued_song_ids = SongRequestQueueManager.get_next_songs(limit=limit, queue="backup-song-queue")
+        queued_unordered_songs = SongrequestQueue._from_list_id(db_session, queued_song_ids)
+        queued_songs = SongrequestQueue.sort(queued_song_ids, queued_unordered_songs)
+        songs = []
+        for song in queued_songs:
+            songs.append(songs.append(song.webjsonify()))
         return songs
 
     @staticmethod
@@ -364,3 +364,11 @@ class SongRequestSongInfo(Base):
         default_thumbnail = video["snippet"]["thumbnails"]["default"]["url"]
 
         return SongRequestSongInfo._create(db_session, video_id, title, duration, default_thumbnail)
+
+    @staticmethod
+    def _get_banned(db_session):
+        return db_session.query(SongRequestSongInfo).filter_by(banned=True).all()
+
+    @staticmethod
+    def _get_favourite(db_session):
+        return db_session.query(SongRequestSongInfo).filter_by(favourite=True).all()

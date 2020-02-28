@@ -153,7 +153,10 @@ class SongRequestQueueManager:
         return song_queue[0] if len(song_queue) != 0 else (backup_song_queue[0] if len(backup_song_queue) != 0 else None)
 
     @staticmethod
-    def get_next_songs(limit):
+    def get_next_songs(limit=None, queue=None):
+        if queue:
+            song_queue = SongRequestQueueManager.song_queues.get(queue, None)
+            return song_queue if not limit else song_queue[:limit]
         song_queue = SongRequestQueueManager.song_queues.get("song-queue", None)
         backup_song_queue = SongRequestQueueManager.song_queues.get("backup-song-queue", None)
         if not limit:

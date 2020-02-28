@@ -1,0 +1,11 @@
+volume
+current song
+modulestate
+videoshowing
+backupplayliststate
+video playing
+playlist
+backupplaylist
+historylist
+bannedlist
+favlist

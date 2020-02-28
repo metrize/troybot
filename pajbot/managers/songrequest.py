@@ -18,54 +18,61 @@ WIDGET_ID = 4
 class SongrequestManager:
     def __init__(self, bot):
         self.bot = bot
-        self.enabled = False
+
         self.current_song_id = None
-        self.showVideo = None
-        self.isVideoShowing = None
         self.youtube = None
         self.settings = None
-        self.previously_playing_spotify = None
-        self.paused = None
-        self.module_opened = None
-        self.previous_queue = None
-        self.true_volume = None
+
+        self.previously_playing_spotify = False
+        self.previous_queue = 0
+
         self.current_song_schedule = None
         self.schedule_job_id = None
+
+        self.module_state = {
+            "paused": False,
+            "video_showing": False,
+            "enabled": False,
+            "requests_open": False,
+            "use_backup_playlist": False
+        }
+        self.volume = 0
 
     def enable(self, settings, youtube):
-        self.enabled = True
-        self.showVideo = False
-        self.isVideoShowing = True
+        self.current_song_id = None
         self.youtube = youtube
         self.settings = settings
-        self.current_song_id = None
+
         self.previously_playing_spotify = False
-        self.paused = False
-        self.module_opened = False
         self.previous_queue = 0
-        self.true_volume = int(self.settings["volume"])
+
         self.current_song_schedule = None
         self.schedule_job_id = None
 
+        self.module_state["enabled"] = True
+        self.volume = 0
+
+    @property
     def volume_val(self):
-        return int(self.true_volume * (100 / int(self.settings["volume_multiplier"])))
+        return int(self.volume * (100 / int(self.settings["volume_multiplier"])))
 
     def to_true_volume(self, multiplied_volume):
         return int(multiplied_volume * int(self.settings["volume_multiplier"]) / 100)
 
     def disable(self):
-        self.enabled = False
-        self.paused = False
+        self.module_state["enabled"] = False
+        self.module_state["paused"] = False
+        self.module_state["requests_open"] = False
+        self.module_state["video_showing"] = False
         self.settings = None
         self.youtube = None
         self.current_song_id = None
-        self.module_opened = False
 
     def open_module_function(self):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
-        if not self.module_opened:
-            self.module_opened = True
+        if not self.module_state["requests_open"]:
+            self.module_state["requests_open"] = True
             self.paused = False
             if not self.current_song_id:
                 self.load_song()
@@ -73,11 +80,10 @@ class SongrequestManager:
         return False
 
     def close_module_function(self):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
-        if self.module_opened:
-            self.module_opened = False
-            self.paused = False
+        if self.module_state["requests_open"]:
+            self.module_state["requests_open"] = False
             return True
         return False
 
@@ -87,7 +93,7 @@ class SongrequestManager:
             if not skipped_by:
                 return
             skipped_by_id = skipped_by.id
-        if not self.enabled and self.current_song_id:
+        if not self.module_state["enabled"] and self.current_song_id:
             return False
         self.load_song(skipped_by_id)
         self.remove_schedule()
@@ -100,9 +106,10 @@ class SongrequestManager:
         except:
             pass
         self.current_song_schedule = None
+        self.schedule_job_id = None
 
     def previous_function(self, requested_by):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
         with DBManager.create_session_scope() as db_session:
             requested_by = User.find_by_user_input(db_session, requested_by)
@@ -117,10 +124,10 @@ class SongrequestManager:
         return True
 
     def pause_function(self):
-        if not self.enabled or not self.current_song_id:
+        if not self.module_state["enabled"] or not self.current_song_id:
             return False
-        if not self.paused:
-            self.paused = True
+        if not self.module_state["paused"]:
+            self.module_state["paused"] = True
             self._pause()
             self.remove_schedule()
             if self.current_song_id:
@@ -134,10 +141,10 @@ class SongrequestManager:
         return False
 
     def resume_function(self):
-        if not self.enabled or not self.current_song_id:
+        if not self.module_state["enabled"] or not self.current_song_id:
             return False
-        if self.paused:
-            self.paused = False
+        if self.module_state["paused"]:
+            self.module_state["paused"] = False
             self._resume()
             with DBManager.create_session_scope() as db_session:
                 song = SongrequestQueue._from_id(db_session, self.current_song_id)
@@ -148,8 +155,8 @@ class SongrequestManager:
             return True
         return False
 
-    def seek_function(self, _time):
-        if not self.enabled:
+    def seek_function(self, _time): #TODO
+        if not self.module_state["enabled"]:
             return False
         if self.current_song_id:
             with DBManager.create_session_scope() as db_session:
@@ -160,14 +167,18 @@ class SongrequestManager:
         return False
 
     def volume_function(self, volume):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
-        self.true_volume = self.to_true_volume(volume)
+        try:
+            self.volume = self.to_true_volume(volume)
+        except ValueError:
+            return False
+
         self._volume()
         return True
 
     def play_function(self, database_id, skipped_by):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
         with DBManager.create_session_scope() as db_session:
             skipped_by = User.find_by_user_input(db_session, skipped_by)
@@ -181,7 +192,7 @@ class SongrequestManager:
         return True
 
     def move_function(self, database_id, to_id):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
         with DBManager.create_session_scope() as db_session:
             song = SongrequestQueue._from_id(db_session, database_id)
@@ -191,7 +202,7 @@ class SongrequestManager:
         return True
 
     def request_function(self, video_id, requested_by, queue=None):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
         with DBManager.create_session_scope() as db_session:
             requested_by = User.find_by_user_input(db_session, requested_by)
@@ -214,22 +225,8 @@ class SongrequestManager:
                 self.load_song()
         return True
 
-    def replay_function(self, requested_by):
-        if not self.enabled:
-            return False
-        with DBManager.create_session_scope() as db_session:
-            requested_by = User.find_by_user_input(db_session, requested_by)
-            if not requested_by:
-                return False
-            requested_by_id = requested_by.id
-            current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
-            self.request_function(current_song.video_id, current_song.requested_by_id, 1)
-            db_session.commit()
-        self.load_song(requested_by_id)
-        return True
-
     def requeue_function(self, database_id, requested_by):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
         with DBManager.create_session_scope() as db_session:
             requested_by = User.find_by_user_input(db_session, requested_by)
@@ -245,26 +242,26 @@ class SongrequestManager:
         return True
 
     def show_function(self):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
-        if not self.showVideo:
-            self.showVideo = True
+        if not self.module_state["video_showing"]:
+            self.module_state["video_showing"]: = True
             if not self.paused:
                 self._show()
             return True
         return False
 
     def hide_function(self):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
-        if self.showVideo:
-            self.showVideo = False
+        if self.module_state["video_showing"]:
+            self.module_state["video_showing"] = False
             self._hide()
             return True
         return False
 
     def remove_function(self, database_id):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
         with DBManager.create_session_scope() as db_session:
             song = SongrequestQueue._from_id(db_session, database_id)
@@ -279,7 +276,7 @@ class SongrequestManager:
         self.load_song()
 
     def load_song(self, skipped_by_id=None):
-        if not self.enabled:
+        if not self.module_state["enabled"]:
             return False
         if self.current_song_id:
             with DBManager.create_session_scope() as db_session:
@@ -366,14 +363,14 @@ class SongrequestManager:
 
     def _resume(self):
         self.bot.songrequest_websocket_manager.emit("resume", {})
-        self.bot.websocket_manager.emit("songrequest_resume", WIDGET_ID, {"volume": self.true_volume})
+        self.bot.websocket_manager.emit("songrequest_resume", WIDGET_ID, {"volume": self.volume})
         self.paused = False
         if self.showVideo:
             self._show()
 
     def _volume(self):
-        self.bot.songrequest_websocket_manager.emit("volume", {"volume": self.volume_val()})
-        self.bot.websocket_manager.emit("songrequest_volume", WIDGET_ID, {"volume": self.true_volume})
+        self.bot.songrequest_websocket_manager.emit("volume", {"volume": self.volume_val})
+        self.bot.websocket_manager.emit("songrequest_volume", WIDGET_ID, {"volume": self.volume})
 
     def _seek(self, _time):
         self.bot.songrequest_websocket_manager.emit("seek", {"seek_time": _time})

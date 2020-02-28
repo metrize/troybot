@@ -8,7 +8,7 @@ from pathlib import Path
 from twisted.internet import reactor
 from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
 
-from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory
+from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory, SongRequestSongInfo
 from pajbot.managers.db import DBManager
 
 log = logging.getLogger("pajbot")
@@ -100,18 +100,10 @@ class SongRequestWebSocketServer:
                                 "AUTH": self._auth,
                                 "PAUSE": self._pause,
                                 "RESUME": self._resume,
-                                "SEEK": self._seek,
-                                "SKIP": self._skip,
+                                "NEXT": self._next,
                                 "PREVIOUS": self._previous,
+                                "SEEK": self._seek,
                                 "VOLUME": self._volume,
-                                "CLOSE": self._close,
-                                "OPEN": self._open,
-                                "PLAY": self._play,
-                                "REQUEST": self._request,
-                                "REPLAY": self._replay,
-                                "REQUEUE": self._requeue,
-                                "MOVE": self._move,
-                                "REMOVE": self._remove,
                             }
                             method = switcher.get(json_msg["event"], None)
                             if not method or not method(db_session, json_msg["data"]):
@@ -127,6 +119,42 @@ class SongRequestWebSocketServer:
             def _close_conn(self):
                 self.sendClose()
 
+            def _pause(self, data):
+                if not self.isAuthed:
+                    return False
+
+                return manager_ext.bot.songrequest_manager.pause_function()
+
+            def _resume(self, data):
+                if not self.isAuthed:
+                    return False
+
+                return manager_ext.bot.songrequest_manager.resume_function()
+
+            def _next(self, data):
+                if not self.isAuthed:
+                    return False
+
+                return manager_ext.bot.songrequest_manager.skip_function(self.login)
+
+            def _previous(self, data):
+                if not self.isAuthed:
+                    return False
+
+                return manager_ext.bot.songrequest_manager.previous_function(self.login)
+
+            def _seek(self, data):
+                if not self.isAuthed or not data.get("seek_time", False):
+                    return False
+
+                return manager_ext.bot.songrequest_manager.seek_function(data.get("seek_time"))
+
+            def _volume(self, data):
+                if not self.isAuthed or not data.get("volume", False):
+                    return False
+
+                return manager_ext.bot.songrequest_manager.volume_function(data.get("volume"))
+
             def _auth(self, db_session, data):
                 access_token = data["access_token"]
                 user = manager_ext.bot.twitch_v5_api.user_from_access_token(
@@ -140,103 +168,22 @@ class SongRequestWebSocketServer:
                 return True
 
             def _dump_state(self, db_session):
-                current_song = SongrequestQueue._from_id(
-                    db_session, manager_ext.bot.songrequest_manager.current_song_id
-                )
+                song = SongrequestQueue._from_id(db_session, manager_ext.bot.songrequest_manager.current_song_id) if manager_ext.bot.songrequest_manager.current_song_id else None
                 data = {
-                    "event": "initialize",
-                    "data": {
-                        "currentSong": current_song.webjsonify() if current_song else None,
-                        "playlist": SongrequestQueue._get_playlist(db_session, 15),
-                        "history": SongrequestHistory._get_history(db_session, 15),
-                        "paused": manager_ext.bot.songrequest_manager.paused,
-                        "open": manager_ext.bot.songrequest_manager.module_opened,
-                        "volume": manager_ext.bot.songrequest_manager.volume_val(),
-                    },
+                    "volume": manager_ext.bot.songrequest_manager.volume_val,
+                    "current_song": song.webjsonify() if song else {},
+                    "module_state": manager_ext.bot.songrequest_manager.module_state,
+                    "playlist": SongrequestQueue._get_playlist(db_session, limit=30),
+                    "backup_playlist": SongrequestQueue._get_backup_playlist(db_session, limit=30),
+                    "history_list": SongrequestHistory._get_history(db_session, limit=30),
+                    "banned_list": [x.jsonify() for x in SongRequestSongInfo._get_banned(db_session)],
+                    "favourite_list": [x.jsonify() for x in SongRequestSongInfo._get_favourite(db_session)],
                 }
-                payload = json.dumps(data).encode("utf8")
-                self.sendMessage(payload, False)
-
-            def _pause(self, db_session, data):
-                if not self.isAuthed:
-                    return False
-                return manager_ext.bot.songrequest_manager.pause_function()
-
-            def _resume(self, db_session, data):
-                if not self.isAuthed:
-                    return False
-                return manager_ext.bot.songrequest_manager.resume_function()
-
-            def _seek(self, db_session, data):
-                if not self.isAuthed or "seek_time" not in data or not isfloat(data["seek_time"]):
-                    return False
-                return manager_ext.bot.songrequest_manager.seek_function(float(data["seek_time"]))
-
-            def _skip(self, db_session, data):
-                if not self.isAuthed:
-                    return False
-                return manager_ext.bot.songrequest_manager.skip_function(self.login)
-
-            def _previous(self, db_session, data):
-                if not self.isAuthed:
-                    return False
-                return manager_ext.bot.songrequest_manager.previous_function(self.login)
-
-            def _volume(self, db_session, data):
-                if not self.isAuthed or "volume" not in data or not isfloat(data["volume"]):
-                    return False
-                return manager_ext.bot.songrequest_manager.volume_function(float(data["volume"]) * 100)
-
-            def _close(self, db_session, data):
-                if not self.isAuthed:
-                    return False
-                return manager_ext.bot.songrequest_manager.close_module_function()
-
-            def _open(self, db_session, data):
-                if not self.isAuthed:
-                    return False
-                return manager_ext.bot.songrequest_manager.close_module_function()
-
-            def _play(self, db_session, data):
-                if not self.isAuthed or "database_id" not in data or not isint(data["database_id"]):
-                    return False
-                return manager_ext.bot.songrequest_manager.play_function(int(data["database_id"]), self.login)
-
-            def _request(self, db_session, data):
-                if not self.isAuthed or "request" not in data:
-                    return False
-                youtube_id = find_youtube_id_in_string(data["request"])
-                if youtube_id is False:
-                    youtube_id = find_youtube_video_by_search(data["request"])
-                    if youtube_id is None:
-                        return True
-                return manager_ext.bot.songrequest_manager.request_function(youtube_id, self.login)
-
-            def _replay(self, db_session, data):
-                if not self.isAuthed:
-                    return False
-                return manager_ext.bot.songrequest_manager.replay_function()
-
-            def _requeue(self, db_session, data):
-                if not self.isAuthed or "database_id" not in data or not isint(data["database_id"]):
-                    return False
-                return manager_ext.bot.songrequest_manager.requeue_function(int(data["database_id"]), self.login)
-
-            def _move(self, db_session, data):
-                if (
-                    not self.isAuthed
-                    or "database_id" not in data
-                    or "to_id" not in data
-                    or not isint(data["to_id"])
-                    or not isint(data["database_id"])
-                ):
-                    return False
-                return manager_ext.bot.songrequest_manager.move_function(int(data["database_id"]), int(data["to_id"]))
-
-            def _remove(self, db_session, data):
-                if not self.isAuthed or "database_id" not in data or not isint(data["database_id"]):
-                    return False
-                return manager_ext.bot.songrequest_manager.remove_function(int(data["database_id"]))
+                payload = {
+                    "event": "initialize",
+                    "data": data,
+                }
+                self.sendMessage(json.dumps(payload).encode("utf8"), False)
 
         factory = WebSocketServerFactory()
         factory.setProtocolOptions(autoPingInterval=15, autoPingTimeout=5)

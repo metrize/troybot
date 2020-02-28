@@ -32,7 +32,7 @@ body {
     background-color: transparent !important;
 }
 
-#player {
+#video_player {
     pointer-events: none;
     width: 528px;
     height: 297px;
@@ -43,10 +43,7 @@ body {
 }
 
 .main-container {
-    width: 80% !important;
-    top: 10px;
     position: relative !important;
-    max-width: 100% !important;
     height: 50%;
     border-radius: 10px !important;
     background-color: #0077be73 !important;

@@ -399,3 +399,16 @@ button.ui.button.streamelements {
 .twitter_follows button.ui.button {
   white-space: nowrap;
 }
+
+@media (min-width: 1600px) {
+  .container, .container-lg, .container-md, .container-sm, .container-xl {
+      max-width: 1800px;
+  }
+}
+@media only screen and (min-width: 1600px) {
+  .ui.container {
+      width: 1800px;
+      margin-left: auto!important;
+      margin-right: auto!important;
+  }
+}

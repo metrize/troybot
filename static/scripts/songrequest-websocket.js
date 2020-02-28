@@ -61,7 +61,7 @@ function handleWebsocketData(json_data) {
 function initialize_player(data) {
     // volume
     player.setVolume(data["volume"]);
-    $("#volume div").css("width", player.getVolume()+"%");
+    $("#volume div").css("width", data["volume"]+"%");
     // current_song
     if (Object.keys(data["current_song"]).length === 0) {
         $("#status").text("No songs currently playing!")
@@ -72,6 +72,7 @@ function initialize_player(data) {
         $("#url a").attr("href", "https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"])
     }
     // playlist
+    console.log(data["history_list"])
     data["playlist"].forEach(function(song) {
         $('#currentqueuebody tr:last').after(`<tr>
         <td>

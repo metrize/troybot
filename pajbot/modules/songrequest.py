@@ -357,7 +357,7 @@ class SongrequestModule(BaseModule):
 
     def volume(self, bot, source, message, **rest):
         if not message:
-            bot.say(f"The current volume is {self.bot.songrequest_manager.volume_val()}%")
+            bot.say(f"The current volume is {self.bot.songrequest_manager.volume_val}%")
             return True
         try:
             val = int(message)

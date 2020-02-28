@@ -294,15 +294,7 @@ class SongrequestHistory(Base):
         )
         songs = []
         for song in played_songs:
-            songs.append(
-                {
-                    "video_id": song.video_id,
-                    "video_title": song.song_info.title,
-                    "video_length": song.duration,
-                    "requested_by": song.requested_by.username_raw if song.requested_by_id else None,
-                    "database_id": song.id,
-                }
-            )
+            songs.append(song.webjsonify())
         return songs
 
 

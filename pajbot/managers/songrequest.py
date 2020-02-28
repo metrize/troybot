@@ -298,7 +298,7 @@ class SongrequestManager:
         self.schedule_job_id = None
         self.remove_schedule()
 
-        if not self.module_opened:
+        if not self.module_state["requests_open"]:
             return False
 
         with DBManager.create_session_scope() as db_session:

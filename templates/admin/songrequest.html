@@ -1,318 +1,303 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet" href="/static/css/songrequest-websocket.css">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-        <link href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
-        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-        <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/esm/popper.js"></script>
-    </head>
-    <body>
-        <div class="main-container container">
-          <div class="d-flex flex-column">
-            <div class="p-2">
-              <div class="d-flex justify-content-between">
-                <div class="p-2">
-                  <div id="player"></div>
-                </div>
-                <div class="p-2">
-                  <div class="info">
-                    <p class="status font-weight-bold" >Now Playing - Requested by TroyDota</p>
-                    <p class="songname font-weight-bold"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 30 30" enable-background="new 0 0 30 30" xml:space="preserve">  <image id="image0" width="30" height="30" x="0" y="0"
-                      href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAMAAAAM7l6QAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                  AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABs1BMVEUAAAC/QEDGQkLGRETH
-                  QkLHQkLKRkbKR0fJRkbJRkbJRkbJRUXIRETIRUXKR0fJRkbJRUXHRETIRETMMzPIRETOTU3VWlrb
-                  ZWXjb2/jbm7cZGTVWVnMTEzHQ0PJQ0PEOzvIREToeXnpeHjHRETDPDzHQ0PTV1fSVFTHQ0PJRUXd
-                  Z2fHRETMSkrodnbIRETLS0vIRkbMSkrJRkbKSUnJRUXLSEjIRETIRUXKSEjIRkbLSUnKRkbLSkrK
-                  RkbKSUnJRUXHQkLdZ2fgaWnHQ0PHRETSVVXUVlbIQkLpeXnpeXm/QEDIRETIRUXNTU3WW1vdZmbd
-                  Z2fYXFzOTU3HRUXHQUGqVVXFQ0PHQ0PIRkbLSEjJR0fKSUnIR0fJRkbJRkbIRUXKRkbJR0fLSEjK
-                  SEjLSEjIRkbpeXntf3/vg4PziYn0iYn1jIz3j4/2jo7ziIjxhYXugYHoeHjeaGjlc3Pqe3v94eH4
-                  o6PugIDtfn7//////f380tL4mJjwhITvgoL++Pj7w8P3kpLxhob+7u76tLT1jY35sLDyh4f939/4
-                  oaHsfX3ndXXib2/uf3/vhITsfn7jcHD+KXeUAAAAZnRSTlMABDpee5a609rm7fT97tnTuHw8BeTm
-                  5u369+rj4uQ9Dev35ekRV+7YX4XpiLP8sNLW3eTn8O77+ebu3OHP0q6ugPr2hVbq5V359xA45Ovw
-                  +fnv6uU7Azl6mr/W3env9fbv6d7XwJ118AejAAAAAWJLR0R5odzU0AAAAAd0SU1FB+QCGwQXNnHp
-                  yRkAAAEWSURBVCjPY2AY1ICRiZmFlY2dg5OLm4eHm5eTj1+AVZBZSBgiyyQiKiYukZaekZmVnZOb
-                  lZdfkF4oKSUtIysHkpVXUMzBCpSUVYDSqmo5OIC6BlBaswiXtJY2UFqnGJe0rh5QWr8EIVBahixd
-                  bgCUNqxACFRWVdcgeLVGQGnjOiTpysr6hkYYL9MEKG3ahCJdWdncAuW1mmGVboPyss2B0hY4DW+3
-                  BEpb4XRanTVQ2gbJYx2dyB7rsgVK2+EMlm57oLSDIy5pJ2egtIsrLmk3d3CEemCX9VTwAkW4t4+v
-                  n39PYVdvbXtWbk52Vl5ff+GEgMCg4BBIcgkNcw+PiIyKjomN4+GJT0hMSk5JZWEOYRzoRI4fAADE
-                  Ac9/AVHJMwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMToyMzo1NC0wNzowMFUOw1MA
-                  AAAldEVYdGRhdGU6bW9kaWZ5ADIwMjAtMDItMjdUMTE6MjM6NTQtMDc6MDAkU3vvAAAAAElFTkSu
-                  QmCC" />
-                  </svg> xQc Stream Highlights #163</p>
-                    <p class="url font-weight-bold">from url <a href="https://www.youtube.com/watch?v=vXyLj-63jR0">https://www.youtube.com/watch?v=vXyLj-63jR0</a></p>
-                  </div>
-                </div>
-                <div class="p-2 ml-auto">
-                  <button type="button" class="btn btn-link font-weight-bold show-video">Show Video</button>
-                </div>
-                <div class="p-2">
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Settings
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Disable Requests</a>
-                      <a class="dropdown-item" href="#">Disable Backup Playlist</a>
-                      <a class="dropdown-item" href="#">Go to Settings</a>
-                    </div>
-                  </div>              
-                </div>
-              </div>
-            </div>
-            <div class="p-2">
-              <div class="d-flex justify-content-center">
-                <div class="p-2">
-                  <div class="controls-player">
-                    <div class="btn-group" role="group">
-                      <button type="button" class="btn btn-secondary control" id="control_previous">Previous</button>
-                      <button type="button" class="btn btn-secondary control" id="control_state">Pause</button>
-                      <button type="button" class="btn btn-secondary control" id="control_next">Next</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="p-2 align-self-center ml-auto" style="flex: 0.65!important">
-                  <div class="progress" id="videotime">
-                    <div class="progress-bar custom-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </div>
-                <div class="p-2 align-self-center">
-                  <span id="videocurrenttime">0:00</span>
-                </div>
-                <div class="p-2 ml-auto align-self-center">
-                  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">  <image id="image0" width="24" height="24" x="0" y="0"
-                    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                  AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
-                  RQfkAhsDDAgc8QmtAAAA/0lEQVQ4y9XSPS+DURjG8V8RsdjEKgY+hNAIc+0GaQxiFokaO3fwYbpj
-                  IBKbGPgEXpuwdKF9ntvQetqS9ukm7jOc5Jzrf51zv/Bvogqabu2OJw8QQmgo5ss7wJ5LiZCOeqfa
-                  9f2OJY9CanW4vJ0BdZuY9iC8D5fXMiCkKliQCAc9YWSrraaUARWfQhFnwv1voCMv9eVwKJxiW/iA
-                  Qhdgq+9r9exmTkPTrHkvnbOJnI4Uuvtk19bUgGvixMUAUMY11tHKT/pYS2oN58LdeGU9wuLPsg5v
-                  3AZmPAlv447GsmchtTK8Mr3h23clFRLl0cUcHO/XUe49BJpu7OSL/zi+ADnohNFdfvAXAAAAJXRF
-                  WHRkYXRlOmNyZWF0ZQAyMDIwLTAyLTI3VDEwOjEyOjA4LTA3OjAwcfhz+QAAACV0RVh0ZGF0ZTpt
-                  b2RpZnkAMjAyMC0wMi0yN1QxMDoxMjowOC0wNzowMACly0UAAAAASUVORK5CYII=" />
-                  </svg>
-                </div>
-                <div class="p-2 align-self-center" style="flex: 0.25!important">
-                  <div class="progress" id="volume">
-                    <div class="progress-bar custom-progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="container">
-          <ul class="nav nav-tabs" id="queues" role="tablist">
-            <li class="nav-item">
-              <a class="nav-link active" id="home-tab" data-toggle="tab" href="#currentqueue" role="tab" aria-controls="currentqueue" aria-selected="true">Current Queue</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="profile-tab" data-toggle="tab" href="#historyqueue" role="tab" aria-controls="historyqueue" aria-selected="false">History Queue</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="contact-tab" data-toggle="tab" href="#backupqueue" role="tab" aria-controls="backupqueue" aria-selected="false">Backup Queue</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="contact-tab" data-toggle="tab" href="#likedqueue" role="tab" aria-controls="likedqueue" aria-selected="false">Liked Songs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="contact-tab" data-toggle="tab" href="#bannedqueue" role="tab" aria-controls="bannedqueue" aria-selected="false">Banned Songs</a>
-            </li>
-          </ul>
-          <div class="tab-content" id="queuesContent">
-            <div class="tab-pane fade show active" id="currentqueue" role="tabpanel" aria-labelledby="currentqueue-tab">
-              <table class="table table-striped table-borderless">
-                <tbody id="currentqueuebody">
-                  <tr>
-                    <td>
-                      <div class="d-flex justify-content-between">
-                        <div class="p-2 align-self-center">
-                          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="28px" viewBox="0 0 48 28" enable-background="new 0 0 48 28" xml:space="preserve">  <image id="image0" width="48" height="28" x="0" y="0"
-                            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAcAgMAAABaAtRZAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                            AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAADFBMVEX///8AAABUbnr///9N
-                            redqAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJ
-                            TUUH5AIbBR8yv5/tPwAAAB5JREFUGNNjYCAHcK2CggXEc1hDoSCAeM5gtod0AADW6V+h4CpCKgAA
-                            ACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMjozMTo1MC0wNzowMNnwhHMAAAAldEVYdGRh
-                            dGU6bW9kaWZ5ADIwMjAtMDItMjdUMTI6MzE6NTAtMDc6MDCorTzPAAAAAElFTkSuQmCC" />
-                          </svg>
-                        </div>
-                        <div class="p-2 align-self-center">
-                          <div class="d-flex flex-column">
-                            <div class="p-2">
-                              <span><a>Video Title</a> Duration 1:32</span>
-                            </div>
-                            <div class="p-2">
-                              <span>-Requested By TroyDota</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="ml-auto p-2 align-self-center">
-                          <div class="dropdown dropleft">
-                            <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
-                              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">  <image id="image0" width="40" height="40" x="0" y="0"
-                                href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                            AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAV1BMVEUAAAAAAAAtDwwrDgsu
-                            DwzAPzGVMSctDgssDwyOLyXDQTMuEAsAAADCQDOOLyUsDguNLyWUMSYuDguPMCUoDgyOLyWQMCWP
-                            LyUAAADCQTMuEAznTDz///8dVoCNAAAAG3RSTlMAA65wrPnrcWnq+7IE++tv6etw623p6+oC+7Ho
-                            kTMcAAAAAWJLR0QcnARBBwAAAAd0SU1FB+QCGwUtHmA31a0AAADWSURBVDjLxdTdFoIgDADgiWVa
-                            KZL2y/u/ZwZBDLbVVe7KA587nrkNYO2oVE1f1KpCbrNtdpRru/3hiJy1lGw7axPpHCVfLpWqty6G
-                            7Dv14M97FV4c/UGW0+dbwpxAkoQjJekIybhCsi6T0TWFQ1J0S9mm9/UQHiZNN0DMKeYrJe+wlBzA
-                            fA7uIjqYr7/BWBdL9yflJIkdL2PBJ7ngyX9jOrlwbM8XTpBFv3ybo+a/c/RZAFnZQmHjArj5lcLN
-                            0f0Rl4+ThpmjxDlpyLZqR+SERarxIl0lnra6MGBtol6jAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIw
-                            LTAyLTI3VDEyOjQ1OjMwLTA3OjAwP084DQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMi0yN1Qx
-                            Mjo0NTozMC0wNzowME4SgLEAAAAASUVORK5CYII=" />
-                            </svg>
-                            </a>
-                          
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                              <a class="dropdown-item" href="#">Ban</a>
-                              <a class="dropdown-item" href="#">Delete</a>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="p-2 align-self-center">
-                          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
-                            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                        AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
-                        RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
-                        FBzaguAgIoYGoaVUInYRukjioA6iDbEUdXCq0hBpJW0URL2nTUvvva9DrW3T/Nwk95lfnvNyz3fO
-                        PSH2EuUqPXTQQZhf5PlEkln200s/pzjKIVyKFJljivdUoYs0TlxZ5WRU0rKyGhMOL+guW/wlzriy
-                        WlFJRjllFRcOac5U0g5iJuSoHEeTwmbof24E86hiblzYxMq1Cdy8qlEQHgkAHuKtVM0tCJfRvW1d
-                        R7VwhMcQw3hezdymcHdad2HyqkdB2NjLdXMLwub0lvj5RN24JNmyfeXGRApCRHnnhMMEh0ubS49F
-                        32igWgjzIEyfRXd3664yohC1iEQCF0cgEsKY9vaAxascXLXwvMAbu+BaFIuBi4tQtFhcDFy8BEsW
-                        mUzg4gxkQnQyH+z2rdG+xgmLb6QmA+2bhBRfAY5h+7sF/GCE4eT2IvevBya+IeI77S3mEoFoJ8VH
-                        2nZ/mOMU3rSsnRXf2Xf1XKa00JJ2WWzQX2k7Y2z+aFprhMtwtUm5XeuXWos/wuNerSEcpPShYe1n
-                        4XC33nxf43eqIW1WGG76OToXKDz2rX0qftLn91SeZf6WL+0dkeN8Iwf+MNMDqj0j6xoQr+lsRLs9
-                        IyZdVftKrP97djXBRb7EKjwAPY2IHJea1QIcIIkzs0c7KzyecaQV7RZXyMVkJEkbGhH5yge3ud4J
-                        zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
-                        MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
-                        LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
-                        </svg>
-                        
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="tab-pane fade" id="historyqueue" role="tabpanel" aria-labelledby="historyqueue-tab"><table class="table table-striped table-borderless">
-              <tbody id="historybody">
-                <tr>
-                  <td>
-                    <div class="d-flex justify-content-between">
-                      <div class="p-2 align-self-center">
-                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="28px" viewBox="0 0 48 28" enable-background="new 0 0 48 28" xml:space="preserve">  <image id="image0" width="48" height="28" x="0" y="0"
-                          href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAcAgMAAABaAtRZAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                          AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAADFBMVEX///8AAABUbnr///9N
-                          redqAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJ
-                          TUUH5AIbBR8yv5/tPwAAAB5JREFUGNNjYCAHcK2CggXEc1hDoSCAeM5gtod0AADW6V+h4CpCKgAA
-                          ACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMjozMTo1MC0wNzowMNnwhHMAAAAldEVYdGRh
-                          dGU6bW9kaWZ5ADIwMjAtMDItMjdUMTI6MzE6NTAtMDc6MDCorTzPAAAAAElFTkSuQmCC" />
-                        </svg>
-                      </div>
-                      <div class="p-2 align-self-center">
-                        <div class="d-flex flex-column">
-                          <div class="p-2">
-                            <span><a>Video Title</a> Duration 1:32</span>
-                          </div>
-                          <div class="p-2">
-                            <span>-Requested By TroyDota</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="ml-auto p-2 align-self-center">
-                        <div class="dropdown dropleft">
-                          <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
-                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">  <image id="image0" width="40" height="40" x="0" y="0"
-                              href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                          AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAV1BMVEUAAAAAAAAtDwwrDgsu
-                          DwzAPzGVMSctDgssDwyOLyXDQTMuEAsAAADCQDOOLyUsDguNLyWUMSYuDguPMCUoDgyOLyWQMCWP
-                          LyUAAADCQTMuEAznTDz///8dVoCNAAAAG3RSTlMAA65wrPnrcWnq+7IE++tv6etw623p6+oC+7Ho
-                          kTMcAAAAAWJLR0QcnARBBwAAAAd0SU1FB+QCGwUtHmA31a0AAADWSURBVDjLxdTdFoIgDADgiWVa
-                          KZL2y/u/ZwZBDLbVVe7KA587nrkNYO2oVE1f1KpCbrNtdpRru/3hiJy1lGw7axPpHCVfLpWqty6G
-                          7Dv14M97FV4c/UGW0+dbwpxAkoQjJekIybhCsi6T0TWFQ1J0S9mm9/UQHiZNN0DMKeYrJe+wlBzA
-                          fA7uIjqYr7/BWBdL9yflJIkdL2PBJ7ngyX9jOrlwbM8XTpBFv3ybo+a/c/RZAFnZQmHjArj5lcLN
-                          0f0Rl4+ThpmjxDlpyLZqR+SERarxIl0lnra6MGBtol6jAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIw
-                          LTAyLTI3VDEyOjQ1OjMwLTA3OjAwP084DQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMi0yN1Qx
-                          Mjo0NTozMC0wNzowME4SgLEAAAAASUVORK5CYII=" />
-                          </svg>
-                          </a>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <a class="dropdown-item" href="#">Ban</a>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="p-2 align-self-center">
-                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
-                          href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                      AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
-                      RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
-                      FBzaguAgIoYGoaVUInYRukjioA6iDbEUdXCq0hBpJW0URL2nTUvvva9DrW3T/Nwk95lfnvNyz3fO
-                      PSH2EuUqPXTQQZhf5PlEkln200s/pzjKIVyKFJljivdUoYs0TlxZ5WRU0rKyGhMOL+guW/wlzriy
-                      WlFJRjllFRcOac5U0g5iJuSoHEeTwmbof24E86hiblzYxMq1Cdy8qlEQHgkAHuKtVM0tCJfRvW1d
-                      R7VwhMcQw3hezdymcHdad2HyqkdB2NjLdXMLwub0lvj5RN24JNmyfeXGRApCRHnnhMMEh0ubS49F
-                      32igWgjzIEyfRXd3664yohC1iEQCF0cgEsKY9vaAxascXLXwvMAbu+BaFIuBi4tQtFhcDFy8BEsW
-                      mUzg4gxkQnQyH+z2rdG+xgmLb6QmA+2bhBRfAY5h+7sF/GCE4eT2IvevBya+IeI77S3mEoFoJ8VH
-                      2nZ/mOMU3rSsnRXf2Xf1XKa00JJ2WWzQX2k7Y2z+aFprhMtwtUm5XeuXWos/wuNerSEcpPShYe1n
-                      4XC33nxf43eqIW1WGG76OToXKDz2rX0qftLn91SeZf6WL+0dkeN8Iwf+MNMDqj0j6xoQr+lsRLs9
-                      IyZdVftKrP97djXBRb7EKjwAPY2IHJea1QIcIIkzs0c7KzyecaQV7RZXyMVkJEkbGhH5yge3ud4J
-                      zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
-                      MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
-                      LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
-                      </svg>
-                      
-                      </div>
-                      <div class="p-2 align-self-center">
-                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="48px" viewBox="0 0 48 48" enable-background="new 0 0 48 48" xml:space="preserve">  <image id="image0" width="48" height="48" x="0" y="0"
-                          href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                      AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAJcEhZ
-                      cwAACxMAAAsTAQCanBgAAAAHdElNRQfkAhsGLTHJoFatAAADp0lEQVRYw+2YX2iVdRjHP+9ZZ1v0
-                      b1u21FSWGtRiWhFUGMWYg+oqL6wIuugqgigi0psIRCkiA/vjRUFGCBFeVIu6qYsuJFmFpktBTZ1M
-                      hcVqqXNpnT+fLvbr7D3b+77nnNXuen5X7/M83+f7PL/f8/tzTiTzK7l5js9l/wod0cGTFNmW4ePc
-                      x3Kfc1jdneU1t9BNrnOnRf+Rx9N9G5+iRbzIg9wc05zg1H83RU/H8tazvmZXNqJWF3XzFlvJV76P
-                      EMWsZznBZI0IGeztbvW8OuENFV3eQavlF9+M2RtY5C6/rgR5KaZ/NOiGPVexH3B1owS9jgbwJbe5
-                      ImZZ4biqL3i9H1kIXmM+0QjBGv8IwB+9d5b1DVW/s0Xs9ZvgOe4D9RIsdjiA3vXqBHu/ZVX7RIzc
-                      Ebwv2l0fwUAAbEpdn92qDlS+NwXEV3bWJng+OG/P6K9nVD3vdRXN9oB6uxZBh8dUHTSf2cC/etwt
-                      NsU0e8LWuy2b4OWQyf2Z+7PVu71iVt9NqPpKFkGHQ6q+lxk+bbyu6kj1tqs+KlbRA8AXc7odPuEi
-                      sJS70o+KjaruNUrJMTIyMpdaw9Te32VrcgWdPAzAIZIu6giIwshVHXnTMgRAD8umVfH74HIWArA/
-                      ZQoimpBiIEpK4iQAV8VO36oKltAOyKHE4BIBZaKQfVINhykD7bQlE5TIASUuJRLkyANlIJc6RT9z
-                      AcizNJmgnRxQ5PcEqEiBAhFSQpIfPG00A6V4hLjbCH8BrdyaQjDVElP55xLXoCXMQSGZoMBvAKxM
-                      LD9HRBnJESFFygk+q2gGLnB6WhXvooucBaCLZJnqnfLUCZAodwAwFl/FeAWn2ANAdyK4HDqoTPpz
-                      9nYAPmdk1uSG0ReOunVzOovWWlKtvtmqe2GQ7wF4iLnIenLAUfZVaWdksTHU8EjD+a8JyM3Z98ES
-                      T6l62OUNhc/7rarHXZBNgJtDJrsaIngnoDbMtMx2bfaD4Px+7ErMHq8GxMBsW5L7Ms8EwKc21wy+
-                      wA8rb73F9RFgT+Vdd8D1meF7/Sl4TnhPkkcasN+DlZfnZz7mtYnBd1Qe86e9LzlSlLotF7GTvsrX
-                      EX7gGEMUGOcmbmQhq7mzctB8yVOcSYmTUX67z3q06qlesuifM57vY26xLT1KrSW8xo0zSOJy0A21
-                      9ktUxw/xTlbSz1o66aCFiBKjXGAvH7OPc7XA9RAA5LmSFm6hQCcnmWSSUYr1AOslmLPM+18J/xPU
-                      lL8BgbzexxqOXSQAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdUMTM6NDU6NDktMDc6MDB9
-                      hK1CAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEzOjQ1OjQ5LTA3OjAwDNkV/gAAAABJ
-                      RU5ErkJggg==" />
-                      </svg>                                      
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table></div>
-            <div class="tab-pane fade" id="backupqueue" role="tabpanel" aria-labelledby="backupqueue-tab">backupqueue</div>
-            <div class="tab-pane fade" id="likedqueue" role="tabpanel" aria-labelledby="likedqueue-tab">likedqueue</div>
-            <div class="tab-pane fade" id="bannedqueue" role="tabpanel" aria-labelledby="bannedqueue-tab">bannedqueue</div>
-          </div>
-        </div>
-        <script type="text/javascript">
-            var ws_host = '{{ site.songrequestWS.host }}';
-            var auth = '{{ token_access }}';
-        </script>
-          <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-          <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-          <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-          <script type="text/javascript" src="/static/scripts/songrequest-websocket.js"></script>
-    </body>
+{% extends "admin/layout.html" %}
+{% set active_page = 'admin_songrequest' %}
+{% block title %}Song Request{% endblock %}
 
-</html>
-<html>
+<div class="main-container container">
+<div class="d-flex flex-column">
+<div class="p-2">
+<div class="d-flex justify-content-between">
+<div class="p-2">
+    <div id="player"></div>
+</div>
+<div class="p-2">
+    <div class="info">
+    <p class="status font-weight-bold" >Now Playing - Requested by TroyDota</p>
+    <p class="songname font-weight-bold"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 30 30" enable-background="new 0 0 30 30" xml:space="preserve">  <image id="image0" width="30" height="30" x="0" y="0"
+        href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAMAAAAM7l6QAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+    AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABs1BMVEUAAAC/QEDGQkLGRETH
+    QkLHQkLKRkbKR0fJRkbJRkbJRkbJRUXIRETIRUXKR0fJRkbJRUXHRETIRETMMzPIRETOTU3VWlrb
+    ZWXjb2/jbm7cZGTVWVnMTEzHQ0PJQ0PEOzvIREToeXnpeHjHRETDPDzHQ0PTV1fSVFTHQ0PJRUXd
+    Z2fHRETMSkrodnbIRETLS0vIRkbMSkrJRkbKSUnJRUXLSEjIRETIRUXKSEjIRkbLSUnKRkbLSkrK
+    RkbKSUnJRUXHQkLdZ2fgaWnHQ0PHRETSVVXUVlbIQkLpeXnpeXm/QEDIRETIRUXNTU3WW1vdZmbd
+    Z2fYXFzOTU3HRUXHQUGqVVXFQ0PHQ0PIRkbLSEjJR0fKSUnIR0fJRkbJRkbIRUXKRkbJR0fLSEjK
+    SEjLSEjIRkbpeXntf3/vg4PziYn0iYn1jIz3j4/2jo7ziIjxhYXugYHoeHjeaGjlc3Pqe3v94eH4
+    o6PugIDtfn7//////f380tL4mJjwhITvgoL++Pj7w8P3kpLxhob+7u76tLT1jY35sLDyh4f939/4
+    oaHsfX3ndXXib2/uf3/vhITsfn7jcHD+KXeUAAAAZnRSTlMABDpee5a609rm7fT97tnTuHw8BeTm
+    5u369+rj4uQ9Dev35ekRV+7YX4XpiLP8sNLW3eTn8O77+ebu3OHP0q6ugPr2hVbq5V359xA45Ovw
+    +fnv6uU7Azl6mr/W3env9fbv6d7XwJ118AejAAAAAWJLR0R5odzU0AAAAAd0SU1FB+QCGwQXNnHp
+    yRkAAAEWSURBVCjPY2AY1ICRiZmFlY2dg5OLm4eHm5eTj1+AVZBZSBgiyyQiKiYukZaekZmVnZOb
+    lZdfkF4oKSUtIysHkpVXUMzBCpSUVYDSqmo5OIC6BlBaswiXtJY2UFqnGJe0rh5QWr8EIVBahixd
+    bgCUNqxACFRWVdcgeLVGQGnjOiTpysr6hkYYL9MEKG3ahCJdWdncAuW1mmGVboPyss2B0hY4DW+3
+    BEpb4XRanTVQ2gbJYx2dyB7rsgVK2+EMlm57oLSDIy5pJ2egtIsrLmk3d3CEemCX9VTwAkW4t4+v
+    n39PYVdvbXtWbk52Vl5ff+GEgMCg4BBIcgkNcw+PiIyKjomN4+GJT0hMSk5JZWEOYRzoRI4fAADE
+    Ac9/AVHJMwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMToyMzo1NC0wNzowMFUOw1MA
+    AAAldEVYdGRhdGU6bW9kaWZ5ADIwMjAtMDItMjdUMTE6MjM6NTQtMDc6MDAkU3vvAAAAAElFTkSu
+    QmCC" />
+    </svg> xQc Stream Highlights #163</p>
+    <p class="url font-weight-bold">from url <a href="https://www.youtube.com/watch?v=vXyLj-63jR0">https://www.youtube.com/watch?v=vXyLj-63jR0</a></p>
+    </div>
+</div>
+<div class="p-2 ml-auto">
+    <button type="button" class="btn btn-link font-weight-bold show-video">Show Video</button>
+</div>
+<div class="p-2">
+    <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Settings
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="#">Disable Requests</a>
+        <a class="dropdown-item" href="#">Disable Backup Playlist</a>
+        <a class="dropdown-item" href="#">Go to Settings</a>
+    </div>
+    </div>              
+</div>
+</div>
+</div>
+<div class="p-2">
+<div class="d-flex justify-content-center">
+<div class="p-2">
+    <div class="controls-player">
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-secondary control" id="control_previous">Previous</button>
+        <button type="button" class="btn btn-secondary control" id="control_state">Pause</button>
+        <button type="button" class="btn btn-secondary control" id="control_next">Next</button>
+    </div>
+    </div>
+</div>
+<div class="p-2 align-self-center ml-auto" style="flex: 0.65!important">
+    <div class="progress" id="videotime">
+    <div class="progress-bar custom-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+</div>
+<div class="p-2 align-self-center">
+    <span id="videocurrenttime">0:00</span>
+</div>
+<div class="p-2 ml-auto align-self-center">
+    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">  <image id="image0" width="24" height="24" x="0" y="0"
+    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+    AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
+    RQfkAhsDDAgc8QmtAAAA/0lEQVQ4y9XSPS+DURjG8V8RsdjEKgY+hNAIc+0GaQxiFokaO3fwYbpj
+    IBKbGPgEXpuwdKF9ntvQetqS9ukm7jOc5Jzrf51zv/Bvogqabu2OJw8QQmgo5ss7wJ5LiZCOeqfa
+    9f2OJY9CanW4vJ0BdZuY9iC8D5fXMiCkKliQCAc9YWSrraaUARWfQhFnwv1voCMv9eVwKJxiW/iA
+    Qhdgq+9r9exmTkPTrHkvnbOJnI4Uuvtk19bUgGvixMUAUMY11tHKT/pYS2oN58LdeGU9wuLPsg5v
+    3AZmPAlv447GsmchtTK8Mr3h23clFRLl0cUcHO/XUe49BJpu7OSL/zi+ADnohNFdfvAXAAAAJXRF
+    WHRkYXRlOmNyZWF0ZQAyMDIwLTAyLTI3VDEwOjEyOjA4LTA3OjAwcfhz+QAAACV0RVh0ZGF0ZTpt
+    b2RpZnkAMjAyMC0wMi0yN1QxMDoxMjowOC0wNzowMACly0UAAAAASUVORK5CYII=" />
+    </svg>
+</div>
+<div class="p-2 align-self-center" style="flex: 0.25!important">
+    <div class="progress" id="volume">
+    <div class="progress-bar custom-progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container">
+<ul class="nav nav-tabs" id="queues" role="tablist">
+<li class="nav-item">
+<a class="nav-link active" id="home-tab" data-toggle="tab" href="#currentqueue" role="tab" aria-controls="currentqueue" aria-selected="true">Current Queue</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" id="profile-tab" data-toggle="tab" href="#historyqueue" role="tab" aria-controls="historyqueue" aria-selected="false">History Queue</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" id="contact-tab" data-toggle="tab" href="#backupqueue" role="tab" aria-controls="backupqueue" aria-selected="false">Backup Queue</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" id="contact-tab" data-toggle="tab" href="#likedqueue" role="tab" aria-controls="likedqueue" aria-selected="false">Liked Songs</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" id="contact-tab" data-toggle="tab" href="#bannedqueue" role="tab" aria-controls="bannedqueue" aria-selected="false">Banned Songs</a>
+</li>
+</ul>
+<div class="tab-content" id="queuesContent">
+<div class="tab-pane fade show active" id="currentqueue" role="tabpanel" aria-labelledby="currentqueue-tab">
+<table class="table table-striped table-borderless">
+<tbody id="currentqueuebody">
+    <tr>
+    <td>
+        <div class="d-flex justify-content-between">
+        <div class="p-2 align-self-center">
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="28px" viewBox="0 0 48 28" enable-background="new 0 0 48 28" xml:space="preserve">  <image id="image0" width="48" height="28" x="0" y="0"
+            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAcAgMAAABaAtRZAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+            AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAADFBMVEX///8AAABUbnr///9N
+            redqAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJ
+            TUUH5AIbBR8yv5/tPwAAAB5JREFUGNNjYCAHcK2CggXEc1hDoSCAeM5gtod0AADW6V+h4CpCKgAA
+            ACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMjozMTo1MC0wNzowMNnwhHMAAAAldEVYdGRh
+            dGU6bW9kaWZ5ADIwMjAtMDItMjdUMTI6MzE6NTAtMDc6MDCorTzPAAAAAElFTkSuQmCC" />
+            </svg>
+        </div>
+        <div class="p-2 align-self-center">
+            <div class="d-flex flex-column">
+            <div class="p-2">
+                <span><a>Video Title</a> Duration 1:32</span>
+            </div>
+            <div class="p-2">
+                <span>-Requested By TroyDota</span>
+            </div>
+            </div>
+        </div>
+        <div class="ml-auto p-2 align-self-center">
+            <div class="dropdown dropleft">
+            <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">  <image id="image0" width="40" height="40" x="0" y="0"
+                href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+            AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAV1BMVEUAAAAAAAAtDwwrDgsu
+            DwzAPzGVMSctDgssDwyOLyXDQTMuEAsAAADCQDOOLyUsDguNLyWUMSYuDguPMCUoDgyOLyWQMCWP
+            LyUAAADCQTMuEAznTDz///8dVoCNAAAAG3RSTlMAA65wrPnrcWnq+7IE++tv6etw623p6+oC+7Ho
+            kTMcAAAAAWJLR0QcnARBBwAAAAd0SU1FB+QCGwUtHmA31a0AAADWSURBVDjLxdTdFoIgDADgiWVa
+            KZL2y/u/ZwZBDLbVVe7KA587nrkNYO2oVE1f1KpCbrNtdpRru/3hiJy1lGw7axPpHCVfLpWqty6G
+            7Dv14M97FV4c/UGW0+dbwpxAkoQjJekIybhCsi6T0TWFQ1J0S9mm9/UQHiZNN0DMKeYrJe+wlBzA
+            fA7uIjqYr7/BWBdL9yflJIkdL2PBJ7ngyX9jOrlwbM8XTpBFv3ybo+a/c/RZAFnZQmHjArj5lcLN
+            0f0Rl4+ThpmjxDlpyLZqR+SERarxIl0lnra6MGBtol6jAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIw
+            LTAyLTI3VDEyOjQ1OjMwLTA3OjAwP084DQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMi0yN1Qx
+            Mjo0NTozMC0wNzowME4SgLEAAAAASUVORK5CYII=" />
+            </svg>
+            </a>
+            
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="#">Ban</a>
+                <a class="dropdown-item" href="#">Delete</a>
+            </div>
+            </div>
+        </div>
+        <div class="p-2 align-self-center">
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+        AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
+        RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
+        FBzaguAgIoYGoaVUInYRukjioA6iDbEUdXCq0hBpJW0URL2nTUvvva9DrW3T/Nwk95lfnvNyz3fO
+        PSH2EuUqPXTQQZhf5PlEkln200s/pzjKIVyKFJljivdUoYs0TlxZ5WRU0rKyGhMOL+guW/wlzriy
+        WlFJRjllFRcOac5U0g5iJuSoHEeTwmbof24E86hiblzYxMq1Cdy8qlEQHgkAHuKtVM0tCJfRvW1d
+        R7VwhMcQw3hezdymcHdad2HyqkdB2NjLdXMLwub0lvj5RN24JNmyfeXGRApCRHnnhMMEh0ubS49F
+        32igWgjzIEyfRXd3664yohC1iEQCF0cgEsKY9vaAxascXLXwvMAbu+BaFIuBi4tQtFhcDFy8BEsW
+        mUzg4gxkQnQyH+z2rdG+xgmLb6QmA+2bhBRfAY5h+7sF/GCE4eT2IvevBya+IeI77S3mEoFoJ8VH
+        2nZ/mOMU3rSsnRXf2Xf1XKa00JJ2WWzQX2k7Y2z+aFprhMtwtUm5XeuXWos/wuNerSEcpPShYe1n
+        4XC33nxf43eqIW1WGG76OToXKDz2rX0qftLn91SeZf6WL+0dkeN8Iwf+MNMDqj0j6xoQr+lsRLs9
+        IyZdVftKrP97djXBRb7EKjwAPY2IHJea1QIcIIkzs0c7KzyecaQV7RZXyMVkJEkbGhH5yge3ud4J
+        zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
+        MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
+        LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
+        </svg>
+        
+        </div>
+        </div>
+    </td>
+    </tr>
+</tbody>
+</table>
+</div>
+<div class="tab-pane fade" id="historyqueue" role="tabpanel" aria-labelledby="historyqueue-tab"><table class="table table-striped table-borderless">
+<tbody id="historybody">
+<tr>
+    <td>
+    <div class="d-flex justify-content-between">
+        <div class="p-2 align-self-center">
+        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="28px" viewBox="0 0 48 28" enable-background="new 0 0 48 28" xml:space="preserve">  <image id="image0" width="48" height="28" x="0" y="0"
+            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAcAgMAAABaAtRZAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+            AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAADFBMVEX///8AAABUbnr///9N
+            redqAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJ
+            TUUH5AIbBR8yv5/tPwAAAB5JREFUGNNjYCAHcK2CggXEc1hDoSCAeM5gtod0AADW6V+h4CpCKgAA
+            ACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMjozMTo1MC0wNzowMNnwhHMAAAAldEVYdGRh
+            dGU6bW9kaWZ5ADIwMjAtMDItMjdUMTI6MzE6NTAtMDc6MDCorTzPAAAAAElFTkSuQmCC" />
+        </svg>
+        </div>
+        <div class="p-2 align-self-center">
+        <div class="d-flex flex-column">
+            <div class="p-2">
+            <span><a>Video Title</a> Duration 1:32</span>
+            </div>
+            <div class="p-2">
+            <span>-Requested By TroyDota</span>
+            </div>
+        </div>
+        </div>
+        <div class="ml-auto p-2 align-self-center">
+        <div class="dropdown dropleft">
+            <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">  <image id="image0" width="40" height="40" x="0" y="0"
+                href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+            AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAV1BMVEUAAAAAAAAtDwwrDgsu
+            DwzAPzGVMSctDgssDwyOLyXDQTMuEAsAAADCQDOOLyUsDguNLyWUMSYuDguPMCUoDgyOLyWQMCWP
+            LyUAAADCQTMuEAznTDz///8dVoCNAAAAG3RSTlMAA65wrPnrcWnq+7IE++tv6etw623p6+oC+7Ho
+            kTMcAAAAAWJLR0QcnARBBwAAAAd0SU1FB+QCGwUtHmA31a0AAADWSURBVDjLxdTdFoIgDADgiWVa
+            KZL2y/u/ZwZBDLbVVe7KA587nrkNYO2oVE1f1KpCbrNtdpRru/3hiJy1lGw7axPpHCVfLpWqty6G
+            7Dv14M97FV4c/UGW0+dbwpxAkoQjJekIybhCsi6T0TWFQ1J0S9mm9/UQHiZNN0DMKeYrJe+wlBzA
+            fA7uIjqYr7/BWBdL9yflJIkdL2PBJ7ngyX9jOrlwbM8XTpBFv3ybo+a/c/RZAFnZQmHjArj5lcLN
+            0f0Rl4+ThpmjxDlpyLZqR+SERarxIl0lnra6MGBtol6jAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIw
+            LTAyLTI3VDEyOjQ1OjMwLTA3OjAwP084DQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMi0yN1Qx
+            Mjo0NTozMC0wNzowME4SgLEAAAAASUVORK5CYII=" />
+            </svg>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="#">Ban</a>
+            </div>
+        </div>
+        </div>
+        <div class="p-2 align-self-center">
+        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+        AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
+        RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
+        FBzaguAgIoYGoaVUInYRukjioA6iDbEUdXCq0hBpJW0URL2nTUvvva9DrW3T/Nwk95lfnvNyz3fO
+        PSH2EuUqPXTQQZhf5PlEkln200s/pzjKIVyKFJljivdUoYs0TlxZ5WRU0rKyGhMOL+guW/wlzriy
+        WlFJRjllFRcOac5U0g5iJuSoHEeTwmbof24E86hiblzYxMq1Cdy8qlEQHgkAHuKtVM0tCJfRvW1d
+        R7VwhMcQw3hezdymcHdad2HyqkdB2NjLdXMLwub0lvj5RN24JNmyfeXGRApCRHnnhMMEh0ubS49F
+        32igWgjzIEyfRXd3664yohC1iEQCF0cgEsKY9vaAxascXLXwvMAbu+BaFIuBi4tQtFhcDFy8BEsW
+        mUzg4gxkQnQyH+z2rdG+xgmLb6QmA+2bhBRfAY5h+7sF/GCE4eT2IvevBya+IeI77S3mEoFoJ8VH
+        2nZ/mOMU3rSsnRXf2Xf1XKa00JJ2WWzQX2k7Y2z+aFprhMtwtUm5XeuXWos/wuNerSEcpPShYe1n
+        4XC33nxf43eqIW1WGG76OToXKDz2rX0qftLn91SeZf6WL+0dkeN8Iwf+MNMDqj0j6xoQr+lsRLs9
+        IyZdVftKrP97djXBRb7EKjwAPY2IHJea1QIcIIkzs0c7KzyecaQV7RZXyMVkJEkbGhH5yge3ud4J
+        zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
+        MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
+        LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
+        </svg>
+        
+        </div>
+        <div class="p-2 align-self-center">
+        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="48px" viewBox="0 0 48 48" enable-background="new 0 0 48 48" xml:space="preserve">  <image id="image0" width="48" height="48" x="0" y="0"
+            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+        AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAJcEhZ
+        cwAACxMAAAsTAQCanBgAAAAHdElNRQfkAhsGLTHJoFatAAADp0lEQVRYw+2YX2iVdRjHP+9ZZ1v0
+        b1u21FSWGtRiWhFUGMWYg+oqL6wIuugqgigi0psIRCkiA/vjRUFGCBFeVIu6qYsuJFmFpktBTZ1M
+        hcVqqXNpnT+fLvbr7D3b+77nnNXuen5X7/M83+f7PL/f8/tzTiTzK7l5js9l/wod0cGTFNmW4ePc
+        x3Kfc1jdneU1t9BNrnOnRf+Rx9N9G5+iRbzIg9wc05zg1H83RU/H8tazvmZXNqJWF3XzFlvJV76P
+        EMWsZznBZI0IGeztbvW8OuENFV3eQavlF9+M2RtY5C6/rgR5KaZ/NOiGPVexH3B1owS9jgbwJbe5
+        ImZZ4biqL3i9H1kIXmM+0QjBGv8IwB+9d5b1DVW/s0Xs9ZvgOe4D9RIsdjiA3vXqBHu/ZVX7RIzc
+        Ebwv2l0fwUAAbEpdn92qDlS+NwXEV3bWJng+OG/P6K9nVD3vdRXN9oB6uxZBh8dUHTSf2cC/etwt
+        NsU0e8LWuy2b4OWQyf2Z+7PVu71iVt9NqPpKFkGHQ6q+lxk+bbyu6kj1tqs+KlbRA8AXc7odPuEi
+        sJS70o+KjaruNUrJMTIyMpdaw9Te32VrcgWdPAzAIZIu6giIwshVHXnTMgRAD8umVfH74HIWArA/
+        ZQoimpBiIEpK4iQAV8VO36oKltAOyKHE4BIBZaKQfVINhykD7bQlE5TIASUuJRLkyANlIJc6RT9z
+        AcizNJmgnRxQ5PcEqEiBAhFSQpIfPG00A6V4hLjbCH8BrdyaQjDVElP55xLXoCXMQSGZoMBvAKxM
+        LD9HRBnJESFFygk+q2gGLnB6WhXvooucBaCLZJnqnfLUCZAodwAwFl/FeAWn2ANAdyK4HDqoTPpz
+        9nYAPmdk1uSG0ReOunVzOovWWlKtvtmqe2GQ7wF4iLnIenLAUfZVaWdksTHU8EjD+a8JyM3Z98ES
+        T6l62OUNhc/7rarHXZBNgJtDJrsaIngnoDbMtMx2bfaD4Px+7ErMHq8GxMBsW5L7Ms8EwKc21wy+
+        wA8rb73F9RFgT+Vdd8D1meF7/Sl4TnhPkkcasN+DlZfnZz7mtYnBd1Qe86e9LzlSlLotF7GTvsrX
+        EX7gGEMUGOcmbmQhq7mzctB8yVOcSYmTUX67z3q06qlesuifM57vY26xLT1KrSW8xo0zSOJy0A21
+        9ktUxw/xTlbSz1o66aCFiBKjXGAvH7OPc7XA9RAA5LmSFm6hQCcnmWSSUYr1AOslmLPM+18J/xPU
+        lL8BgbzexxqOXSQAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdUMTM6NDU6NDktMDc6MDB9
+        hK1CAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEzOjQ1OjQ5LTA3OjAwDNkV/gAAAABJ
+        RU5ErkJggg==" />
+        </svg>                                      
+        </div>
+    </div>
+    </td>
+</tr>
+</tbody>
+</table></div>
+<div class="tab-pane fade" id="backupqueue" role="tabpanel" aria-labelledby="backupqueue-tab">backupqueue</div>
+<div class="tab-pane fade" id="likedqueue" role="tabpanel" aria-labelledby="likedqueue-tab">likedqueue</div>
+<div class="tab-pane fade" id="bannedqueue" role="tabpanel" aria-labelledby="bannedqueue-tab">bannedqueue</div>
+</div>
+</div>
+<script type="text/javascript">
+var ws_host = '{{ site.songrequestWS.host }}';
+var auth = '{{ token_access }}';
+</script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/static/scripts/songrequest-websocket.js"></script>

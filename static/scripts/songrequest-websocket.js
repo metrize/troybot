@@ -272,7 +272,7 @@ function initialize_player(data) {
     });
     // history_list
     data["history_list"].forEach(function(song) {
-        $('#backupqueuebody').append(`<tr>
+        $('#historybody').append(`<tr>
         <td>
           <div class="d-flex justify-content-between">
             <div class="p-2 align-self-center">

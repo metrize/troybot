@@ -24,6 +24,7 @@ class SongrequestManager:
         self.settings = None
 
         self.previously_playing_spotify = False
+        self.is_video_showing = False
         self.previous_queue = 0
 
         self.current_song_schedule = None
@@ -44,6 +45,7 @@ class SongrequestManager:
         self.settings = settings
 
         self.previously_playing_spotify = False
+        self.is_video_showing = False
         self.previous_queue = 0
 
         self.current_song_schedule = None
@@ -64,6 +66,8 @@ class SongrequestManager:
         self.module_state["paused"] = False
         self.module_state["requests_open"] = False
         self.module_state["video_showing"] = False
+        self.previously_playing_spotify = False
+        self.is_video_showing = False
         self.settings = None
         self.youtube = None
         self.current_song_id = None
@@ -338,7 +342,7 @@ class SongrequestManager:
                 if self.previously_playing_spotify:
                     self.bot.spotify_api.play(self.bot.spotify_token_manager)
                     self.previously_playing_spotify = False
-            if self.isVideoShowing:
+            if self.is_video_showing:
                 self._hide()
         return False
 
@@ -348,7 +352,7 @@ class SongrequestManager:
         )
         self.bot.websocket_manager.emit("songrequest_play", WIDGET_ID, {"video_id": video_id})
         self.paused = True
-        if self.showVideo:
+        if self.module_state["video_showing"]:
             self._show()
         self._playlist()
 
@@ -365,7 +369,7 @@ class SongrequestManager:
         self.bot.songrequest_websocket_manager.emit("resume", {})
         self.bot.websocket_manager.emit("songrequest_resume", WIDGET_ID, {"volume": self.volume})
         self.paused = False
-        if self.showVideo:
+        if self.module_state["video_showing"]:
             self._show()
 
     def _volume(self):
@@ -379,11 +383,11 @@ class SongrequestManager:
 
     def _show(self):
         self.bot.websocket_manager.emit("songrequest_show", WIDGET_ID, {})
-        self.isVideoShowing = True
+        self.is_video_showing = True
 
     def _hide(self):
         self.bot.websocket_manager.emit("songrequest_hide", WIDGET_ID, {})
-        self.isVideoShowing = False
+        self.is_video_showing = False
 
     def _playlist(self):
         with DBManager.create_session_scope() as db_session:

@@ -435,7 +435,7 @@ jQuery(function($) {
         player.on('ready', event => {
             player.play();
             player.pause();
-            player.embed.a.closest('div').style.cssText = '';
+            // player.embed.a.closest('div').style.cssText = '';
             hide();
             socket.send(
                 JSON.stringify({ event: 'ready', data: { salt: salt_value } })

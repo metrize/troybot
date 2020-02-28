@@ -226,14 +226,13 @@ class SongrequestHistory(Base):
 
     def webjsonify(self):
         return {
-            "video_id": self.video_id,
-            "stream_id": self.stream_id,
-            "video_title": self.song_info.title,
-            "video_length": self.duration,
+            "song_info": self.song_info.jsonify(),
             "requested_by": self.requested_by.username_raw if self.requested_by_id else "Backup Playlist",
-            "date_finished": self.date_finished,
+            "skipped_by": self.skipped_by.username_raw if self.skipped_by_id else None,
+            "current_song_time": self.current_song_time,
             "database_id": self.id,
-            "link": f"http://www.youtube.com/watch?v={self.video_id}",
+            "date_finished": self.date_finished,
+            "skip_after": self.skip_after
         }
 
     @hybrid_property

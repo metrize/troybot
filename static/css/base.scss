@@ -401,10 +401,11 @@ button.ui.button.streamelements {
 }
 
 @media (min-width: 1600px) {
-  .container, .container-lg, .container-md, .container-sm, .container-xl {
+  .container {
       max-width: 1800px;
   }
 }
+
 @media only screen and (min-width: 1600px) {
   .ui.container {
       width: 1800px;

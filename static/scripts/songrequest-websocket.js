@@ -65,8 +65,12 @@ function initialize_player(data) {
     // current_song
     if (Object.keys(data["current_song"]).length === 0) {
         $("#status").text("No songs currently playing!")
+        $("#songname").hide()
+        $("#url").hide()
     } else {
         $("#status").text("Now Playing - " + data["current_song"]["requested_by"])
+        $("#songname").show()
+        $("#url").show()
         $("#song_title").text(data["current_song"]["song_info"]["title"])
         $("#url a").text("https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"])
         $("#url a").attr("href", "https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"])

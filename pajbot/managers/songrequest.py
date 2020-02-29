@@ -505,13 +505,13 @@ class SongrequestManager:
 
     def _favourite_list(self):
         with DBManager.create_session_scope() as db_session:
-            playlist = SongRequestSongInfo._get_favourite(db_session)
-            self.bot.songrequest_websocket_manager.emit("playlist", {"playlist": playlist})
+            favourite_list = SongRequestSongInfo._get_favourite_list(db_session)
+            self.bot.songrequest_websocket_manager.emit("favourite_list", {"favourite_list": favourite_list})
 
     def _banned_list(self):
         with DBManager.create_session_scope() as db_session:
-            playlist = SongRequestSongInfo._get_banned(db_session)
-            self.bot.songrequest_websocket_manager.emit("playlist", {"playlist": playlist})
+            banned_list = SongRequestSongInfo._get_banned_list(db_session)
+            self.bot.songrequest_websocket_manager.emit("banned_list", {"banned_list": banned_list})
 
     def _module_state(self):
         self.bot.songrequest_websocket_manager.emit(

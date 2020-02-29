@@ -248,8 +248,8 @@ class SongRequestWebSocketServer:
                     "playlist": SongrequestQueue._get_playlist(db_session, limit=30),
                     "backup_playlist": SongrequestQueue._get_backup_playlist(db_session, limit=30),
                     "history_list": SongrequestHistory._get_history(db_session, limit=30),
-                    "banned_list": [x.jsonify() for x in SongRequestSongInfo._get_banned(db_session)],
-                    "favourite_list": [x.jsonify() for x in SongRequestSongInfo._get_favourite(db_session)],
+                    "banned_list": SongRequestSongInfo._get_banned_list(db_session),
+                    "favourite_list": SongRequestSongInfo._get_favourite_list(db_session),
                     "current_timestamp": str(utils.now().timestamp()),
                 }
                 payload = {

@@ -384,7 +384,17 @@ class SongRequestSongInfo(Base):
     @staticmethod
     def _get_banned(db_session):
         return db_session.query(SongRequestSongInfo).filter_by(banned=True).all()
+        
+    @staticmethod
+    def _get_banned_list(db_session):
+        song_infos = SongRequestSongInfo._get_banned(db_session)
+        return [x.jsonify() for x in song_infos]
 
     @staticmethod
     def _get_favourite(db_session):
         return db_session.query(SongRequestSongInfo).filter_by(favourite=True).all()
+
+    @staticmethod
+    def _get_favourite_list(db_session):
+        song_infos = SongRequestSongInfo._get_favourite(db_session)
+        return [x.jsonify() for x in song_infos]

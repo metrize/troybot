@@ -58,11 +58,28 @@ function handleWebsocketData(json_data) {
     }
 }
 var paused = false;
+var video_showing = false;
+var enabled = false;
+var requests_open = false;
+var use_backup_playlist = false;
+
 function initialize_player(data) {
     // volume
     player.setVolume(data["volume"]);
     var offset = Math.floor((new Date()).getTime() / 1000) - parseFloat(data["current_timestamp"])
     $("#volume div").css("width", data["volume"]+"%");
+
+    // module_state
+    paused = data["module_state"]["paused"]
+    video_showing = data["module_state"]["video_showing"]
+    enabled = data["module_state"]["enabled"]
+    requests_open = data["module_state"]["requests_open"]
+    use_backup_playlist = data["module_state"]["use_backup_playlist"]
+
+    $("#video_showing_state").text(video_showing ? "Hide Video" : "Show Video" )
+    $("#requests_open_state").text(requests_open ? "Disable Requests" : "Enable Requests" )
+    $("#backup_playlist_usage_state").text(use_backup_playlist ? "Disable Backup Playlist" : "Enable Backup Playlist" )
+
     // current_song
     if (Object.keys(data["current_song"]).length === 0) {
         $("#status").text("No songs currently playing!")
@@ -76,7 +93,6 @@ function initialize_player(data) {
         $("#url a").text("https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"])
         $("#url a").attr("href", "https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"])
         player.loadVideoById(data["current_song"]["song_info"]["video_id"], data["current_song"]["current_song_time"] + offset + 1.5)
-        paused = data["current_song"]["module_state"]["paused"]
     }
     // playlist
     console.log(data["history_list"])

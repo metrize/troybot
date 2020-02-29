@@ -229,11 +229,11 @@ class SongrequestManager:
         self._banned_list()
         return True
 
-    def unfavourite_function(self, database_id=None, song_info_database_id=None):
+    def unfavourite_function(self, database_id=None, songinfo_database_id=None):
         if not self.module_state["enabled"]:
             return False
 
-        if not song_info_database_id and not database_id:
+        if not songinfo_database_id and not database_id:
             return False
 
         with DBManager.create_session_scope() as db_session:
@@ -241,7 +241,7 @@ class SongrequestManager:
                 song = SongrequestQueue._from_id(db_session, int(database_id))
                 song_info = song.song_info
             else:
-                song_info = SongRequestSongInfo._get(db_session, int(song_info_database_id))
+                song_info = SongRequestSongInfo._get(db_session, int(songinfo_database_id))
             if not song.song_info.favourite:
                 return False
 
@@ -273,11 +273,11 @@ class SongrequestManager:
         self._banned_list()
         return True
 
-    def unban_function(self, database_id=None, song_info_database_id=None):
+    def unban_function(self, database_id=None, songinfo_database_id=None):
         if not self.module_state["enabled"]:
             return False
 
-        if not song_info_database_id and not database_id:
+        if not songinfo_database_id and not database_id:
             return False
 
         with DBManager.create_session_scope() as db_session:
@@ -285,7 +285,7 @@ class SongrequestManager:
                 song = SongrequestQueue._from_id(db_session, int(database_id))
                 song_info = song.song_info
             else:
-                song_info = SongRequestSongInfo._get(db_session, int(song_info_database_id))
+                song_info = SongRequestSongInfo._get(db_session, int(songinfo_database_id))
             if not song.song_info.banned:
                 return False
 

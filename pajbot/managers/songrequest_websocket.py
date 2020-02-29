@@ -107,7 +107,7 @@ class SongRequestWebSocketServer:
                             "VOLUME": self._volume,
                         }
                         method = switcher.get(json_msg["event"], None)
-                        if not method or not method(db_session, json_msg["data"]):
+                        if not method or not method(db_session, json_msg.get("data", None)):
                             self._close_conn()
                             return
 

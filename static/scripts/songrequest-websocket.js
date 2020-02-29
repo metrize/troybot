@@ -740,6 +740,7 @@ $("#video_showing_state").on("click", function(e) {
 })
 
 function favourite_control(_this) {
+  console.log(_this);
   var tr = _this.closest("tr")
   socket.send(
     JSON.stringify({

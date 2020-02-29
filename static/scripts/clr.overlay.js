@@ -411,71 +411,38 @@ function handleWebsocketData(json_data) {
     }
 }
 
-function adblocker() {
-    try {
-        $(".video-ads").style.display = "none"
-    } catch {
-        setTimeout(adblocker(), 100)
-    }
-}
-
-// 2. This code loads the IFrame Player API code asynchronously.
-var tag = document.createElement('script');
-
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-var player;
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player('player', {
-    playerVars: { 'autoplay': 0, 'controls': 0},
-    videoId: '',
-    events: {
-      'onStateChange': onPlayerStateChange
-    }
-  });
-}
-
-function onPlayerStateChange(event) {
-    if (event.data == 0) {
-        hide()
-        socket.send(
-            JSON.stringify({
-                event: 'next_song',
-                data: { salt: salt_value },
-            })
-        );
-    }
-    if (event.data == 1) {
-        adblocker()
-    }
-}
-
 function play({ video_id }) {
-    player.loadVideoById(video_id);
-    player.pauseVideo();
+    player.source = {
+        type: 'video',
+        sources: [
+            {
+                src: video_id,
+                provider: 'youtube',
+            },
+        ],
+    };
+    pause()
     socket.send(
         JSON.stringify({ event: 'ready', data: { salt: salt_value } })
     );
 }
 
 function pause() {
-    player.pauseVideo();
+    player.pause();
 }
 
 function resume() {
-    player.playVideo();
+    player.play();
 }
 
 function seek({ seek_time }) {
-    player.seekTo(seek_time);
+    player.currentTime = seek_time
     pause();
     socket.send(JSON.stringify({ event: 'ready', data: { salt: salt_value } }));
 }
 
 function volume({ volume }) {
-    player.setVolume(volume);
+    player.volume = volume/100
 }
 
 function hide() {
@@ -487,9 +454,28 @@ function show() {
 }
 
 function stop() {
-    player.loadVideoById("");
-    player.stopVideo();
+    player.source = null
+    player.stop();
 }
+
+document.addEventListener('DOMContentLoaded', () => { 
+    // This is the bare minimum JavaScript. You can opt to pass no arguments to setup.
+    const player = new Plyr('#player',{controls:[]});
+    player.on('ready', event => {
+        player.play();
+    });
+    player.on('statechange', event => {
+        if (event.detail.code == 0) {
+            hide()
+            socket.send(
+                JSON.stringify({
+                    event: 'next_song',
+                    data: { salt: salt_value },
+                })
+            );
+        }
+    });
+});
 
 let socket = null;
 

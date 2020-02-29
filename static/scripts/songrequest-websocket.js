@@ -427,7 +427,7 @@ function set_module_state(data) {
       player.playVideo()
     }
   } else {
-    
+    player.stopVideo()
   }
 }
 

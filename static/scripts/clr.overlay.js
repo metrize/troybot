@@ -431,7 +431,7 @@ function onYouTubeIframeAPIReady() {
 
 function onPlayerStateChange(event) {
 
-    if (event.data == YT.PlayerState.ENDED) {
+    if (event.data == 0) {
         hide()
         socket.send(
             JSON.stringify({

@@ -441,9 +441,8 @@ function pause() {
 }
 
 function onPlayerStateChange(event) {
-  player.playVideo();
   if (paused) {
-    setTimeout(pause, 1500);
+    setTimeout(pause, 1000);
   }
   timer()
   if (event.data == YT.PlayerState.PLAYING) {

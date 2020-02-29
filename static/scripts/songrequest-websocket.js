@@ -396,7 +396,7 @@ function set_history_list(data) {
 function set_favourite_list(data) {
   $('#favouritelist').empty()
   data["favourite_list"].forEach(function(song_info) {
-    $('#favouritelist').append(`<tr data-id="`+song_info["database_id"]+`" data-favourite=`+song_info["favourite"]+` data-banned=`+song_info["banned"]+`>
+    $('#favouritelist').append(`<tr data-infoid="`+song_info["database_id"]+`" data-favourite=`+song_info["favourite"]+` data-banned=`+song_info["banned"]+`>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -475,7 +475,7 @@ function set_favourite_list(data) {
 function set_banned_list(data) {
   $('#bannedlist').empty()
   data["banned_list"].forEach(function(song_info) {
-    $('#bannedlist').append(`<tr data-id="`+song_info["database_id"]+`" data-favourite=`+song_info["favourite"]+` data-banned=`+song_info["banned"]+`>
+    $('#bannedlist').append(`<tr data-infoid="`+song_info["database_id"]+`" data-favourite=`+song_info["favourite"]+` data-banned=`+song_info["banned"]+`>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -745,7 +745,7 @@ function favourite_control(event) {
   socket.send(
     JSON.stringify({
         event: tr.data("favourite") ? "UNFAVOURITE" : "FAVOURITE",
-        data: {database_id: tr.data("id")}
+        data: tr.data("id") ? {database_id: tr.data("id")} : {songinfo_database_id: tr.data("infoid")},
     })
   );
 }
@@ -755,7 +755,7 @@ function ban_control(event) {
   socket.send(
     JSON.stringify({
         event: tr.data("banned") ? "UNBAN" : "BAN",
-        data: {database_id: tr.data("id")}
+        data: tr.data("id") ? {database_id: tr.data("id")} : {songinfo_database_id: tr.data("infoid")},
     })
   );
 }

@@ -25,7 +25,7 @@ class SongrequestQueue(Base):
     skip_after = Column(INT, nullable=True)  # skipped after
     requested_by_id = Column(INT, ForeignKey("user.id"), nullable=True)
     date_resumed = Column(UtcDateTime(), nullable=True)
-    played_for = Column(REAL, default=0, nullable=False)
+    played_for = Column(REAL, default=0, nullable=Fal_move_song)
     song_info = relationship("SongRequestSongInfo", foreign_keys=[video_id])
     requested_by = relationship("User", foreign_keys=[requested_by_id])
 
@@ -100,7 +100,6 @@ class SongrequestQueue(Base):
         db_session.delete(self)
 
     def _move_song(self, to_id):
-        to_id -= 1
         if not self.requested_by:
             return
 

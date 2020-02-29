@@ -417,6 +417,12 @@ function set_module_state(data) {
   $("#requests_open_state").text(requests_open ? "Disable Requests" : "Enable Requests" );
   $("#backup_playlist_usage_state").text(use_backup_playlist ? "Disable Backup Playlist" : "Enable Backup Playlist" );
   $("#control_state").text(paused ? "Resume" : "Pause");
+
+  if (paused) {
+    player.stopVideo()
+  } else {
+    player.playVideo()
+  }
 }
 
 function initialize_player(data) {

@@ -752,13 +752,12 @@ function favourite_control(event) {
 
 function ban_control(event) {
   var tr = $(this).closest("tr")
-  console.log(tr.data("banned"))
-  // socket.send(
-  //   JSON.stringify({
-  //       event: tr.data("banned") ? "UNBAN" : "BAN",
-  //       data: tr.data("id") ? {database_id: tr.data("id")} : {songinfo_database_id: tr.data("infoid")},
-  //   })
-  // );
+  socket.send(
+    JSON.stringify({
+        event: tr.data("banned") ? "UNBAN" : "BAN",
+        data: tr.data("id") ? {database_id: tr.data("id")} : {songinfo_database_id: tr.data("infoid")},
+    })
+  );
 }
 
 function delete_control(event) {

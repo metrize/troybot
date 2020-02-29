@@ -426,24 +426,24 @@ function onPlayerReady(event) {
 
 var done = false;
 
+function timer() {
+  var playerTotalTime = player.getDuration();
+  var playerCurrentTime = player.getCurrentTime();
+  var playerTimeDifference = (playerCurrentTime / playerTotalTime) * 100;
+  var minutes = Math.floor(playerCurrentTime / 60);
+  var seconds = Math.floor(playerCurrentTime - minutes * 60)
+  $("#videotime div").css("width", playerTimeDifference+"%");
+  $("#videocurrenttime").text(minutes+":"+('0'+seconds).slice(-2))
+}
+
 function onPlayerStateChange(event) {
   if (!paused) {
     event.target.playVideo();
   } else {
     player.pauseVideo();
   }
+  timer()
   if (event.data == YT.PlayerState.PLAYING) {
-    $("#volume div").css("width", player.getVolume()+"%");
-    var playerTotalTime = player.getDuration();
-    function timer() {
-      var playerCurrentTime = player.getCurrentTime();
-      var playerTimeDifference = (playerCurrentTime / playerTotalTime) * 100;
-      var minutes = Math.floor(playerCurrentTime / 60);
-      var seconds = Math.floor(playerCurrentTime - minutes * 60)
-      $("#videotime div").css("width", playerTimeDifference+"%");
-      $("#videocurrenttime").text(minutes+":"+('0'+seconds).slice(-2))
-    }
-    timer()
     mytimer = setInterval(timer, 1000);  
   } else {
     try{

@@ -549,11 +549,10 @@ $("#videotime").on("click", function(e){
 })
 
 $("#volume").on("click", function(e){
-  console.log(((e.pageX - $(this).offset().left) /  $("#volume").width())*100)
   socket.send(
     JSON.stringify({
         event: 'VOLUME',
-        data: { volume: ((e.pageX - $(this).offset().left) /  $("#volume").width())*100 },
+        data: { volume: Math.Round(((e.pageX - $(this).offset().left) /  $("#volume").width())*100) },
     })
   );
 })

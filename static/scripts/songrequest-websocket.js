@@ -417,11 +417,12 @@ function set_module_state(data) {
   $("#requests_open_state").text(requests_open ? "Disable Requests" : "Enable Requests" );
   $("#backup_playlist_usage_state").text(use_backup_playlist ? "Disable Backup Playlist" : "Enable Backup Playlist" );
   $("#control_state").text(paused ? "Resume" : "Pause");
-
-  if (paused) {
-    player.pauseVideo()
-  } else {
-    player.playVideo()
+  if (player.getDuration() > 0) {
+    if (paused) {
+      player.pauseVideo()
+    } else {
+      player.playVideo()
+    }
   }
 }
 

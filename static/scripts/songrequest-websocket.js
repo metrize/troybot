@@ -562,6 +562,22 @@ $("#volume").on("click", function(e){
   );
 })
 
+$("#requests_open_state").on("click", function(e) {
+  socket.send(
+    JSON.stringify({
+        event: requests_open ? "CLOSESR" : "OPENSR",
+    })
+  );
+})
+
+$("#video_showing_state").on("click", function(e) {
+  socket.send(
+    JSON.stringify({
+        event: video_showing ? "HIDEVIDEO" : "SHOWVIDEO",
+    })
+  );
+})
+
 var currentqueuebody = $('#currentqueuebody')
 currentqueuebody.sortable({
     placeholder: 'sortable-placeholder',

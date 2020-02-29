@@ -412,7 +412,7 @@ function handleWebsocketData(json_data) {
 }
 
 function adblocker() {
-    adblocker()
+    $(".video-ads").remove()
 }
 
 // 2. This code loads the IFrame Player API code asynchronously.
@@ -434,7 +434,7 @@ function onYouTubeIframeAPIReady() {
 }
 
 function onPlayerStateChange(event) {
-    adblocker();
+    adblocker()
     if (event.data == 0) {
         hide()
         socket.send(

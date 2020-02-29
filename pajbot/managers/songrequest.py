@@ -207,7 +207,7 @@ class SongrequestManager:
             return False
         with DBManager.create_session_scope() as db_session:
             song = SongrequestQueue._from_id(db_session, database_id)
-            song._move_song(db_session, to_id)
+            song._move_song(to_id)
             db_session.commit()
         self._playlist()
         return True

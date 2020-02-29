@@ -426,8 +426,6 @@ function set_module_state(data) {
     } else {
       player.playVideo()
     }
-  } else {
-    player.stopVideo()
   }
 }
 

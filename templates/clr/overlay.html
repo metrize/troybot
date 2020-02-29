@@ -17,8 +17,6 @@
         var ws_host = '{{ site.websocket.host }}';
         var salt_value = '{{ salt }}';
     </script>
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.5.6/plyr.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.5.6/plyr.min.js"></script>
     {% assets 'clr_overlay_js' %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
@@ -46,6 +44,6 @@
         </div>
     </div>
     <div class="notifications"></div>
-    <div id="songrequest"><audio id="player" preload controls></audio></div>
+    <div id="songrequest"><div id="player"></div></div>
 </body>
 </html>

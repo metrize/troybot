@@ -391,7 +391,7 @@ function handleWebsocketData(json_data) {
             pause();
             break;
         case 'songrequest_resume':
-            resume(data);
+            resume();
             break;
         case 'songrequest_volume':
             volume(data);
@@ -411,82 +411,72 @@ function handleWebsocketData(json_data) {
     }
 }
 
+// 2. This code loads the IFrame Player API code asynchronously.
+var tag = document.createElement('script');
+
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
 var player;
-var volume_ext;
-jQuery(function($) {
-    'use strict';
-    var supportsAudio = !!document.createElement('audio').canPlayType;
-    if (supportsAudio) {
-        // initialize plyr
-        player = new Plyr('#player', {
-            controls: [],
-            listeners: {
-                play: function(e) {
-                    player.volume = volume_ext * 0.01;
-                },
-                seek: function(e) {
-                    player.volume = volume_ext * 0.01;
-                },
-                restart: function(e) {
-                    player.volume = volume_ext * 0.01;
-                },
-            },
-        });
-        player.on('ready', event => {
-            player.play();
-            player.pause();
-            // player.embed.a.closest('div').style.cssText = '';
-            hide();
-            socket.send(
-                JSON.stringify({ event: 'ready', data: { salt: salt_value } })
-            );
-        });
-        player.on('ended', function(event) {
-            socket.send(
-                JSON.stringify({
-                    event: 'next_song',
-                    data: { salt: salt_value },
-                })
-            );
-        });
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    playerVars: { 'autoplay': 0, 'controls': 0},
+    videoId: '',
+    events: {
+      'onStateChange': onPlayerStateChange
     }
-});
+  });
+}
+
+function onPlayerStateChange(event) {
+
+    if (event.data == YT.PlayerState.ENDED) {
+        socket.send(
+            JSON.stringify({
+                event: 'next_song',
+                data: { salt: salt_value },
+            })
+        );
+    }
+}
+
 function play({ video_id }) {
-    player.source = {
-        type: 'video',
-        sources: [
-            {
-                src: video_id,
-                provider: 'youtube',
-            },
-        ],
-    };
+    player.loadVideoById(video_id);
+    player.pauseVideo();
+    socket.send(
+        JSON.stringify({ event: 'ready', data: { salt: salt_value } })
+    );
 }
+
 function pause() {
-    player.pause();
+    player.pauseVideo();
 }
-function resume({ volume }) {
-    player.play();
-    volume({ volume });
+
+function resume() {
+    player.playVideo();
 }
+
 function seek({ seek_time }) {
-    player.currentTime = seek_time;
+    player.seekTo(seek_time);
     pause();
     socket.send(JSON.stringify({ event: 'ready', data: { salt: salt_value } }));
 }
+
 function volume({ volume }) {
-    volume_ext = volume;
-    player.volume = volume_ext * 0.01;
+    player.setVolume(volume);
 }
+
 function hide() {
     $('#songrequest').hide();
 }
 function show() {
     $('#songrequest').show();
 }
+
 function stop() {
-    player.stop();
-    play({ video_id: '' });
+    player.loadVideoById("");
+    player.stopVideo();
 }
 
 let socket = null;

@@ -337,7 +337,15 @@ class SongRequestSongInfo(Base):
             "default_thumbnail": self.default_thumbnail,
             "banned": self.banned,
             "favourite": self.favourite,
+            "formatted_duration": self.formatted_duration,
         }
+
+    @property
+    def formatted_duration(self):
+        m, s = divmod(self.duration, 60)
+        m = int(m)
+        s = int(s)
+        return f"{m:02d}:{s:02d}"
 
     @staticmethod
     def _create(db_session, video_id, title, duration, default_thumbnail):

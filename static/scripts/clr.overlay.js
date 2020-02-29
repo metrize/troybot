@@ -432,6 +432,7 @@ function onYouTubeIframeAPIReady() {
 function onPlayerStateChange(event) {
 
     if (event.data == YT.PlayerState.ENDED) {
+        hide()
         socket.send(
             JSON.stringify({
                 event: 'next_song',
@@ -470,6 +471,7 @@ function volume({ volume }) {
 function hide() {
     $('#songrequest').hide();
 }
+hide();
 function show() {
     $('#songrequest').show();
 }

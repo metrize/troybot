@@ -157,13 +157,13 @@ function set_playlist(data) {
               </a>
             
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a id="ban_control" class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
-                <a id="delete_control" class="dropdown-item" href="#">Delete</a>
+                <a onclick="ban_control(this)" class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
+                <a onclick="delete_control(this)" class="dropdown-item" href="#">Delete</a>
               </div>
             </div>
           </div>
           <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
-              <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+              <svg onclick="favourite_control(this)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
               AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -189,7 +189,7 @@ function set_playlist(data) {
               ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
               </svg>
       ` : `
-            <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+            <svg onclick="favourite_control(this)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
               href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
           AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
           RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
@@ -241,7 +241,7 @@ function set_backup_playlist(data) {
             </div>
           </div>
           <div class="ml-auto p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
-              <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+              <svg onclick="favourite_control(this)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
               AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -267,7 +267,7 @@ function set_backup_playlist(data) {
               ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
               </svg>
       ` : `
-            <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+            <svg onclick="favourite_control(this)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
               href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
           AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
           RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
@@ -337,12 +337,12 @@ function set_history_list(data) {
               </a>
             
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a id="ban_control" class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
+                <a onclick="ban_control(this)" class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
               </div>
             </div>
           </div>
           <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
-              <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+              <svg onclick="favourite_control(this)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
               AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -368,7 +368,7 @@ function set_history_list(data) {
               ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
               </svg>
       ` : `
-            <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+            <svg onclick="favourite_control(this)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
               href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
           AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
           RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
@@ -435,12 +435,12 @@ function set_favourite_list(data) {
               </a>
             
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a id="ban_control" class="dropdown-item" href="#">`+ (song_info["banned"] ? "Unban" : "Ban") + `</a>
+                <a onclick="ban_control(this)" class="dropdown-item" href="#">`+ (song_info["banned"] ? "Unban" : "Ban") + `</a>
               </div>
             </div>
           </div>
           <div class="p-2 align-self-center">
-              <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+              <svg onclick="favourite_control(this)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
               AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -513,12 +513,12 @@ function set_banned_list(data) {
               </svg>
               </a>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a id="ban_control" class="dropdown-item" href="#">Unban</a>
+                <a onclick="ban_control(this)" class="dropdown-item" href="#">Unban</a>
               </div>
             </div>
           </div>
           <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
-              <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+              <svg onclick="favourite_control(this)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
               AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -544,7 +544,7 @@ function set_banned_list(data) {
               ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
               </svg>
           ` : `
-              <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+              <svg onclick="favourite_control(this)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
               RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
@@ -739,28 +739,28 @@ $("#video_showing_state").on("click", function(e) {
   );
 })
 
-$("#favourite_control").on("click", function(e) {
-  var tr = $(this).closest("tr")
+function favourite_control(_this) {
+  var tr = _this.closest("tr")
   socket.send(
     JSON.stringify({
         event: tr.data("favourite") ? "UNFAVOURITE" : "FAVOURITE",
         data: {database_id: tr.data("id")}
     })
   );
-})
+}
 
-$("#ban_control").on("click", function(e) {
-  var tr = $(this).closest("tr")
+function ban_control(_this) {
+  var tr = _this.closest("tr")
   socket.send(
     JSON.stringify({
         event: tr.data("banned") ? "UNBAN" : "BAN",
         data: {database_id: tr.data("id")}
     })
   );
-})
+}
 
-$("#delete_control").on("click", function(e) {
-  var tr = $(this).closest("tr")
+function delete_control(_this) {
+  var tr = _this.closest("tr")
   socket.send(
     JSON.stringify({
         event: "DELETE",

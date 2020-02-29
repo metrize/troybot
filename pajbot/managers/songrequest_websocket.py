@@ -94,7 +94,7 @@ class SongRequestWebSocketServer:
                         except:
                             self._close_conn()
                             return
-                        if "event" not in json_msg or "data" not in json_msg:
+                        if "event" not in json_msg:
                             self._close_conn()
                             return
                         switcher = {

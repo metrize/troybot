@@ -387,7 +387,7 @@ class SongrequestManager:
         self.bot.websocket_manager.emit("songrequest_volume", WIDGET_ID, {"volume": self.volume})
 
     def _seek(self, _time, current_song_webjsonify):
-        self.bot.songrequest_websocket_manager.emit("play", {"current_song": current_song_webjsonify})
+        self.bot.songrequest_websocket_manager.emit("play", {"current_song": current_song_webjsonify, "current_timestamp": str(utils.now().timestamp())})
         self.bot.websocket_manager.emit("songrequest_seek", WIDGET_ID, {"seek_time": _time})
         self.module_state["paused"] = True
         self._module_state()

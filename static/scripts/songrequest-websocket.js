@@ -426,6 +426,8 @@ function set_module_state(data) {
     } else {
       player.playVideo()
     }
+  } else {
+    
   }
 }
 
@@ -478,6 +480,9 @@ var done = false;
 
 function timer() {
   var playerTotalTime = player.getDuration();
+  if (playerTotalTime == 0) {
+    playerTotalTime++;
+  }
   var playerCurrentTime = player.getCurrentTime();
   var playerTimeDifference = (playerCurrentTime / playerTotalTime) * 100;
   var minutes = Math.floor(playerCurrentTime / 60);

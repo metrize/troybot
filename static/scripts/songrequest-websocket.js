@@ -600,7 +600,7 @@ currentqueuebody.sortable({
           JSON.stringify({
               event: 'MOVE',
               data: {
-                //   database_id: tracks[sourceIndex].database_id,
+                  database_id: ui.item.data("id"),
                   to_id: ui.item.index(),
               },
           })

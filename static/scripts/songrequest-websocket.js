@@ -89,6 +89,7 @@ function current_song(data) {
     player.loadVideoById("");
     player.stopVideo();
   } else {
+      player.stopVideo();
       $("#status").text("Now Playing - " + data["current_song"]["requested_by"]);
       $("#songname").show();
       $("#url").show();

@@ -134,9 +134,6 @@ class SongrequestManager:
             self.module_state["paused"] = True
             self._pause()
             self.remove_schedule()
-            if self.current_song_id:
-                return True
-
             with DBManager.create_session_scope() as db_session:
                 song = SongrequestQueue._from_id(db_session, self.current_song_id)
                 song.played_for = (utils.now() - song.date_resumed).total_seconds()

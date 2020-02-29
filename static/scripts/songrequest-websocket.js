@@ -105,6 +105,7 @@ function set_volume(data) {
 }
 
 function set_playlist(data) {
+  $('#currentqueuebody').empty()
   data["playlist"].forEach(function(song) {
       $('#currentqueuebody').append(`<tr>
       <td>
@@ -206,6 +207,7 @@ function set_playlist(data) {
 }
 
 function set_backup_playlist(data) {
+  $('#backupqueuebody').empty()
   data["backup_playlist"].forEach(function(song) {
       $('#backupqueuebody').append(`<tr>
       <td>
@@ -307,6 +309,7 @@ function set_backup_playlist(data) {
 }
 
 function set_history_list(data) {
+  $('#historybody').empty()
   data["history_list"].forEach(function(song) {
     $('#historybody').append(`<tr>
       <td>

@@ -59,7 +59,7 @@ function handleWebsocketData(json_data) {
           current_song(json_data['data']);
           break;
         case "volume":
-          volume(json_data['data']);
+          set_volume(json_data['data']);
           break;
         case "playlist":
           set_playlist(json_data['data']);
@@ -461,7 +461,7 @@ function onYouTubeIframeAPIReady() {
 }
 
 function onPlayerReady(event) {
-  
+  player.playVideo()
 }
 
 var done = false;

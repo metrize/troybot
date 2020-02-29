@@ -459,22 +459,23 @@ function stop() {
 }
 
 // This is the bare minimum JavaScript. You can opt to pass no arguments to setup.
-const player = new Plyr('#player',{controls:[]});
-player.on('ready', event => {
-    player.play();
+jQuery(function($) {
+    player = new Plyr('#player',{controls:[]});
+    player.on('ready', event => {
+        player.play();
+    });
+    player.on('statechange', event => {
+        if (event.detail.code == 0) {
+            hide()
+            socket.send(
+                JSON.stringify({
+                    event: 'next_song',
+                    data: { salt: salt_value },
+                })
+            );
+        }
+    });
 });
-player.on('statechange', event => {
-    if (event.detail.code == 0) {
-        hide()
-        socket.send(
-            JSON.stringify({
-                event: 'next_song',
-                data: { salt: salt_value },
-            })
-        );
-    }
-});
-
 let socket = null;
 
 function connect_to_ws() {

@@ -24,7 +24,7 @@ class SongrequestQueue(Base):
     date_added = Column(UtcDateTime(), nullable=False)
     skip_after = Column(INT, nullable=True)  # skipped after
     requested_by_id = Column(INT, ForeignKey("user.id"), nullable=True)
-    date_resumed = Column(UtcDateTime(), nullable=False)
+    date_resumed = Column(UtcDateTime(), nullable=True)
     played_for = Column(REAL, default=0, nullable=False)
     song_info = relationship("SongRequestSongInfo", foreign_keys=[video_id])
     requested_by = relationship("User", foreign_keys=[requested_by_id])
@@ -86,7 +86,7 @@ class SongrequestQueue(Base):
 
     @hybrid_property
     def time_left(self):
-        return self.duration - (self.played_for + (utils.now() - self.date_resumed).total_seconds() if bool(self.playing) else 0)
+        return self.duration - (self.played_for + ((utils.now() - self.date_resumed).total_seconds() if self.date_resumed else 0) if bool(self.playing) else 0)
 
     @hybrid_property
     def current_song_time(self):

@@ -437,9 +437,8 @@ function timer() {
 }
 
 function onPlayerStateChange(event) {
-  if (!paused) {
-    event.target.playVideo();
-  } else {
+  player.playVideo();
+  if (paused) {
     player.pauseVideo();
   }
   timer()

@@ -53,7 +53,10 @@ function handleWebsocketData(json_data) {
     console.log(json_data);
     switch (json_data['event']) {
         case "initialize":
-            initialize_player(json_data['data'])
+            initialize_player(json_data['data']);
+            break;
+        case "play":
+            current_song(json_data['data']);
             break;
     }
 }
@@ -62,6 +65,22 @@ var video_showing = false;
 var enabled = false;
 var requests_open = false;
 var use_backup_playlist = false;
+
+function current_song(current_song) {
+  if (Object.keys(current_song).length === 0) {
+    $("#status").text("No songs currently playing!");
+    $("#songname").hide();
+    $("#url").hide();
+  } else {
+      $("#status").text("Now Playing - " + current_song["requested_by"]);
+      $("#songname").show();
+      $("#url").show();
+      $("#song_title").text(current_song["song_info"]["title"]);
+      $("#url a").text("https://www.youtube.com/watch?v="+current_song["song_info"]["video_id"]);
+      $("#url a").attr("href", "https://www.youtube.com/watch?v="+current_song["song_info"]["video_id"]);
+      player.loadVideoById(current_song["song_info"]["video_id"], current_song["current_song_time"] + offset + 1.5);
+  }
+}
 
 function initialize_player(data) {
     // volume
@@ -82,19 +101,7 @@ function initialize_player(data) {
     $("#control_state").text(paused ? "Resume" : "Pause");
 
     // current_song
-    if (Object.keys(data["current_song"]).length === 0) {
-        $("#status").text("No songs currently playing!");
-        $("#songname").hide();
-        $("#url").hide();
-    } else {
-        $("#status").text("Now Playing - " + data["current_song"]["requested_by"]);
-        $("#songname").show();
-        $("#url").show();
-        $("#song_title").text(data["current_song"]["song_info"]["title"]);
-        $("#url a").text("https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
-        $("#url a").attr("href", "https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
-        player.loadVideoById(data["current_song"]["song_info"]["video_id"], data["current_song"]["current_song_time"] + offset + 1.5);
-    }
+    current_song(data["current_song"]);
     // playlist
     data["playlist"].forEach(function(song) {
         $('#currentqueuebody').append(`<tr>

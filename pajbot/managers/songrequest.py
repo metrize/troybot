@@ -313,8 +313,7 @@ class SongrequestManager:
                 self.current_song_id = current_song.id
                 self._play(
                     current_song.video_id,
-                    current_song.song_info.title,
-                    current_song.requested_by.username_raw if current_song.requested_by else "Backup list",
+                    current_song.webjsonify(),
                 )
                 current_song.date_resumed = utils.now()
                 self.schedule_job_id = random.randint(1, 100000)
@@ -345,15 +344,12 @@ class SongrequestManager:
                 self._hide()
         return False
 
-    def _play(self, video_id, video_title, requested_by_name):
-        self.bot.songrequest_websocket_manager.emit(
-            "play", {"video_id": video_id, "video_title": video_title, "requested_by": requested_by_name}
-        )
+    def _play(self, video_id, current_song_webjsonify):
+        self.bot.songrequest_websocket_manager.emit("play", current_song_webjsonify)
         self.bot.websocket_manager.emit("songrequest_play", WIDGET_ID, {"video_id": video_id})
         self.module_state["paused"] = True
         if self.module_state["video_showing"]:
             self._show()
-        self._playlist()
 
     def ready(self):
         self.resume_function()
@@ -390,13 +386,13 @@ class SongrequestManager:
 
     def _playlist(self):
         with DBManager.create_session_scope() as db_session:
-            playlist = SongrequestQueue._get_playlist(db_session, 15)
+            playlist = SongrequestQueue._get_playlist(db_session, 30)
             self.bot.songrequest_websocket_manager.emit("playlist", {"playlist": playlist})
 
     def _playlist_history(self):
         with DBManager.create_session_scope() as db_session:
             self.bot.songrequest_websocket_manager.emit(
-                "history", {"history": SongrequestHistory._get_history(db_session, 15)}
+                "history", {"history": SongrequestHistory._get_history(db_session, 30)}
             )
 
     def _stop_video(self):

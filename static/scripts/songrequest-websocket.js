@@ -483,7 +483,9 @@ function timer() {
 }
 
 function pause() {
-  player.pauseVideo()
+  if (paused) {
+    player.pauseVideo()
+  }
 }
 
 function onPlayerStateChange(event) {

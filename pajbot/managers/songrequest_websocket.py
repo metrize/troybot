@@ -151,7 +151,7 @@ class SongRequestWebSocketServer:
                 return manager_ext.bot.songrequest_manager.seek_function(data.get("seek_time"))
 
             def _volume(self, db_session, data):
-                if not self.isAuthed or not data.get("volume", False):
+                if not self.isAuthed or not data or not data.get("volume", False):
                     return False
 
                 return manager_ext.bot.songrequest_manager.volume_function(data.get("volume"))

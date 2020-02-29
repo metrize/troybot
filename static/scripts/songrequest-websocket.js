@@ -549,10 +549,12 @@ $("#videotime").on("click", function(e){
 })
 
 $("#volume").on("click", function(e){
+  socket.send(
     JSON.stringify({
         event: 'VOLUME',
         data: { volume: ((e.pageX - $(this).offset().left) /  $("#volume").width())*100 },
     })
+  );
 })
 
 var currentqueuebody = $('#currentqueuebody')

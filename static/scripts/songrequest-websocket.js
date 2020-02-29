@@ -67,7 +67,6 @@ var requests_open = false;
 var use_backup_playlist = false;
 
 function current_song(data) {
-  var offset = Math.floor((new Date()).getTime() / 1000) - parseFloat(data["current_timestamp"]);
   if (Object.keys(data["current_song"]).length === 0) {
     $("#status").text("No songs currently playing!");
     $("#songname").hide();
@@ -79,7 +78,7 @@ function current_song(data) {
       $("#song_title").text(data["current_song"]["song_info"]["title"]);
       $("#url a").text("https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
       $("#url a").attr("href", "https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
-      player.loadVideoById(data["current_song"]["song_info"]["video_id"], data["current_song"]["current_song_time"] + offset + 0.5);
+      player.loadVideoById(data["current_song"]["song_info"]["video_id"], data["current_song"]["current_song_time"] + Math.floor((new Date()).getTime() / 1000) - parseFloat(data["current_timestamp"]) + 0.5);
   }
 }
 

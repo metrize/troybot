@@ -396,5 +396,5 @@ class SongrequestManager:
             )
 
     def _stop_video(self):
-        self.bot.songrequest_websocket_manager.emit("stop", {})
+        self.bot.songrequest_websocket_manager.emit("play", {"current_song": {}})
         self.bot.websocket_manager.emit("songrequest_stop", WIDGET_ID, {})

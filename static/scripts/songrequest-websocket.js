@@ -93,7 +93,7 @@ function initialize_player(data) {
         $("#song_title").text(data["current_song"]["song_info"]["title"]);
         $("#url a").text("https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
         $("#url a").attr("href", "https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
-        player.loadVideoById(data["current_song"]["song_info"]["video_id"], data["current_song"]["current_song_time"] + offset + 1.5); player.pauseVideo()
+        player.loadVideoById(data["current_song"]["song_info"]["video_id"], data["current_song"]["current_song_time"] + offset + 1.5);
     }
     // playlist
     data["playlist"].forEach(function(song) {
@@ -421,10 +421,9 @@ function onYouTubeIframeAPIReady() {
 }
 
 function onPlayerReady(event) {
+  player.pauseVideo()
   if (!paused) {
     event.target.playVideo();
-  } else {
-    event.target.pauseVideo();
   }
 }
 

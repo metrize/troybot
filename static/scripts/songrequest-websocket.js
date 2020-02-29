@@ -552,7 +552,7 @@ $("#volume").on("click", function(e){
   socket.send(
     JSON.stringify({
         event: 'VOLUME',
-        data: { volume: Math.Round(((e.pageX - $(this).offset().left) /  $("#volume").width())*100) },
+        data: { volume: Math.round(((e.pageX - $(this).offset().left) /  $("#volume").width())*100) },
     })
   );
 })

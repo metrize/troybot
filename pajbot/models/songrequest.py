@@ -172,7 +172,7 @@ class SongrequestQueue(Base):
         all_songs = SongrequestQueue._all_by_video_id(db_session, _video_id)
         for song in all_songs:
             SongRequestQueueManager.remove_song_id(song.id)
-            song._remove()
+            song._remove(db_session)
 
     @staticmethod
     def _clear_backup_songs(db_session):

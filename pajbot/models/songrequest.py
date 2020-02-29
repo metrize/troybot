@@ -288,15 +288,15 @@ class SongrequestHistory(Base):
         previous = SongrequestHistory._get_previous(db_session, position)
         if not previous:
             return False
-        return SongrequestQueue._create(db_session, previous.video_id, previous.skip_after, requested_by_id, 1)
+        return SongrequestQueue._create(db_session, previous.video_id, previous.skip_after, requested_by_id, 0)
 
     @staticmethod
     def _get_list(db_session, size):
         return db_session.query(SongrequestHistory).order_by(SongrequestHistory.id.desc()).limit(size).all()
 
     @staticmethod
-    def _from_id(db_session, id):
-        return db_session.query(SongrequestHistory).filter_by(id=id).one_or_none()
+    def _from_id(db_session, _id):
+        return db_session.query(SongrequestHistory).filter_by(id=_id).one_or_none()
 
     @staticmethod
     def _get_history(db_session, limit):

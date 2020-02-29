@@ -50,12 +50,12 @@ function handleWebsocketData(json_data) {
     if (json_data['event'] === undefined) {
         return;
     }
+    console.log(json_data);
     switch (json_data['event']) {
         case "initialize":
             initialize_player(json_data['data'])
             break;
     }
-    console.log(json_data);
 }
 var paused = false;
 function initialize_player(data) {

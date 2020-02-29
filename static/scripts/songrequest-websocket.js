@@ -419,7 +419,7 @@ function set_module_state(data) {
   $("#control_state").text(paused ? "Resume" : "Pause");
 
   if (paused) {
-    player.stopVideo()
+    player.pauseVideo()
   } else {
     player.playVideo()
   }

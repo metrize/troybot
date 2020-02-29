@@ -313,7 +313,7 @@ function set_backup_playlist(data) {
 function set_history_list(data) {
   $('#historybody').empty()
   data["history_list"].forEach(function(song) {
-    $('#historybody').append(`<tr>
+    $('#historybody').append(`<tr data-id="`+song["database_id"]+`">
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">

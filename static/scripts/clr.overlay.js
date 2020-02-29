@@ -440,9 +440,10 @@ function seek({ seek_time }) {
     pause();
     socket.send(JSON.stringify({ event: 'ready', data: { salt: salt_value } }));
 }
-
+var global_v = 0
 function volume({ volume }) {
-    player.volume = volume/100
+    global_v = volume/100
+    player.volume = global_v
 }
 
 function hide() {
@@ -473,6 +474,9 @@ jQuery(function($) {
                     data: { salt: salt_value },
                 })
             );
+        }
+        if (event.detail.code == 1) {
+            player.volume = global_v
         }
     });
 });

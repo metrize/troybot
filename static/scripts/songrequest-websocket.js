@@ -601,7 +601,7 @@ currentqueuebody.sortable({
               event: 'MOVE',
               data: {
                   database_id: ui.item.data("id"),
-                  to_id: ui.item.index(),
+                  to_id: ui.item.index()+1,
               },
           })
       );

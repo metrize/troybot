@@ -190,7 +190,7 @@ class SongRequestWebSocketServer:
                 if not self.isAuthed or not data or not data.get("database_id", False) or not data.get("to_id", False):
                     return False
 
-                return manager_ext.bot.songrequest_manager.move_function(int(data["database_id"]), int(data["to_id"]))
+                return manager_ext.bot.songrequest_manager.move_function(int(data["database_id"]), int(data["to_id"])-1)
 
             def _auth(self, db_session, data):
                 access_token = data["access_token"]

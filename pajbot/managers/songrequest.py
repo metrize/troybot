@@ -168,6 +168,7 @@ class SongrequestManager:
             with DBManager.create_session_scope() as db_session:
                 current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
                 current_song.played_for += _time - current_song.current_song_time
+                db_session.merge(current_song)
                 db_session.commit()
                 self.remove_schedule()
                 self.schedule_job_id = random.randint(1, 100000)

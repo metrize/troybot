@@ -300,6 +300,7 @@ class SongrequestManager:
 
         self.current_song_id = None
         self.schedule_job_id = None
+        self.module_state["paused"] = False
         self.remove_schedule()
 
         if not self.module_state["requests_open"]:

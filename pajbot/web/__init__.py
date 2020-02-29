@@ -48,7 +48,7 @@ def init(args):
     from pajbot.web.utils import download_sub_badge
 
     ScheduleManager.init()
-    
+
     config = load_config(args.config)
     # ScheduleManager.init()
     api_client_credentials = ClientCredentials(
@@ -65,7 +65,6 @@ def init(args):
     app_token_manager = AppAccessTokenManager(id_api, RedisManager.get())
     twitch_helix_api = TwitchHelixAPI(RedisManager.get(), app_token_manager)
     twitch_badges_api = TwitchBadgesAPI(RedisManager.get())
-    
 
     if "web" not in config:
         log.error("Missing [web] section in config.ini")

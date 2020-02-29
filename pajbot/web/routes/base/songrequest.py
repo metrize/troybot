@@ -20,7 +20,9 @@ def init(app):
             SongRequestQueueManager.force_reload()
             queue_ids = SongRequestQueueManager.get_next_songs(50)
             current_song = SongrequestQueue._get_current_song(db_session)
-            queue = ([current_song] if current_song else []) + SongrequestQueue.sort(queue_ids, SongrequestQueue._from_list_id(db_session, queue_ids))
+            queue = ([current_song] if current_song else []) + SongrequestQueue.sort(
+                queue_ids, SongrequestQueue._from_list_id(db_session, queue_ids)
+            )
             for song in queue:
                 if song.song_info is None:
                     continue
@@ -28,7 +30,11 @@ def init(app):
                 m, s = divmod(playing_in, 60)
                 m = int(m)
                 s = int(s)
-                jsonify["playing_in"] = f"{m:02d}:{s:02d}" if playing_in != 0 else ("Currently playing" if current_song else "Song Request Closed")
+                jsonify["playing_in"] = (
+                    f"{m:02d}:{s:02d}"
+                    if playing_in != 0
+                    else ("Currently playing" if current_song else "Song Request Closed")
+                )
                 m, s = divmod(jsonify["video_length"], 60)
                 m = int(m)
                 s = int(s)

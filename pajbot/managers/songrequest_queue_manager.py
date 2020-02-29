@@ -17,18 +17,22 @@ class SongRequestQueueManager:
     def init(streamer_name):
         SongRequestQueueManager.streamer_name = streamer_name
         SongRequestQueueManager.redis = RedisManager.get()
-        SongRequestQueueManager.song_playing_id = SongRequestQueueManager.redis.get(f"{SongRequestQueueManager.streamer_name}:song-playing-id")
+        SongRequestQueueManager.song_playing_id = SongRequestQueueManager.redis.get(
+            f"{SongRequestQueueManager.streamer_name}:song-playing-id"
+        )
         SongRequestQueueManager.song_queues = {
             "song-queue": SongRequestQueueManager._get_init_redis("song-queue"),
-            "backup-song-queue": SongRequestQueueManager._get_init_redis("backup-song-queue")
+            "backup-song-queue": SongRequestQueueManager._get_init_redis("backup-song-queue"),
         }
 
     @staticmethod
     def force_reload():
-        SongRequestQueueManager.song_playing_id = SongRequestQueueManager.redis.get(f"{SongRequestQueueManager.streamer_name}:song-playing-id")
+        SongRequestQueueManager.song_playing_id = SongRequestQueueManager.redis.get(
+            f"{SongRequestQueueManager.streamer_name}:song-playing-id"
+        )
         SongRequestQueueManager.song_queues = {
             "song-queue": SongRequestQueueManager._get_init_redis("song-queue"),
-            "backup-song-queue": SongRequestQueueManager._get_init_redis("backup-song-queue")
+            "backup-song-queue": SongRequestQueueManager._get_init_redis("backup-song-queue"),
         }
 
     @staticmethod
@@ -97,7 +101,9 @@ class SongRequestQueueManager:
 
     @staticmethod
     def get_id_index(_id):
-        song_queue = SongRequestQueueManager.song_queues.get("song-queue", None) + SongRequestQueueManager.song_queues.get("backup-song-queue", None)
+        song_queue = SongRequestQueueManager.song_queues.get(
+            "song-queue", None
+        ) + SongRequestQueueManager.song_queues.get("backup-song-queue", None)
 
         if _id not in song_queue:
             return -1
@@ -132,7 +138,7 @@ class SongRequestQueueManager:
         if _id not in song_queue:
             return []
 
-        return song_queue[:song_queue.index(_id)]
+        return song_queue[: song_queue.index(_id)]
 
     @staticmethod
     def _get_id(index, queue):
@@ -150,7 +156,9 @@ class SongRequestQueueManager:
     def get_next_song():
         song_queue = SongRequestQueueManager.song_queues.get("song-queue", None)
         backup_song_queue = SongRequestQueueManager.song_queues.get("backup-song-queue", None)
-        return song_queue[0] if len(song_queue) != 0 else (backup_song_queue[0] if len(backup_song_queue) != 0 else None)
+        return (
+            song_queue[0] if len(song_queue) != 0 else (backup_song_queue[0] if len(backup_song_queue) != 0 else None)
+        )
 
     @staticmethod
     def get_next_songs(limit=None, queue=None):

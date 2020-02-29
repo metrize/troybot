@@ -52,33 +52,33 @@ function handleWebsocketData(json_data) {
     }
     console.log(json_data);
     switch (json_data['event']) {
-        case "initialize":
-          initialize_player(json_data['data']);
-          break;
-        case "play":
-          current_song(json_data['data']);
-          break;
-        case "volume":
-          set_volume(json_data['data']);
-          break;
-        case "playlist":
-          set_playlist(json_data['data']);
-          break;
-        case "backup_playlist":
-          set_backup_playlist(json_data['data']);
-          break;
-        case "history_list":
-          set_history_list(json_data['data']);
-          break;
-        case "favourite_list":
-          set_favourite_list(json_data['data']);
-          break;
-        case "banned_list":
-          set_banned_list(json_data['data']);
-          break;
-        case "module_state":
-          set_module_state(json_data['data']);
-          break;
+        case 'initialize':
+            initialize_player(json_data['data']);
+            break;
+        case 'play':
+            current_song(json_data['data']);
+            break;
+        case 'volume':
+            set_volume(json_data['data']);
+            break;
+        case 'playlist':
+            set_playlist(json_data['data']);
+            break;
+        case 'backup_playlist':
+            set_backup_playlist(json_data['data']);
+            break;
+        case 'history_list':
+            set_history_list(json_data['data']);
+            break;
+        case 'favourite_list':
+            set_favourite_list(json_data['data']);
+            break;
+        case 'banned_list':
+            set_banned_list(json_data['data']);
+            break;
+        case 'module_state':
+            set_module_state(json_data['data']);
+            break;
     }
 }
 var paused = false;
@@ -88,34 +88,67 @@ var requests_open = false;
 var use_backup_playlist = false;
 
 function current_song(data) {
-  if (Object.keys(data["current_song"]).length === 0) {
-    $("#status").text("No songs currently playing!");
-    $("#songname").hide();
-    $("#url").hide();
-    player.loadVideoById("");
-    player.stopVideo();
-  } else {
-      player.stopVideo();
-      $("#status").text("Now Playing - " + data["current_song"]["requested_by"]);
-      $("#songname").show();
-      $("#url").show();
-      $("#song_title").text(data["current_song"]["song_info"]["title"]);
-      $("#url a").text("https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
-      $("#url a").attr("href", "https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
-      console.log(Math.round(data["current_song"]["current_song_time"] + Math.floor((new Date()).getTime() / 1000) - parseFloat(data["current_timestamp"]) + 0.5, 2))
-      player.loadVideoById(data["current_song"]["song_info"]["video_id"], Math.round(data["current_song"]["current_song_time"] + Math.floor((new Date()).getTime() / 1000) - parseFloat(data["current_timestamp"]) + 0.5, 2));
-  }
+    if (Object.keys(data['current_song']).length === 0) {
+        $('#status').text('No songs currently playing!');
+        $('#songname').hide();
+        $('#url').hide();
+        player.loadVideoById('');
+        player.stopVideo();
+    } else {
+        player.stopVideo();
+        $('#status').text(
+            'Now Playing - ' + data['current_song']['requested_by']
+        );
+        $('#songname').show();
+        $('#url').show();
+        $('#song_title').text(data['current_song']['song_info']['title']);
+        $('#url a').text(
+            'https://www.youtube.com/watch?v=' +
+                data['current_song']['song_info']['video_id']
+        );
+        $('#url a').attr(
+            'href',
+            'https://www.youtube.com/watch?v=' +
+                data['current_song']['song_info']['video_id']
+        );
+        console.log(
+            Math.round(
+                data['current_song']['current_song_time'] +
+                    Math.floor(new Date().getTime() / 1000) -
+                    parseFloat(data['current_timestamp']) +
+                    0.5,
+                2
+            )
+        );
+        player.loadVideoById(
+            data['current_song']['song_info']['video_id'],
+            Math.round(
+                data['current_song']['current_song_time'] +
+                    Math.floor(new Date().getTime() / 1000) -
+                    parseFloat(data['current_timestamp']) +
+                    0.5,
+                2
+            )
+        );
+    }
 }
 
 function set_volume(data) {
-  player.setVolume(data["volume"]);
-  $("#volume div").css("width", data["volume"]+"%");
+    player.setVolume(data['volume']);
+    $('#volume div').css('width', data['volume'] + '%');
 }
 
 function set_playlist(data) {
-  $('#currentqueuebody').empty()
-  data["playlist"].forEach(function(song) {
-      $('#currentqueuebody').append(`<tr data-id="`+song["database_id"]+`" data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
+    $('#currentqueuebody').empty();
+    data['playlist'].forEach(function(song) {
+        $('#currentqueuebody').append(
+            `<tr data-id="` +
+                song['database_id'] +
+                `" data-favourite=` +
+                song['song_info']['favourite'] +
+                ` data-banned=` +
+                song['song_info']['banned'] +
+                `>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -131,10 +164,16 @@ function set_playlist(data) {
           <div class="p-2 align-self-center">
             <div class="d-flex flex-column">
               <div class="p-2">
-                <span><a>`+ song["song_info"]["title"] +`</a> Duration `+ song["formatted_duration"] +`</span>
+                <span><a>` +
+                song['song_info']['title'] +
+                `</a> Duration ` +
+                song['formatted_duration'] +
+                `</span>
               </div>
               <div class="p-2">
-                <span>-Requested By `+ song["requested_by"] +`</span>
+                <span>-Requested By ` +
+                song['requested_by'] +
+                `</span>
               </div>
             </div>
           </div>
@@ -157,12 +196,16 @@ function set_playlist(data) {
               </a>
             
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a onclick="ban_control.call(this,event)" class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
+                <a onclick="ban_control.call(this,event)" class="dropdown-item" href="#">` +
+                (song['song_info']['banned'] ? 'Unban' : 'Ban') +
+                `</a>
                 <a onclick="delete_control.call(this,event)" class="dropdown-item" href="#">Delete</a>
               </div>
             </div>
           </div>
-          <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
+          <div class="p-2 align-self-center">` +
+                (song['song_info']['favourite']
+                    ? `
               <svg onclick="favourite_control.call(this,event)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
@@ -188,7 +231,8 @@ function set_playlist(data) {
               dGRhdGU6Y3JlYXRlADIwMjAtMDItMjhUMTA6NDA6MTUtMDc6MDAnzQniAAAAJXRFWHRkYXRlOm1v
               ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
               </svg>
-      ` : `
+      `
+                    : `
             <svg onclick="favourite_control.call(this,event)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
               href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
           AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
@@ -205,19 +249,28 @@ function set_playlist(data) {
           zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
           MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
           LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
-          </svg>`) + `
+          </svg>`) +
+                `
           
           </div>
         </div>
       </td>
-    </tr>`);
-  });
+    </tr>`
+        );
+    });
 }
 
 function set_backup_playlist(data) {
-  $('#backupqueuebody').empty()
-  data["backup_playlist"].forEach(function(song) {
-      $('#backupqueuebody').append(`<tr data-id="`+song["database_id"]+`" data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
+    $('#backupqueuebody').empty();
+    data['backup_playlist'].forEach(function(song) {
+        $('#backupqueuebody').append(
+            `<tr data-id="` +
+                song['database_id'] +
+                `" data-favourite=` +
+                song['song_info']['favourite'] +
+                ` data-banned=` +
+                song['song_info']['banned'] +
+                `>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -233,14 +286,22 @@ function set_backup_playlist(data) {
           <div class="p-2 align-self-center">
             <div class="d-flex flex-column">
               <div class="p-2">
-                <span><a>`+ song["song_info"]["title"] +`</a> Duration `+ song["formatted_duration"] +`</span>
+                <span><a>` +
+                song['song_info']['title'] +
+                `</a> Duration ` +
+                song['formatted_duration'] +
+                `</span>
               </div>
               <div class="p-2">
-                <span>-Requested By `+ song["requested_by"] +`</span>
+                <span>-Requested By ` +
+                song['requested_by'] +
+                `</span>
               </div>
             </div>
           </div>
-          <div class="ml-auto p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
+          <div class="ml-auto p-2 align-self-center">` +
+                (song['song_info']['favourite']
+                    ? `
               <svg onclick="favourite_control.call(this,event)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
@@ -266,7 +327,8 @@ function set_backup_playlist(data) {
               dGRhdGU6Y3JlYXRlADIwMjAtMDItMjhUMTA6NDA6MTUtMDc6MDAnzQniAAAAJXRFWHRkYXRlOm1v
               ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
               </svg>
-      ` : `
+      `
+                    : `
             <svg onclick="favourite_control.call(this,event)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
               href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
           AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
@@ -283,19 +345,28 @@ function set_backup_playlist(data) {
           zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
           MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
           LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
-          </svg>`) + `
+          </svg>`) +
+                `
           
           </div>
         </div>
       </td>
-    </tr>`);
-  });
+    </tr>`
+        );
+    });
 }
 
 function set_history_list(data) {
-  $('#historybody').empty()
-  data["history_list"].forEach(function(song) {
-    $('#historybody').append(`<tr data-histid="`+song["database_id"]+`" data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
+    $('#historybody').empty();
+    data['history_list'].forEach(function(song) {
+        $('#historybody').append(
+            `<tr data-histid="` +
+                song['database_id'] +
+                `" data-favourite=` +
+                song['song_info']['favourite'] +
+                ` data-banned=` +
+                song['song_info']['banned'] +
+                `>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -311,10 +382,16 @@ function set_history_list(data) {
           <div class="p-2 align-self-center">
             <div class="d-flex flex-column">
               <div class="p-2">
-                <span><a>`+ song["song_info"]["title"] +`</a> Played for `+ song["formatted_duration"] +`</span>
+                <span><a>` +
+                song['song_info']['title'] +
+                `</a> Played for ` +
+                song['formatted_duration'] +
+                `</span>
               </div>
               <div class="p-2">
-                <span>-Requested By `+ song["requested_by"] +`</span>
+                <span>-Requested By ` +
+                song['requested_by'] +
+                `</span>
               </div>
             </div>
           </div>
@@ -337,11 +414,15 @@ function set_history_list(data) {
               </a>
             
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a onclick="ban_control.call(this,event)" class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
+                <a onclick="ban_control.call(this,event)" class="dropdown-item" href="#">` +
+                (song['song_info']['banned'] ? 'Unban' : 'Ban') +
+                `</a>
               </div>
             </div>
           </div>
-          <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
+          <div class="p-2 align-self-center">` +
+                (song['song_info']['favourite']
+                    ? `
               <svg onclick="favourite_control.call(this,event)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
@@ -367,7 +448,8 @@ function set_history_list(data) {
               dGRhdGU6Y3JlYXRlADIwMjAtMDItMjhUMTA6NDA6MTUtMDc6MDAnzQniAAAAJXRFWHRkYXRlOm1v
               ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
               </svg>
-      ` : `
+      `
+                    : `
             <svg onclick="favourite_control.call(this,event)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
               href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
           AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
@@ -384,19 +466,28 @@ function set_history_list(data) {
           zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
           MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
           LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
-          </svg>`) + `
+          </svg>`) +
+                `
           
           </div>
         </div>
       </td>
-    </tr>`);
-  });
+    </tr>`
+        );
+    });
 }
 
 function set_favourite_list(data) {
-  $('#favouritelist').empty()
-  data["favourite_list"].forEach(function(song_info) {
-    $('#favouritelist').append(`<tr data-infoid="`+song_info["video_id"]+`" data-favourite=`+song_info["favourite"]+` data-banned=`+song_info["banned"]+`>
+    $('#favouritelist').empty();
+    data['favourite_list'].forEach(function(song_info) {
+        $('#favouritelist').append(
+            `<tr data-infoid="` +
+                song_info['video_id'] +
+                `" data-favourite=` +
+                song_info['favourite'] +
+                ` data-banned=` +
+                song_info['banned'] +
+                `>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -412,7 +503,11 @@ function set_favourite_list(data) {
           <div class="p-2 align-self-center">
             <div class="d-flex flex-column">
               <div class="p-2">
-                <span><a>`+ song_info["title"] +`</a> Duration: `+ song_info["formatted_duration"] +`</span>
+                <span><a>` +
+                song_info['title'] +
+                `</a> Duration: ` +
+                song_info['formatted_duration'] +
+                `</span>
               </div>
             </div>
           </div>
@@ -435,7 +530,9 @@ function set_favourite_list(data) {
               </a>
             
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a onclick="ban_control.call(this,event)" class="dropdown-item" href="#">`+ (song_info["banned"] ? "Unban" : "Ban") + `</a>
+                <a onclick="ban_control.call(this,event)" class="dropdown-item" href="#">` +
+                (song_info['banned'] ? 'Unban' : 'Ban') +
+                `</a>
               </div>
             </div>
           </div>
@@ -468,14 +565,22 @@ function set_favourite_list(data) {
           </div>
         </div>
       </td>
-    </tr>`);
-  });
+    </tr>`
+        );
+    });
 }
 
 function set_banned_list(data) {
-  $('#bannedlist').empty()
-  data["banned_list"].forEach(function(song_info) {
-    $('#bannedlist').append(`<tr data-infoid="`+song_info["video_id"]+`" data-favourite=`+song_info["favourite"]+` data-banned=`+song_info["banned"]+`>
+    $('#bannedlist').empty();
+    data['banned_list'].forEach(function(song_info) {
+        $('#bannedlist').append(
+            `<tr data-infoid="` +
+                song_info['video_id'] +
+                `" data-favourite=` +
+                song_info['favourite'] +
+                ` data-banned=` +
+                song_info['banned'] +
+                `>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -491,7 +596,11 @@ function set_banned_list(data) {
           <div class="p-2 align-self-center">
             <div class="d-flex flex-column">
               <div class="p-2">
-                <span><a>`+ song_info["title"] +`</a> Duration: `+ song_info["formatted_duration"] +`</span>
+                <span><a>` +
+                song_info['title'] +
+                `</a> Duration: ` +
+                song_info['formatted_duration'] +
+                `</span>
               </div>
             </div>
           </div>
@@ -517,7 +626,9 @@ function set_banned_list(data) {
               </div>
             </div>
           </div>
-          <div class="p-2 align-self-center">` + (song_info["favourite"] ? `
+          <div class="p-2 align-self-center">` +
+                (song_info['favourite']
+                    ? `
               <svg onclick="favourite_control.call(this,event)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
@@ -543,7 +654,8 @@ function set_banned_list(data) {
               dGRhdGU6Y3JlYXRlADIwMjAtMDItMjhUMTA6NDA6MTUtMDc6MDAnzQniAAAAJXRFWHRkYXRlOm1v
               ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
               </svg>
-          ` : `
+          `
+                    : `
               <svg onclick="favourite_control.call(this,event)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
@@ -560,32 +672,40 @@ function set_banned_list(data) {
               zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
               MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
               LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
-              </svg>`) + `
+              </svg>`) +
+                `
               </div>
         </div>
       </td>
-    </tr>`);
-  });
+    </tr>`
+        );
+    });
 }
 
 function set_module_state(data) {
-  paused = data["module_state"]["paused"];
-  video_showing = data["module_state"]["video_showing"];
-  enabled = data["module_state"]["enabled"];
-  requests_open = data["module_state"]["requests_open"];
-  use_backup_playlist = data["module_state"]["use_backup_playlist"];
+    paused = data['module_state']['paused'];
+    video_showing = data['module_state']['video_showing'];
+    enabled = data['module_state']['enabled'];
+    requests_open = data['module_state']['requests_open'];
+    use_backup_playlist = data['module_state']['use_backup_playlist'];
 
-  $("#video_showing_state").text(video_showing ? "Hide Video" : "Show Video" );
-  $("#requests_open_state").text(requests_open ? "Disable Requests" : "Enable Requests" );
-  $("#backup_playlist_usage_state").text(use_backup_playlist ? "Disable Backup Playlist" : "Enable Backup Playlist" );
-  $("#control_state").text(paused ? "Resume" : "Pause");
-  if (player.getDuration() > 0) {
-    if (paused) {
-      player.pauseVideo()
-    } else {
-      player.playVideo()
+    $('#video_showing_state').text(video_showing ? 'Hide Video' : 'Show Video');
+    $('#requests_open_state').text(
+        requests_open ? 'Disable Requests' : 'Enable Requests'
+    );
+    $('#backup_playlist_usage_state').text(
+        use_backup_playlist
+            ? 'Disable Backup Playlist'
+            : 'Enable Backup Playlist'
+    );
+    $('#control_state').text(paused ? 'Resume' : 'Pause');
+    if (player.getDuration() > 0) {
+        if (paused) {
+            player.pauseVideo();
+        } else {
+            player.playVideo();
+        }
     }
-  }
 }
 
 function initialize_player(data) {
@@ -614,66 +734,65 @@ $(document).ready(function() {
 // 2. This code loads the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
 
-tag.src = "https://www.youtube.com/iframe_api";
+tag.src = 'https://www.youtube.com/iframe_api';
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-$("#songname").hide()
-$("#url").hide()
+$('#songname').hide();
+$('#url').hide();
 
 var player;
 function onYouTubeIframeAPIReady() {
-  player = new YT.Player('video_player', {
-    playerVars: { 'autoplay': 0, 'controls': 0, 'mute': 1},
-    videoId: '',
-    events: {
-      'onReady': onPlayerReady,
-      'onStateChange': onPlayerStateChange
-    }
-  });
+    player = new YT.Player('video_player', {
+        playerVars: { autoplay: 0, controls: 0, mute: 1 },
+        videoId: '',
+        events: {
+            onReady: onPlayerReady,
+            onStateChange: onPlayerStateChange,
+        },
+    });
 }
 
 function onPlayerReady(event) {
-  player.playVideo()
+    player.playVideo();
 }
 
 var done = false;
 
 function timer() {
-  var playerTotalTime = player.getDuration();
-  if (playerTotalTime == 0) {
-    playerTotalTime++;
-  }
-  var playerCurrentTime = player.getCurrentTime();
-  var playerTimeDifference = (playerCurrentTime / playerTotalTime) * 100;
-  var minutes = Math.floor(playerCurrentTime / 60);
-  var seconds = Math.floor(playerCurrentTime - minutes * 60)
-  $("#videotime div").css("width", playerTimeDifference+"%");
-  $("#videocurrenttime").text(minutes+":"+('0'+seconds).slice(-2))
+    var playerTotalTime = player.getDuration();
+    if (playerTotalTime == 0) {
+        playerTotalTime++;
+    }
+    var playerCurrentTime = player.getCurrentTime();
+    var playerTimeDifference = (playerCurrentTime / playerTotalTime) * 100;
+    var minutes = Math.floor(playerCurrentTime / 60);
+    var seconds = Math.floor(playerCurrentTime - minutes * 60);
+    $('#videotime div').css('width', playerTimeDifference + '%');
+    $('#videocurrenttime').text(minutes + ':' + ('0' + seconds).slice(-2));
 }
 
 function pause() {
-  if (paused) {
-    player.pauseVideo()
-  }
+    if (paused) {
+        player.pauseVideo();
+    }
 }
 
 function onPlayerStateChange(event) {
-  if (paused) {
-    setTimeout(pause, 1000);
-  }
-  timer()
-  if (event.data == YT.PlayerState.PLAYING) {
-    mytimer = setInterval(timer, 1000);  
-  } else {
-    try{
-      clearTimeout(mytimer);
-    } catch {
+    if (paused) {
+        setTimeout(pause, 1000);
     }
-  }
+    timer();
+    if (event.data == YT.PlayerState.PLAYING) {
+        mytimer = setInterval(timer, 1000);
+    } else {
+        try {
+            clearTimeout(mytimer);
+        } catch {}
+    }
 }
 
-$("#control_state").on("click", function(e) {
+$('#control_state').on('click', function(e) {
     if (!paused) {
         socket.send(
             JSON.stringify({
@@ -687,90 +806,108 @@ $("#control_state").on("click", function(e) {
             })
         );
     }
-})
+});
 
-$("#control_previous").on("click", function(e) {
+$('#control_previous').on('click', function(e) {
     socket.send(
         JSON.stringify({
             event: 'PREVIOUS',
         })
     );
-})
+});
 
-$("#control_next").on("click", function(e) {
+$('#control_next').on('click', function(e) {
     socket.send(
         JSON.stringify({
             event: 'NEXT',
         })
     );
-})
+});
 
-$("#videotime").on("click", function(e){
+$('#videotime').on('click', function(e) {
     socket.send(
         JSON.stringify({
             event: 'SEEK',
-            data: { seek_time: player.getDuration() * ((e.pageX - $(this).offset().left) / $("#videotime").width()) },
+            data: {
+                seek_time:
+                    player.getDuration() *
+                    ((e.pageX - $(this).offset().left) /
+                        $('#videotime').width()),
+            },
         })
     );
-})
+});
 
-$("#volume").on("click", function(e){
-  socket.send(
-    JSON.stringify({
-        event: 'VOLUME',
-        data: { volume: Math.round(((e.pageX - $(this).offset().left) /  $("#volume").width())*100) },
-    })
-  );
-})
+$('#volume').on('click', function(e) {
+    socket.send(
+        JSON.stringify({
+            event: 'VOLUME',
+            data: {
+                volume: Math.round(
+                    ((e.pageX - $(this).offset().left) / $('#volume').width()) *
+                        100
+                ),
+            },
+        })
+    );
+});
 
-$("#requests_open_state").on("click", function(e) {
-  socket.send(
-    JSON.stringify({
-        event: requests_open ? "CLOSESR" : "OPENSR",
-    })
-  );
-})
+$('#requests_open_state').on('click', function(e) {
+    socket.send(
+        JSON.stringify({
+            event: requests_open ? 'CLOSESR' : 'OPENSR',
+        })
+    );
+});
 
-$("#video_showing_state").on("click", function(e) {
-  socket.send(
-    JSON.stringify({
-        event: video_showing ? "HIDEVIDEO" : "SHOWVIDEO",
-    })
-  );
-})
+$('#video_showing_state').on('click', function(e) {
+    socket.send(
+        JSON.stringify({
+            event: video_showing ? 'HIDEVIDEO' : 'SHOWVIDEO',
+        })
+    );
+});
 
 function favourite_control(event) {
-  console.log($(this));
-  var tr = $(this).closest("tr")
-  socket.send(
-    JSON.stringify({
-        event: tr.data("favourite") ? "UNFAVOURITE" : "FAVOURITE",
-        data: tr.data("id") ? {database_id: tr.data("id")} : (tr.data("infoid") ? {songinfo_database_id: tr.data("infoid")} : {hist_database_id: tr.data("histid")}),
-    })
-  );
+    console.log($(this));
+    var tr = $(this).closest('tr');
+    socket.send(
+        JSON.stringify({
+            event: tr.data('favourite') ? 'UNFAVOURITE' : 'FAVOURITE',
+            data: tr.data('id')
+                ? { database_id: tr.data('id') }
+                : tr.data('infoid')
+                ? { songinfo_database_id: tr.data('infoid') }
+                : { hist_database_id: tr.data('histid') },
+        })
+    );
 }
 
 function ban_control(event) {
-  var tr = $(this).closest("tr")
-  socket.send(
-    JSON.stringify({
-        event: tr.data("banned") ? "UNBAN" : "BAN",
-        data: tr.data("id") ? {database_id: tr.data("id")} : (tr.data("infoid") ? {songinfo_database_id: tr.data("infoid")} : {hist_database_id: tr.data("histid")}),
-    })
-  );
+    var tr = $(this).closest('tr');
+    socket.send(
+        JSON.stringify({
+            event: tr.data('banned') ? 'UNBAN' : 'BAN',
+            data: tr.data('id')
+                ? { database_id: tr.data('id') }
+                : tr.data('infoid')
+                ? { songinfo_database_id: tr.data('infoid') }
+                : { hist_database_id: tr.data('histid') },
+        })
+    );
 }
 
 function delete_control(event) {
-  var tr = $(this).closest("tr")
-  socket.send(
-    JSON.stringify({
-        event: "DELETE",
-        data: {database_id: tr.data("id")}
-    })
-  );
+    var tr = $(this).closest('tr');
+    socket.send(
+        JSON.stringify({
+            event: 'DELETE',
+            data: { database_id: tr.data('id') },
+        })
+    );
 }
 
-var currentqueuebody = $('#currentqueuebody')
+var currentqueuebody = $('#currentqueuebody');
 currentqueuebody.sortable({
     placeholder: 'sortable-placeholder',
     items: 'tr',
@@ -787,18 +924,18 @@ currentqueuebody.sortable({
         sourceIndex = $(ui.item).index();
     },
     stop: function(evt, ui) {
-      console.log(sourceIndex + " to " + ui.item.index())
-      socket.send(
-          JSON.stringify({
-              event: 'MOVE',
-              data: {
-                  database_id: ui.item.data("id"),
-                  to_id: ui.item.index()+1,
-              },
-          })
-      );
-      setTimeout(function() {
-        currentqueuebody.sortable('cancel');
-      }, 0);
+        console.log(sourceIndex + ' to ' + ui.item.index());
+        socket.send(
+            JSON.stringify({
+                event: 'MOVE',
+                data: {
+                    database_id: ui.item.data('id'),
+                    to_id: ui.item.index() + 1,
+                },
+            })
+        );
+        setTimeout(function() {
+            currentqueuebody.sortable('cancel');
+        }, 0);
     },
 });

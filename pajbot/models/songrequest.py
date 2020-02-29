@@ -86,7 +86,11 @@ class SongrequestQueue(Base):
 
     @hybrid_property
     def time_left(self):
-        return self.duration - (self.played_for + ((utils.now() - self.date_resumed).total_seconds() if self.date_resumed else 0) if bool(self.playing) else 0)
+        return self.duration - (
+            self.played_for + ((utils.now() - self.date_resumed).total_seconds() if self.date_resumed else 0)
+            if bool(self.playing)
+            else 0
+        )
 
     @hybrid_property
     def current_song_time(self):
@@ -142,10 +146,7 @@ class SongrequestQueue(Base):
     @staticmethod
     def _create(db_session, video_id, skip_after, requested_by_id, queue=None, backup=False):
         songrequestqueue = SongrequestQueue(
-            video_id=video_id,
-            date_added=utils.now(),
-            skip_after=skip_after,
-            requested_by_id=requested_by_id,
+            video_id=video_id, date_added=utils.now(), skip_after=skip_after, requested_by_id=requested_by_id,
         )
         db_session.add(songrequestqueue)
         db_session.commit()
@@ -154,7 +155,11 @@ class SongrequestQueue(Base):
 
     @staticmethod
     def _get_current_song(db_session):
-        return db_session.query(SongrequestQueue).filter_by(id=SongRequestQueueManager.song_playing_id).one_or_none() if SongRequestQueueManager.song_playing_id else None
+        return (
+            db_session.query(SongrequestQueue).filter_by(id=SongRequestQueueManager.song_playing_id).one_or_none()
+            if SongRequestQueueManager.song_playing_id
+            else None
+        )
 
     @staticmethod
     def _get_next_song(db_session):
@@ -177,7 +182,7 @@ class SongrequestQueue(Base):
     @staticmethod
     def _clear_backup_songs(db_session):
         SongRequestQueueManager.delete_backup_songs()
-        return db_session.query(SongrequestQueue).filter_by(requested_by=None).delete(synchronize_session='evaluate')
+        return db_session.query(SongrequestQueue).filter_by(requested_by=None).delete(synchronize_session="evaluate")
 
     @staticmethod
     def _load_backup_songs(db_session, songs, youtube, settings):
@@ -212,6 +217,7 @@ class SongrequestQueue(Base):
         for song in unordered:
             queued_songs.insert(order.index(song.id), song)
         return queued_songs
+
 
 class SongrequestHistory(Base):
     __tablename__ = "songrequest_history"
@@ -392,7 +398,7 @@ class SongRequestSongInfo(Base):
     @staticmethod
     def _get_banned(db_session):
         return db_session.query(SongRequestSongInfo).filter_by(banned=True).all()
-        
+
     @staticmethod
     def _get_banned_list(db_session):
         song_infos = SongRequestSongInfo._get_banned(db_session)

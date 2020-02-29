@@ -421,10 +421,8 @@ function play({ video_id }) {
             },
         ],
     };
-    pause()
-    socket.send(
-        JSON.stringify({ event: 'ready', data: { salt: salt_value } })
-    );
+    pause();
+    socket.send(JSON.stringify({ event: 'ready', data: { salt: salt_value } }));
 }
 
 function pause() {
@@ -436,14 +434,14 @@ function resume() {
 }
 
 function seek({ seek_time }) {
-    player.currentTime = seek_time
+    player.currentTime = seek_time;
     pause();
     socket.send(JSON.stringify({ event: 'ready', data: { salt: salt_value } }));
 }
-var global_v = 0
+var global_v = 0;
 function volume({ volume }) {
-    global_v = volume/100
-    player.volume = global_v
+    global_v = volume / 100;
+    player.volume = global_v;
 }
 
 function hide() {
@@ -455,19 +453,19 @@ function show() {
 }
 
 function stop() {
-    player.source = null
+    player.source = null;
     player.stop();
 }
 
 // This is the bare minimum JavaScript. You can opt to pass no arguments to setup.
 jQuery(function($) {
-    player = new Plyr('#player',{controls:[]});
+    player = new Plyr('#player', { controls: [] });
     player.on('ready', event => {
         player.play();
     });
     player.on('statechange', event => {
         if (event.detail.code == 0) {
-            hide()
+            hide();
             socket.send(
                 JSON.stringify({
                     event: 'next_song',
@@ -476,7 +474,7 @@ jQuery(function($) {
             );
         }
         if (event.detail.code == 1) {
-            player.volume = global_v
+            player.volume = global_v;
         }
     });
 });

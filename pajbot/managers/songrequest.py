@@ -35,7 +35,7 @@ class SongrequestManager:
             "video_showing": False,
             "enabled": False,
             "requests_open": False,
-            "use_backup_playlist": False
+            "use_backup_playlist": False,
         }
         self.volume = 0
 
@@ -156,7 +156,9 @@ class SongrequestManager:
                 song = SongrequestQueue._from_id(db_session, self.current_song_id)
                 song.date_resumed = utils.now()
                 self.schedule_job_id = random.randint(1, 100000)
-                self.current_song_schedule = ScheduleManager.execute_delayed(song.time_left + 10, self.load_song_schedule, args=[self.schedule_job_id])
+                self.current_song_schedule = ScheduleManager.execute_delayed(
+                    song.time_left + 10, self.load_song_schedule, args=[self.schedule_job_id]
+                )
 
             return True
         return False
@@ -172,7 +174,9 @@ class SongrequestManager:
                 db_session.commit()
                 self.remove_schedule()
                 self.schedule_job_id = random.randint(1, 100000)
-                self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left + 10, self.load_song_schedule, args=[self.schedule_job_id])
+                self.current_song_schedule = ScheduleManager.execute_delayed(
+                    current_song.time_left + 10, self.load_song_schedule, args=[self.schedule_job_id]
+                )
                 self._seek(_time, current_song.webjsonify())
             return True
         return False
@@ -430,11 +434,12 @@ class SongrequestManager:
                 self.current_song_id = current_song.id
                 self._volume()
                 self._play(
-                    current_song.video_id,
-                    current_song.webjsonify(),
+                    current_song.video_id, current_song.webjsonify(),
                 )
                 self.schedule_job_id = random.randint(1, 100000)
-                self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left + 10, self.load_song_schedule, args=[self.schedule_job_id])
+                self.current_song_schedule = ScheduleManager.execute_delayed(
+                    current_song.time_left + 10, self.load_song_schedule, args=[self.schedule_job_id]
+                )
                 if self.settings["use_spotify"]:
                     is_playing, song_name, artistsArr = self.bot.spotify_api.state(self.bot.spotify_token_manager)
                     if is_playing:
@@ -442,11 +447,7 @@ class SongrequestManager:
                         self.previously_playing_spotify = True
                 if not current_song.requested_by_id:
                     SongrequestQueue._create(
-                        db_session,
-                        current_song.video_id,
-                        current_song.skip_after,
-                        None,
-                        backup=True
+                        db_session, current_song.video_id, current_song.skip_after, None, backup=True
                     )
                 db_session.commit()
                 if current_song.requested_by_id:
@@ -466,7 +467,9 @@ class SongrequestManager:
         return False
 
     def _play(self, video_id, current_song_webjsonify):
-        self.bot.songrequest_websocket_manager.emit("play", {"current_song": current_song_webjsonify, "current_timestamp": str(utils.now().timestamp())})
+        self.bot.songrequest_websocket_manager.emit(
+            "play", {"current_song": current_song_webjsonify, "current_timestamp": str(utils.now().timestamp())}
+        )
         self.bot.websocket_manager.emit("songrequest_play", WIDGET_ID, {"video_id": video_id})
         self.module_state["paused"] = True
         self._module_state()
@@ -490,7 +493,9 @@ class SongrequestManager:
         self.bot.websocket_manager.emit("songrequest_volume", WIDGET_ID, {"volume": self.volume})
 
     def _seek(self, _time, current_song_webjsonify):
-        self.bot.songrequest_websocket_manager.emit("play", {"current_song": current_song_webjsonify, "current_timestamp": str(utils.now().timestamp())})
+        self.bot.songrequest_websocket_manager.emit(
+            "play", {"current_song": current_song_webjsonify, "current_timestamp": str(utils.now().timestamp())}
+        )
         self.bot.websocket_manager.emit("songrequest_seek", WIDGET_ID, {"seek_time": _time})
         self.module_state["paused"] = True
         self._module_state()
@@ -530,9 +535,7 @@ class SongrequestManager:
             self.bot.songrequest_websocket_manager.emit("banned_list", {"banned_list": banned_list})
 
     def _module_state(self):
-        self.bot.songrequest_websocket_manager.emit(
-            "module_state", {"module_state": self.module_state}
-        )
+        self.bot.songrequest_websocket_manager.emit("module_state", {"module_state": self.module_state})
 
     def _stop_video(self):
         self.bot.songrequest_websocket_manager.emit("play", {"current_song": {}})

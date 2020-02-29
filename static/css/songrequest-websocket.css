@@ -3,7 +3,7 @@ body {
 }
 
 .nav-item a {
-    color: #CFCCCC !important;
+    color: #cfcccc !important;
     font-weight: 500 !important;
     text-decoration: none !important;
 }
@@ -25,7 +25,8 @@ body {
     background-color: transparent !important;
 }
 
-.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+.nav-tabs .nav-item.show .nav-link,
+.nav-tabs .nav-link.active {
     color: white !important;
     text-shadow: 0px 0px 3px white;
     border: 0 !important;
@@ -54,8 +55,8 @@ body {
     padding-top: 20px;
 }
 
-.info  {
-    line-height: 0.5;    
+.info {
+    line-height: 0.5;
     font-size: 15px;
     margin-left: 10px;
 }
@@ -70,8 +71,8 @@ body {
     color: white;
 }
 
-.url{
-    color:  #9c9b9b;
+.url {
+    color: #9c9b9b;
 }
 
 .custom-progress-bar {
@@ -79,7 +80,7 @@ body {
 }
 
 .url a:hover {
-    color: #FF7D7D !important;
+    color: #ff7d7d !important;
 }
 .url a {
     color: #9c9b9b !important;
@@ -88,7 +89,7 @@ body {
 
 .show-video {
     width: 200px;
-    padding: 0 !important; 
+    padding: 0 !important;
     line-height: 0 !important;
     color: white !important;
     text-decoration: none !important;

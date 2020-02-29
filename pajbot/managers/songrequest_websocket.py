@@ -160,7 +160,6 @@ class SongRequestWebSocketServer:
 
                 return manager_ext.bot.songrequest_manager.open_module_function()
 
-
             def _resume(self, db_session, data):
                 if not self.isAuthed:
                     return False
@@ -195,31 +194,57 @@ class SongRequestWebSocketServer:
                 if not self.isAuthed or not data or not data.get("database_id", False) or not data.get("to_id", False):
                     return False
 
-                return manager_ext.bot.songrequest_manager.move_function(int(data["database_id"]), int(data["to_id"])-1)
+                return manager_ext.bot.songrequest_manager.move_function(
+                    int(data["database_id"]), int(data["to_id"]) - 1
+                )
 
             def _favourite(self, db_session, data):
                 if not self.isAuthed or not data or not data.get("database_id", data.get("hist_database_id", False)):
                     return False
 
-                return manager_ext.bot.songrequest_manager.favourite_function(database_id=data.get("database_id", None), hist_database_id=data.get("hist_database_id", None))
+                return manager_ext.bot.songrequest_manager.favourite_function(
+                    database_id=data.get("database_id", None), hist_database_id=data.get("hist_database_id", None)
+                )
 
             def _unfavourite(self, db_session, data):
-                if not self.isAuthed or not data or not data.get("database_id", data.get("songinfo_database_id", data.get("hist_database_id", False))):
+                if (
+                    not self.isAuthed
+                    or not data
+                    or not data.get(
+                        "database_id", data.get("songinfo_database_id", data.get("hist_database_id", False))
+                    )
+                ):
                     return False
 
-                return manager_ext.bot.songrequest_manager.unfavourite_function(database_id=data.get("database_id", None), hist_database_id=data.get("hist_database_id", None), songinfo_database_id=data.get("songinfo_database_id", None))
+                return manager_ext.bot.songrequest_manager.unfavourite_function(
+                    database_id=data.get("database_id", None),
+                    hist_database_id=data.get("hist_database_id", None),
+                    songinfo_database_id=data.get("songinfo_database_id", None),
+                )
 
             def _ban(self, db_session, data):
                 if not self.isAuthed or not data or not data.get("database_id", data.get("hist_database_id", False)):
                     return False
 
-                return manager_ext.bot.songrequest_manager.ban_function(database_id=data.get("database_id", None), hist_database_id=data.get("hist_database_id", None))
+                return manager_ext.bot.songrequest_manager.ban_function(
+                    database_id=data.get("database_id", None), hist_database_id=data.get("hist_database_id", None)
+                )
 
             def _unban(self, db_session, data):
-                if not self.isAuthed or not data or not data.get("database_id", data.get("songinfo_database_id", data.get("hist_database_id", False))):
+                if (
+                    not self.isAuthed
+                    or not data
+                    or not data.get(
+                        "database_id", data.get("songinfo_database_id", data.get("hist_database_id", False))
+                    )
+                ):
                     return False
 
-                return manager_ext.bot.songrequest_manager.unban_function(database_id=data.get("database_id", None), hist_database_id=data.get("hist_database_id", None), songinfo_database_id=data.get("songinfo_database_id", None))
+                return manager_ext.bot.songrequest_manager.unban_function(
+                    database_id=data.get("database_id", None),
+                    hist_database_id=data.get("hist_database_id", None),
+                    songinfo_database_id=data.get("songinfo_database_id", None),
+                )
 
             def _delete(self, db_session, data):
                 if not self.isAuthed or not data or not data.get("database_id", False):
@@ -240,7 +265,11 @@ class SongRequestWebSocketServer:
                 return True
 
             def _dump_state(self, db_session):
-                song = SongrequestQueue._from_id(db_session, manager_ext.bot.songrequest_manager.current_song_id) if manager_ext.bot.songrequest_manager.current_song_id else None
+                song = (
+                    SongrequestQueue._from_id(db_session, manager_ext.bot.songrequest_manager.current_song_id)
+                    if manager_ext.bot.songrequest_manager.current_song_id
+                    else None
+                )
                 data = {
                     "volume": manager_ext.bot.songrequest_manager.volume_val,
                     "current_song": song.webjsonify() if song else {},

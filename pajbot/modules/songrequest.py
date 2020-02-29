@@ -234,7 +234,7 @@ class SongrequestModule(BaseModule):
                         playing_in=playing_in,
                     )
                 )
-            
+
         self.bot.songrequest_manager._playlist()
         return True
 

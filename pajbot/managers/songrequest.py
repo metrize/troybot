@@ -167,7 +167,7 @@ class SongrequestManager:
         if self.current_song_id:
             with DBManager.create_session_scope() as db_session:
                 current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
-                current_song.current_song_time = _time
+                current_song.played_for += _time - current_song.current_song_time
                 self.remove_schedule()
                 self.schedule_job_id = random.randint(1, 100000)
                 self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left + 10, self.load_song_schedule, args=[self.schedule_job_id])

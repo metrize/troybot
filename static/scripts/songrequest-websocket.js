@@ -71,6 +71,8 @@ function current_song(data) {
     $("#status").text("No songs currently playing!");
     $("#songname").hide();
     $("#url").hide();
+    player.loadVideoById("");
+    player.stopVideo();
   } else {
       $("#status").text("Now Playing - " + data["current_song"]["requested_by"]);
       $("#songname").show();

@@ -96,6 +96,7 @@ function current_song(data) {
       $("#song_title").text(data["current_song"]["song_info"]["title"]);
       $("#url a").text("https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
       $("#url a").attr("href", "https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
+      console.log(Math.round(data["current_song"]["current_song_time"] + Math.floor((new Date()).getTime() / 1000) - parseFloat(data["current_timestamp"]) + 0.5, 2))
       player.loadVideoById(data["current_song"]["song_info"]["video_id"], Math.round(data["current_song"]["current_song_time"] + Math.floor((new Date()).getTime() / 1000) - parseFloat(data["current_timestamp"]) + 0.5, 2));
   }
 }

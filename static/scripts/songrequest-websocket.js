@@ -95,7 +95,6 @@ function initialize_player(data) {
         player.loadVideoById(data["current_song"]["song_info"]["video_id"], data["current_song"]["current_song_time"] + offset + 1.5)
     }
     // playlist
-    console.log(data["history_list"])
     data["playlist"].forEach(function(song) {
         $('#currentqueuebody').append(`<tr>
         <td>
@@ -404,6 +403,9 @@ var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+$("#songname").hide()
+$("#url").hide()
 
 var player;
 function onYouTubeIframeAPIReady() {

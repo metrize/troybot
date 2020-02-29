@@ -66,26 +66,26 @@ var enabled = false;
 var requests_open = false;
 var use_backup_playlist = false;
 
-function current_song(current_song) {
-  if (Object.keys(current_song).length === 0) {
+function current_song(data) {
+  var offset = Math.floor((new Date()).getTime() / 1000) - parseFloat(data["current_timestamp"]);
+  if (Object.keys(data["current_song"]).length === 0) {
     $("#status").text("No songs currently playing!");
     $("#songname").hide();
     $("#url").hide();
   } else {
-      $("#status").text("Now Playing - " + current_song["requested_by"]);
+      $("#status").text("Now Playing - " + data["current_song"]["requested_by"]);
       $("#songname").show();
       $("#url").show();
-      $("#song_title").text(current_song["song_info"]["title"]);
-      $("#url a").text("https://www.youtube.com/watch?v="+current_song["song_info"]["video_id"]);
-      $("#url a").attr("href", "https://www.youtube.com/watch?v="+current_song["song_info"]["video_id"]);
-      player.loadVideoById(current_song["song_info"]["video_id"], current_song["current_song_time"] + offset + 1.5);
+      $("#song_title").text(data["current_song"]["song_info"]["title"]);
+      $("#url a").text("https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
+      $("#url a").attr("href", "https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"]);
+      player.loadVideoById(data["current_song"]["song_info"]["video_id"], data["current_song"]["current_song_time"] + offset + 1.5);
   }
 }
 
 function initialize_player(data) {
     // volume
     player.setVolume(data["volume"]);
-    var offset = Math.floor((new Date()).getTime() / 1000) - parseFloat(data["current_timestamp"]);
     $("#volume div").css("width", data["volume"]+"%");
 
     // module_state
@@ -101,7 +101,7 @@ function initialize_player(data) {
     $("#control_state").text(paused ? "Resume" : "Pause");
 
     // current_song
-    current_song(data["current_song"]);
+    current_song(data);
     // playlist
     data["playlist"].forEach(function(song) {
         $('#currentqueuebody').append(`<tr>

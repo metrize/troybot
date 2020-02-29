@@ -345,7 +345,7 @@ class SongrequestManager:
         return False
 
     def _play(self, video_id, current_song_webjsonify):
-        self.bot.songrequest_websocket_manager.emit("play", current_song_webjsonify)
+        self.bot.songrequest_websocket_manager.emit("play", {"current_song": current_song_webjsonify, "current_timestamp": str(utils.now().timestamp())})
         self.bot.websocket_manager.emit("songrequest_play", WIDGET_ID, {"video_id": video_id})
         self.module_state["paused"] = True
         if self.module_state["video_showing"]:

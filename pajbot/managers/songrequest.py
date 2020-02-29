@@ -516,7 +516,7 @@ class SongrequestManager:
     def _playlist_history(self):
         with DBManager.create_session_scope() as db_session:
             self.bot.songrequest_websocket_manager.emit(
-                "history", {"history_list": SongrequestHistory._get_history(db_session, 30)}
+                "history_list", {"history_list": SongrequestHistory._get_history(db_session, 30)}
             )
 
     def _favourite_list(self):

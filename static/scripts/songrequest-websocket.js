@@ -421,15 +421,17 @@ function onYouTubeIframeAPIReady() {
 }
 
 function onPlayerReady(event) {
-  player.pauseVideo()
-  if (!paused) {
-    event.target.playVideo();
-  }
+  
 }
 
 var done = false;
 
 function onPlayerStateChange(event) {
+  if (!paused) {
+    event.target.playVideo();
+  } else {
+    player.pauseVideo();
+  }
   if (event.data == YT.PlayerState.PLAYING) {
     $("#volume div").css("width", player.getVolume()+"%");
     var playerTotalTime = player.getDuration();

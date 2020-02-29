@@ -109,6 +109,7 @@ class SongRequestWebSocketServer:
                             "HIDEVIDEO": self._hidevideo,
                             "CLOSESR": self._closesr,
                             "OPENSR": self._opensr,
+                            "MOVE": self._move,
                         }
                         method = switcher.get(json_msg["event"], None)
                         if not method or not method(db_session, json_msg.get("data", None)):
@@ -184,6 +185,12 @@ class SongRequestWebSocketServer:
                     return False
 
                 return manager_ext.bot.songrequest_manager.volume_function(data.get("volume"))
+
+            def _move(self, db_session, data):
+                if not self.isAuthed or not data or not data.get("database_id", False) or not data.get("to_id", False):
+                    return False
+
+                return manager_ext.bot.songrequest_manager.move_function(int(data.get["database_id"]), int(data["to_id"]))
 
             def _auth(self, db_session, data):
                 access_token = data["access_token"]

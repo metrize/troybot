@@ -57,10 +57,11 @@ function handleWebsocketData(json_data) {
     }
     console.log(json_data);
 }
-
+var paused = false;
 function initialize_player(data) {
     // volume
     player.setVolume(data["volume"]);
+    var offset = Math.floor((new Date()).getTime() / 1000) - parseFloat(data["current_timestamp"])
     $("#volume div").css("width", data["volume"]+"%");
     // current_song
     if (Object.keys(data["current_song"]).length === 0) {
@@ -74,6 +75,8 @@ function initialize_player(data) {
         $("#song_title").text(data["current_song"]["song_info"]["title"])
         $("#url a").text("https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"])
         $("#url a").attr("href", "https://www.youtube.com/watch?v="+data["current_song"]["song_info"]["video_id"])
+        player.loadVideoById(data["current_song"]["song_info"]["video_id"], data["current_song"]["current_song_time"] + offset)
+        paused = data["current_song"]["module_state"]["paused"]
     }
     // playlist
     console.log(data["history_list"])
@@ -399,7 +402,9 @@ function onYouTubeIframeAPIReady() {
 }
 
 function onPlayerReady(event) {
-    // event.target.playVideo();
+  if (!paused) {
+    event.target.playVideo();
+  }
 }
 
 var done = false;
@@ -429,7 +434,7 @@ function onPlayerStateChange(event) {
 }
 
 $("#control_state").on("click", function(e) {
-    if (player.getPlayerState() == 1) {
+    if (!paused) {
         socket.send(
             JSON.stringify({
                 event: 'PAUSE',

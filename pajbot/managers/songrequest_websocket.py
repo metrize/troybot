@@ -11,6 +11,8 @@ from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerPr
 from pajbot.models.songrequest import SongrequestQueue, SongrequestHistory, SongRequestSongInfo
 from pajbot.managers.db import DBManager
 
+import pajbot.utils as utils
+
 log = logging.getLogger("pajbot")
 
 
@@ -177,6 +179,7 @@ class SongRequestWebSocketServer:
                     "history_list": SongrequestHistory._get_history(db_session, limit=30),
                     "banned_list": [x.jsonify() for x in SongRequestSongInfo._get_banned(db_session)],
                     "favourite_list": [x.jsonify() for x in SongRequestSongInfo._get_favourite(db_session)],
+                    "current_timestamp": str(utils.now().timestamp()),
                 }
                 payload = {
                     "event": "initialize",

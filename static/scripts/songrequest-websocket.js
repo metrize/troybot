@@ -79,6 +79,7 @@ function initialize_player(data) {
     $("#video_showing_state").text(video_showing ? "Hide Video" : "Show Video" )
     $("#requests_open_state").text(requests_open ? "Disable Requests" : "Enable Requests" )
     $("#backup_playlist_usage_state").text(use_backup_playlist ? "Disable Backup Playlist" : "Enable Backup Playlist" )
+    $("#control_state").text(paused ? "Resume" : "Pause");
 
     // current_song
     if (Object.keys(data["current_song"]).length === 0) {
@@ -429,7 +430,6 @@ var done = false;
 
 function onPlayerStateChange(event) {
   if (event.data == YT.PlayerState.PLAYING) {
-    $("#control_state").text("Pause");
     $("#volume div").css("width", player.getVolume()+"%");
     var playerTotalTime = player.getDuration();
     function timer() {
@@ -443,7 +443,6 @@ function onPlayerStateChange(event) {
     timer()
     mytimer = setInterval(timer, 1000);  
   } else {
-    $("#control_state").text("Resume");
     try{
       clearTimeout(mytimer);
     } catch {

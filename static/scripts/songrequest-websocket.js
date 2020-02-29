@@ -295,7 +295,7 @@ function set_backup_playlist(data) {
 function set_history_list(data) {
   $('#historybody').empty()
   data["history_list"].forEach(function(song) {
-    $('#historybody').append(`<tr data-id="`+song["database_id"]+`" data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
+    $('#historybody').append(`<tr data-histid="`+song["database_id"]+`" data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -745,7 +745,7 @@ function favourite_control(event) {
   socket.send(
     JSON.stringify({
         event: tr.data("favourite") ? "UNFAVOURITE" : "FAVOURITE",
-        data: tr.data("id") ? {database_id: tr.data("id")} : {songinfo_database_id: tr.data("infoid")},
+        data: tr.data("id") ? {database_id: tr.data("id")} : (tr.data("infoid") ? {songinfo_database_id: tr.data("infoid")} : {hist_database_id: tr.data("histid")}),
     })
   );
 }
@@ -755,7 +755,7 @@ function ban_control(event) {
   socket.send(
     JSON.stringify({
         event: tr.data("banned") ? "UNBAN" : "BAN",
-        data: tr.data("id") ? {database_id: tr.data("id")} : {songinfo_database_id: tr.data("infoid")},
+        data: tr.data("id") ? {database_id: tr.data("id")} : (tr.data("infoid") ? {songinfo_database_id: tr.data("infoid")} : {hist_database_id: tr.data("histid")}),
     })
   );
 }

@@ -423,6 +423,8 @@ function onYouTubeIframeAPIReady() {
 function onPlayerReady(event) {
   if (!paused) {
     event.target.playVideo();
+  } else {
+    event.target.pauseVideo();
   }
 }
 

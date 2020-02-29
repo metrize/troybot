@@ -70,6 +70,12 @@ function handleWebsocketData(json_data) {
         case "history_list":
           set_history_list(json_data['data']);
           break;
+        case "favourite_list":
+          set_favourite_list(json_data['data']);
+          break;
+        case "banned_list":
+          set_banned_list(json_data['data']);
+          break;
         case "module_state":
           set_module_state(json_data['data']);
           break;
@@ -109,7 +115,7 @@ function set_volume(data) {
 function set_playlist(data) {
   $('#currentqueuebody').empty()
   data["playlist"].forEach(function(song) {
-      $('#currentqueuebody').append(`<tr data-id="`+song["database_id"]+`">
+      $('#currentqueuebody').append(`<tr data-id="`+song["database_id"]+` data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -151,12 +157,12 @@ function set_playlist(data) {
               </a>
             
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
-                <a class="dropdown-item" href="#">Delete</a>
+                <a id="ban_control" class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
+                <a id="delete_control" class="dropdown-item" href="#">Delete</a>
               </div>
             </div>
           </div>
-          <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
+          <div id="favourite_control" class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
               <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
@@ -183,7 +189,7 @@ function set_playlist(data) {
               ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
               </svg>
       ` : `
-            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+            <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
               href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
           AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
           RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
@@ -211,7 +217,7 @@ function set_playlist(data) {
 function set_backup_playlist(data) {
   $('#backupqueuebody').empty()
   data["backup_playlist"].forEach(function(song) {
-      $('#backupqueuebody').append(`<tr data-id="`+song["database_id"]+`">
+      $('#backupqueuebody').append(`<tr data-id="`+song["database_id"]+` data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -234,32 +240,8 @@ function set_backup_playlist(data) {
               </div>
             </div>
           </div>
-          <div class="ml-auto p-2 align-self-center">
-            <div class="dropdown dropleft">
-              <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
-                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">  <image id="image0" width="40" height="40" x="0" y="0"
-                  href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-              AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAV1BMVEUAAAAAAAAtDwwrDgsu
-              DwzAPzGVMSctDgssDwyOLyXDQTMuEAsAAADCQDOOLyUsDguNLyWUMSYuDguPMCUoDgyOLyWQMCWP
-              LyUAAADCQTMuEAznTDz///8dVoCNAAAAG3RSTlMAA65wrPnrcWnq+7IE++tv6etw623p6+oC+7Ho
-              kTMcAAAAAWJLR0QcnARBBwAAAAd0SU1FB+QCGwUtHmA31a0AAADWSURBVDjLxdTdFoIgDADgiWVa
-              KZL2y/u/ZwZBDLbVVe7KA587nrkNYO2oVE1f1KpCbrNtdpRru/3hiJy1lGw7axPpHCVfLpWqty6G
-              7Dv14M97FV4c/UGW0+dbwpxAkoQjJekIybhCsi6T0TWFQ1J0S9mm9/UQHiZNN0DMKeYrJe+wlBzA
-              fA7uIjqYr7/BWBdL9yflJIkdL2PBJ7ngyX9jOrlwbM8XTpBFv3ybo+a/c/RZAFnZQmHjArj5lcLN
-              0f0Rl4+ThpmjxDlpyLZqR+SERarxIl0lnra6MGBtol6jAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIw
-              LTAyLTI3VDEyOjQ1OjMwLTA3OjAwP084DQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMi0yN1Qx
-              Mjo0NTozMC0wNzowME4SgLEAAAAASUVORK5CYII=" />
-              </svg>
-              </a>
-            
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
-                <a class="dropdown-item" href="#">Delete</a>
-              </div>
-            </div>
-          </div>
-          <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
-              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+          <div class="ml-auto p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
+              <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
               AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -285,7 +267,7 @@ function set_backup_playlist(data) {
               ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
               </svg>
       ` : `
-            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+            <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
               href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
           AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
           RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
@@ -313,7 +295,7 @@ function set_backup_playlist(data) {
 function set_history_list(data) {
   $('#historybody').empty()
   data["history_list"].forEach(function(song) {
-    $('#historybody').append(`<tr data-id="`+song["database_id"]+`">
+    $('#historybody').append(`<tr data-id="`+song["database_id"]+` data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -355,12 +337,12 @@ function set_history_list(data) {
               </a>
             
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
+                <a id="ban_control" class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
               </div>
             </div>
           </div>
           <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
-              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+              <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
               AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -386,7 +368,7 @@ function set_history_list(data) {
               ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
               </svg>
       ` : `
-            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+            <svg id="favourite_control" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
               href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
           AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
           RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
@@ -444,6 +426,10 @@ function initialize_player(data) {
     set_backup_playlist(data);
     // history_list
     set_history_list(data);
+    // favourite_list
+    set_favourite_list(data);
+    // banned_list
+    set_banned_list(data);
 }
 
 $(document).ready(function() {
@@ -574,6 +560,36 @@ $("#video_showing_state").on("click", function(e) {
   socket.send(
     JSON.stringify({
         event: video_showing ? "HIDEVIDEO" : "SHOWVIDEO",
+    })
+  );
+})
+
+$("#favourite_control").on("click", function(e) {
+  var tr = $(this).closest("tr")
+  socket.send(
+    JSON.stringify({
+        event: tr.data("favourite") ? "UNFAVOURITE" : "FAVOURITE",
+        data: {database_id: tr.data("id")}
+    })
+  );
+})
+
+$("#ban_control").on("click", function(e) {
+  var tr = $(this).closest("tr")
+  socket.send(
+    JSON.stringify({
+        event: tr.data("banned") ? "UNBAN" : "BAN",
+        data: {database_id: tr.data("id")}
+    })
+  );
+})
+
+$("#delete_control").on("click", function(e) {
+  var tr = $(this).closest("tr")
+  socket.send(
+    JSON.stringify({
+        event: "DELETE",
+        data: {database_id: tr.data("id")}
     })
   );
 })

@@ -164,6 +164,17 @@ class SongrequestQueue(Base):
         return db_session.query(SongrequestQueue).filter_by(id=next_id).one_or_none()
 
     @staticmethod
+    def _all_by_video_id(db_session, _video_id):
+        return db_session.query(SongrequestQueue).filter_by(video_id=_video_id).all()
+
+    @staticmethod
+    def _pruge_videos(db_session, _video_id):
+        all_songs = SongrequestQueue._all_by_video_id(db_session, _video_id)
+        for song in all_songs:
+            SongRequestQueueManager.remove_song_id(song.id)
+            song._remove()
+
+    @staticmethod
     def _clear_backup_songs(db_session):
         SongRequestQueueManager.delete_backup_songs()
         return db_session.query(SongrequestQueue).filter_by(requested_by=None).delete(synchronize_session='evaluate')
@@ -365,6 +376,10 @@ class SongRequestSongInfo(Base):
         default_thumbnail = video["snippet"]["thumbnails"]["default"]["url"]
 
         return SongRequestSongInfo._create(db_session, video_id, title, duration, default_thumbnail)
+
+    @staticmethod
+    def _get(db_session, _id):
+        return db_session.query(SongRequestSongInfo).filter_by(id=_id).one_or_none()
 
     @staticmethod
     def _get_banned(db_session):

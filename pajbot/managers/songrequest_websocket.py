@@ -110,6 +110,11 @@ class SongRequestWebSocketServer:
                             "CLOSESR": self._closesr,
                             "OPENSR": self._opensr,
                             "MOVE": self._move,
+                            "FAVOURITE": self._favourite,
+                            "UNFAVOURITE": self._unfavourite,
+                            "BAN": self._ban,
+                            "UNBAN": self._ban,
+                            "DELETE": self._delete,
                         }
                         method = switcher.get(json_msg["event"], None)
                         if not method or not method(db_session, json_msg.get("data", None)):
@@ -191,6 +196,36 @@ class SongRequestWebSocketServer:
                     return False
 
                 return manager_ext.bot.songrequest_manager.move_function(int(data["database_id"]), int(data["to_id"])-1)
+
+            def _favourite(self, db_session, data):
+                if not self.isAuthed or not data or not data.get("database_id", False):
+                    return False
+
+                return manager_ext.bot.songrequest_manager.favourite_function(int(data["database_id"]))
+
+            def _unfavourite(self, db_session, data):
+                if not self.isAuthed or not data or not data.get("database_id", data.get("song_info_database_id", False)):
+                    return False
+
+                return manager_ext.bot.songrequest_manager.unfavourite_function(database_id=data.get("database_id", None), song_info_database_id=data.get("song_info_database_id", None))
+
+            def _ban(self, db_session, data):
+                if not self.isAuthed or not data or not data.get("database_id", False):
+                    return False
+
+                return manager_ext.bot.songrequest_manager.ban_function(int(data["database_id"]))
+
+            def _unban(self, db_session, data):
+                if not self.isAuthed or not data or not data.get("database_id", data.get("song_info_database_id", False)):
+                    return False
+
+                return manager_ext.bot.songrequest_manager.unban_function(database_id=data.get("database_id", None), song_info_database_id=data.get("song_info_database_id", None))
+
+            def _delete(self, db_session, data):
+                if not self.isAuthed or not data or not data.get("database_id", False):
+                    return False
+
+                return manager_ext.bot.songrequest_manager.remove_function(int(data["database_id"]))
 
             def _auth(self, db_session, data):
                 access_token = data["access_token"]

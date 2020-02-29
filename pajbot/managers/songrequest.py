@@ -212,6 +212,93 @@ class SongrequestManager:
         self._playlist()
         return True
 
+    def favourite_function(self, database_id):
+        if not self.module_state["enabled"]:
+            return False
+        with DBManager.create_session_scope() as db_session:
+            song = SongrequestQueue._from_id(db_session, database_id)
+            if song.song_info.favourite:
+                return False
+            song.song_info.favourite = True
+            db_session.merge(song.song_info)
+            db_session.commit()
+        self._playlist()
+        self._backup_playlist()
+        self._playlist_history()
+        self._favourite_list()
+        self._banned_list()
+        return True
+
+    def unfavourite_function(self, database_id=None, song_info_database_id=None):
+        if not self.module_state["enabled"]:
+            return False
+
+        if not song_info_database_id and not database_id:
+            return False
+
+        with DBManager.create_session_scope() as db_session:
+            if database_id:
+                song = SongrequestQueue._from_id(db_session, int(database_id))
+                song_info = song.song_info
+            else:
+                song_info = SongRequestSongInfo._get(db_session, int(song_info_database_id))
+            if not song.song_info.favourite:
+                return False
+
+            song_info.favourite = False
+            db_session.merge(song_info)
+            db_session.commit()
+        self._playlist()
+        self._backup_playlist()
+        self._playlist_history()
+        self._favourite_list()
+        self._banned_list()
+        return True
+
+    def ban_function(self, database_id):
+        if not self.module_state["enabled"]:
+            return False
+        with DBManager.create_session_scope() as db_session:
+            song = SongrequestQueue._from_id(db_session, database_id)
+            if song.song_info.banned:
+                return False
+            song.song_info.banned = True
+            db_session.merge(song.song_info)
+            SongrequestQueue._pruge_videos(db_session, song.video_id)
+            db_session.commit()
+        self._playlist()
+        self._backup_playlist()
+        self._playlist_history()
+        self._favourite_list()
+        self._banned_list()
+        return True
+
+    def unban_function(self, database_id=None, song_info_database_id=None):
+        if not self.module_state["enabled"]:
+            return False
+
+        if not song_info_database_id and not database_id:
+            return False
+
+        with DBManager.create_session_scope() as db_session:
+            if database_id:
+                song = SongrequestQueue._from_id(db_session, int(database_id))
+                song_info = song.song_info
+            else:
+                song_info = SongRequestSongInfo._get(db_session, int(song_info_database_id))
+            if not song.song_info.banned:
+                return False
+
+            song_info.banned = False
+            db_session.merge(song_info)
+            db_session.commit()
+        self._playlist()
+        self._backup_playlist()
+        self._playlist_history()
+        self._favourite_list()
+        self._banned_list()
+        return True
+
     def request_function(self, video_id, requested_by, queue=None):
         if not self.module_state["enabled"]:
             return False
@@ -415,6 +502,16 @@ class SongrequestManager:
             self.bot.songrequest_websocket_manager.emit(
                 "history", {"history_list": SongrequestHistory._get_history(db_session, 30)}
             )
+
+    def _favourite_list(self):
+        with DBManager.create_session_scope() as db_session:
+            playlist = SongRequestSongInfo._get_favourite(db_session)
+            self.bot.songrequest_websocket_manager.emit("playlist", {"playlist": playlist})
+
+    def _banned_list(self):
+        with DBManager.create_session_scope() as db_session:
+            playlist = SongRequestSongInfo._get_banned(db_session)
+            self.bot.songrequest_websocket_manager.emit("playlist", {"playlist": playlist})
 
     def _module_state(self):
         self.bot.songrequest_websocket_manager.emit(

@@ -471,7 +471,7 @@ function volume({ volume }) {
 function hide() {
     $('#songrequest').hide();
 }
-hide();
+
 function show() {
     $('#songrequest').show();
 }

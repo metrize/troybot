@@ -428,6 +428,7 @@ class SongrequestManager:
                 current_song.played_for = 0
                 current_song.date_resumed = utils.now()
                 self.current_song_id = current_song.id
+                self._volume()
                 self._play(
                     current_song.video_id,
                     current_song.webjsonify(),
@@ -474,7 +475,6 @@ class SongrequestManager:
 
     def ready(self):
         self.resume_function()
-        ScheduleManager.execute_delayed(2, self._volume)
 
     def _pause(self):
         self.bot.websocket_manager.emit("songrequest_pause", WIDGET_ID, {})

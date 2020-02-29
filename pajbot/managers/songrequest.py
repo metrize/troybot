@@ -52,7 +52,7 @@ class SongrequestManager:
         self.schedule_job_id = None
 
         self.module_state["enabled"] = True
-        self.volume = 0
+        self.volume = self.settings["volume"]
 
     @property
     def volume_val(self):

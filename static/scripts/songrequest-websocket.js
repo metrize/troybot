@@ -53,11 +53,26 @@ function handleWebsocketData(json_data) {
     console.log(json_data);
     switch (json_data['event']) {
         case "initialize":
-            initialize_player(json_data['data']);
-            break;
+          initialize_player(json_data['data']);
+          break;
         case "play":
-            current_song(json_data['data']);
-            break;
+          current_song(json_data['data']);
+          break;
+        case "volume":
+          volume(json_data['data']);
+          break;
+        case "playlist":
+          set_playlist(json_data['data']);
+          break;
+        case "backup_playlist":
+          set_backup_playlist(json_data['data']);
+          break;
+        case "history_list":
+          set_history_list(json_data['data']);
+          break;
+        case "module_state":
+          set_module_state(json_data['data']);
+          break;
     }
 }
 var paused = false;
@@ -84,322 +99,339 @@ function current_song(data) {
   }
 }
 
+function set_volume(data) {
+  player.setVolume(data["volume"]);
+  $("#volume div").css("width", data["volume"]+"%");
+}
+
+function set_playlist(data) {
+  data["playlist"].forEach(function(song) {
+      $('#currentqueuebody').append(`<tr>
+      <td>
+        <div class="d-flex justify-content-between">
+          <div class="p-2 align-self-center">
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="28px" viewBox="0 0 48 28" enable-background="new 0 0 48 28" xml:space="preserve">  <image id="image0" width="48" height="28" x="0" y="0"
+              href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAcAgMAAABaAtRZAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+              AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAADFBMVEX///8AAABUbnr///9N
+              redqAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJ
+              TUUH5AIbBR8yv5/tPwAAAB5JREFUGNNjYCAHcK2CggXEc1hDoSCAeM5gtod0AADW6V+h4CpCKgAA
+              ACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMjozMTo1MC0wNzowMNnwhHMAAAAldEVYdGRh
+              dGU6bW9kaWZ5ADIwMjAtMDItMjdUMTI6MzE6NTAtMDc6MDCorTzPAAAAAElFTkSuQmCC" />
+            </svg>
+          </div>
+          <div class="p-2 align-self-center">
+            <div class="d-flex flex-column">
+              <div class="p-2">
+                <span><a>`+ song["song_info"]["title"] +`</a> Duration `+ song["formatted_duration"] +`</span>
+              </div>
+              <div class="p-2">
+                <span>-Requested By `+ song["requested_by"] +`</span>
+              </div>
+            </div>
+          </div>
+          <div class="ml-auto p-2 align-self-center">
+            <div class="dropdown dropleft">
+              <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">  <image id="image0" width="40" height="40" x="0" y="0"
+                  href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+              AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAV1BMVEUAAAAAAAAtDwwrDgsu
+              DwzAPzGVMSctDgssDwyOLyXDQTMuEAsAAADCQDOOLyUsDguNLyWUMSYuDguPMCUoDgyOLyWQMCWP
+              LyUAAADCQTMuEAznTDz///8dVoCNAAAAG3RSTlMAA65wrPnrcWnq+7IE++tv6etw623p6+oC+7Ho
+              kTMcAAAAAWJLR0QcnARBBwAAAAd0SU1FB+QCGwUtHmA31a0AAADWSURBVDjLxdTdFoIgDADgiWVa
+              KZL2y/u/ZwZBDLbVVe7KA587nrkNYO2oVE1f1KpCbrNtdpRru/3hiJy1lGw7axPpHCVfLpWqty6G
+              7Dv14M97FV4c/UGW0+dbwpxAkoQjJekIybhCsi6T0TWFQ1J0S9mm9/UQHiZNN0DMKeYrJe+wlBzA
+              fA7uIjqYr7/BWBdL9yflJIkdL2PBJ7ngyX9jOrlwbM8XTpBFv3ybo+a/c/RZAFnZQmHjArj5lcLN
+              0f0Rl4+ThpmjxDlpyLZqR+SERarxIl0lnra6MGBtol6jAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIw
+              LTAyLTI3VDEyOjQ1OjMwLTA3OjAwP084DQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMi0yN1Qx
+              Mjo0NTozMC0wNzowME4SgLEAAAAASUVORK5CYII=" />
+              </svg>
+              </a>
+            
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
+                <a class="dropdown-item" href="#">Delete</a>
+              </div>
+            </div>
+          </div>
+          <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
+              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+                  href="data:image/png;base64,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" />
+              </svg>
+      ` : `
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+              href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+          AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
+          RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
+          FBzaguAgIoYGoaVUInYRukjioA6iDbEUdXCq0hBpJW0URL2nTUvvva9DrW3T/Nwk95lfnvNyz3fO
+          PSH2EuUqPXTQQZhf5PlEkln200s/pzjKIVyKFJljivdUoYs0TlxZ5WRU0rKyGhMOL+guW/wlzriy
+          WlFJRjllFRcOac5U0g5iJuSoHEeTwmbof24E86hiblzYxMq1Cdy8qlEQHgkAHuKtVM0tCJfRvW1d
+          R7VwhMcQw3hezdymcHdad2HyqkdB2NjLdXMLwub0lvj5RN24JNmyfeXGRApCRHnnhMMEh0ubS49F
+          32igWgjzIEyfRXd3664yohC1iEQCF0cgEsKY9vaAxascXLXwvMAbu+BaFIuBi4tQtFhcDFy8BEsW
+          mUzg4gxkQnQyH+z2rdG+xgmLb6QmA+2bhBRfAY5h+7sF/GCE4eT2IvevBya+IeI77S3mEoFoJ8VH
+          2nZ/mOMU3rSsnRXf2Xf1XKa00JJ2WWzQX2k7Y2z+aFprhMtwtUm5XeuXWos/wuNerSEcpPShYe1n
+          4XC33nxf43eqIW1WGG76OToXKDz2rX0qftLn91SeZf6WL+0dkeN8Iwf+MNMDqj0j6xoQr+lsRLs9
+          IyZdVftKrP97djXBRb7EKjwAPY2IHJea1QIcIIkzs0c7KzyecaQV7RZXyMVkJEkbGhH5yge3ud4J
+          zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
+          MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
+          LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
+          </svg>`) + `
+          
+          </div>
+        </div>
+      </td>
+    </tr>`);
+  });
+}
+
+function set_backup_playlist(data) {
+  data["backup_playlist"].forEach(function(song) {
+      $('#backupqueuebody').append(`<tr>
+      <td>
+        <div class="d-flex justify-content-between">
+          <div class="p-2 align-self-center">
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="28px" viewBox="0 0 48 28" enable-background="new 0 0 48 28" xml:space="preserve">  <image id="image0" width="48" height="28" x="0" y="0"
+              href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAcAgMAAABaAtRZAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+              AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAADFBMVEX///8AAABUbnr///9N
+              redqAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJ
+              TUUH5AIbBR8yv5/tPwAAAB5JREFUGNNjYCAHcK2CggXEc1hDoSCAeM5gtod0AADW6V+h4CpCKgAA
+              ACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMjozMTo1MC0wNzowMNnwhHMAAAAldEVYdGRh
+              dGU6bW9kaWZ5ADIwMjAtMDItMjdUMTI6MzE6NTAtMDc6MDCorTzPAAAAAElFTkSuQmCC" />
+            </svg>
+          </div>
+          <div class="p-2 align-self-center">
+            <div class="d-flex flex-column">
+              <div class="p-2">
+                <span><a>`+ song["song_info"]["title"] +`</a> Duration `+ song["formatted_duration"] +`</span>
+              </div>
+              <div class="p-2">
+                <span>-Requested By `+ song["requested_by"] +`</span>
+              </div>
+            </div>
+          </div>
+          <div class="ml-auto p-2 align-self-center">
+            <div class="dropdown dropleft">
+              <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">  <image id="image0" width="40" height="40" x="0" y="0"
+                  href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+              AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAV1BMVEUAAAAAAAAtDwwrDgsu
+              DwzAPzGVMSctDgssDwyOLyXDQTMuEAsAAADCQDOOLyUsDguNLyWUMSYuDguPMCUoDgyOLyWQMCWP
+              LyUAAADCQTMuEAznTDz///8dVoCNAAAAG3RSTlMAA65wrPnrcWnq+7IE++tv6etw623p6+oC+7Ho
+              kTMcAAAAAWJLR0QcnARBBwAAAAd0SU1FB+QCGwUtHmA31a0AAADWSURBVDjLxdTdFoIgDADgiWVa
+              KZL2y/u/ZwZBDLbVVe7KA587nrkNYO2oVE1f1KpCbrNtdpRru/3hiJy1lGw7axPpHCVfLpWqty6G
+              7Dv14M97FV4c/UGW0+dbwpxAkoQjJekIybhCsi6T0TWFQ1J0S9mm9/UQHiZNN0DMKeYrJe+wlBzA
+              fA7uIjqYr7/BWBdL9yflJIkdL2PBJ7ngyX9jOrlwbM8XTpBFv3ybo+a/c/RZAFnZQmHjArj5lcLN
+              0f0Rl4+ThpmjxDlpyLZqR+SERarxIl0lnra6MGBtol6jAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIw
+              LTAyLTI3VDEyOjQ1OjMwLTA3OjAwP084DQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMi0yN1Qx
+              Mjo0NTozMC0wNzowME4SgLEAAAAASUVORK5CYII=" />
+              </svg>
+              </a>
+            
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
+                <a class="dropdown-item" href="#">Delete</a>
+              </div>
+            </div>
+          </div>
+          <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
+              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+                  href="data:image/png;base64,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" />
+              </svg>
+      ` : `
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+              href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+          AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
+          RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
+          FBzaguAgIoYGoaVUInYRukjioA6iDbEUdXCq0hBpJW0URL2nTUvvva9DrW3T/Nwk95lfnvNyz3fO
+          PSH2EuUqPXTQQZhf5PlEkln200s/pzjKIVyKFJljivdUoYs0TlxZ5WRU0rKyGhMOL+guW/wlzriy
+          WlFJRjllFRcOac5U0g5iJuSoHEeTwmbof24E86hiblzYxMq1Cdy8qlEQHgkAHuKtVM0tCJfRvW1d
+          R7VwhMcQw3hezdymcHdad2HyqkdB2NjLdXMLwub0lvj5RN24JNmyfeXGRApCRHnnhMMEh0ubS49F
+          32igWgjzIEyfRXd3664yohC1iEQCF0cgEsKY9vaAxascXLXwvMAbu+BaFIuBi4tQtFhcDFy8BEsW
+          mUzg4gxkQnQyH+z2rdG+xgmLb6QmA+2bhBRfAY5h+7sF/GCE4eT2IvevBya+IeI77S3mEoFoJ8VH
+          2nZ/mOMU3rSsnRXf2Xf1XKa00JJ2WWzQX2k7Y2z+aFprhMtwtUm5XeuXWos/wuNerSEcpPShYe1n
+          4XC33nxf43eqIW1WGG76OToXKDz2rX0qftLn91SeZf6WL+0dkeN8Iwf+MNMDqj0j6xoQr+lsRLs9
+          IyZdVftKrP97djXBRb7EKjwAPY2IHJea1QIcIIkzs0c7KzyecaQV7RZXyMVkJEkbGhH5yge3ud4J
+          zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
+          MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
+          LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
+          </svg>`) + `
+          
+          </div>
+        </div>
+      </td>
+    </tr>`);
+  });
+}
+
+function set_history_list(data) {
+  data["history_list"].forEach(function(song) {
+    $('#historybody').append(`<tr>
+      <td>
+        <div class="d-flex justify-content-between">
+          <div class="p-2 align-self-center">
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="28px" viewBox="0 0 48 28" enable-background="new 0 0 48 28" xml:space="preserve">  <image id="image0" width="48" height="28" x="0" y="0"
+              href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAcAgMAAABaAtRZAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+              AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAADFBMVEX///8AAABUbnr///9N
+              redqAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJ
+              TUUH5AIbBR8yv5/tPwAAAB5JREFUGNNjYCAHcK2CggXEc1hDoSCAeM5gtod0AADW6V+h4CpCKgAA
+              ACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMjozMTo1MC0wNzowMNnwhHMAAAAldEVYdGRh
+              dGU6bW9kaWZ5ADIwMjAtMDItMjdUMTI6MzE6NTAtMDc6MDCorTzPAAAAAElFTkSuQmCC" />
+            </svg>
+          </div>
+          <div class="p-2 align-self-center">
+            <div class="d-flex flex-column">
+              <div class="p-2">
+                <span><a>`+ song["song_info"]["title"] +`</a> Played for `+ song["formatted_duration"] +`</span>
+              </div>
+              <div class="p-2">
+                <span>-Requested By `+ song["requested_by"] +`</span>
+              </div>
+            </div>
+          </div>
+          <div class="ml-auto p-2 align-self-center">
+            <div class="dropdown dropleft">
+              <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">  <image id="image0" width="40" height="40" x="0" y="0"
+                  href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+              AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAV1BMVEUAAAAAAAAtDwwrDgsu
+              DwzAPzGVMSctDgssDwyOLyXDQTMuEAsAAADCQDOOLyUsDguNLyWUMSYuDguPMCUoDgyOLyWQMCWP
+              LyUAAADCQTMuEAznTDz///8dVoCNAAAAG3RSTlMAA65wrPnrcWnq+7IE++tv6etw623p6+oC+7Ho
+              kTMcAAAAAWJLR0QcnARBBwAAAAd0SU1FB+QCGwUtHmA31a0AAADWSURBVDjLxdTdFoIgDADgiWVa
+              KZL2y/u/ZwZBDLbVVe7KA587nrkNYO2oVE1f1KpCbrNtdpRru/3hiJy1lGw7axPpHCVfLpWqty6G
+              7Dv14M97FV4c/UGW0+dbwpxAkoQjJekIybhCsi6T0TWFQ1J0S9mm9/UQHiZNN0DMKeYrJe+wlBzA
+              fA7uIjqYr7/BWBdL9yflJIkdL2PBJ7ngyX9jOrlwbM8XTpBFv3ybo+a/c/RZAFnZQmHjArj5lcLN
+              0f0Rl4+ThpmjxDlpyLZqR+SERarxIl0lnra6MGBtol6jAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIw
+              LTAyLTI3VDEyOjQ1OjMwLTA3OjAwP084DQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMi0yN1Qx
+              Mjo0NTozMC0wNzowME4SgLEAAAAASUVORK5CYII=" />
+              </svg>
+              </a>
+            
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
+              </div>
+            </div>
+          </div>
+          <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
+              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+                  href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+              AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
+              AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+              AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+              AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+              AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+              AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABjIBqnNyvEQDPdSTngSjrPRDam
+              NytrIxxsIxzQRTZiIBl4KB/kSzvnTDx5KCB6KCB4Jx+oNyyuOS2wOi7FQTPGQTTDQDOvOi3bSDl3
+              Jx9kIRphIBmkNivcSDnaSDnZSDjBPzLAPzKaMyhSGxXeSTpzJh51Jh69PjHCQDJeHxh0Jh6QLyWV
+              MSelNiuyOy68PjG6PTCZMiijNiqHLCOUMSZ8KSCBKiFmIhviSzttJBxUHBazOy9fHxmILSOMLiTT
+              RTfmTDxpIxuSMCbiSjt9KSB+KSH////VIxNvAAAAXXRSTlMAHm242PT35bd2ICF35mwdHJ38paac
+              G1Dz8ldZTm/9/nByblganptrtdvx8NXUqlsP9RGKjBYYaAG9xAIX4+g2+TxN+1xmZEBLLO060SUI
+              ka1d+C0yBYCZCziysyKU6NSiAAAAAWJLR0Sjx9rvGgAAAAd0SU1FB+QCHAMoD+6qRREAAAG8SURB
+              VDjLY2CAAEYmZhZWNnYOTi4GOODmYeZlY2Vh5uNnQAYCgkKxcfEJiUnJKULCUClGEaHUuLTEhPi4
+              dCFRMYRacYmMzCwoyMyWlAKJSUvkIMRyJWVgamXl8rKQQL68AgODonwBsliynBLUXLn4LBRQKC+l
+              LF+EKlYsBzZbQCIvCw3kS0qWoIslS6oAFatmZGGA0lJMsTI1oKeFMrOIAplCAgxK5cSpzcqqUGfg
+              SCZWcaUGg2YRsYrjWRgkqohVXCXBoFVNrOIabQadWmIV1+ky6NUTq7hej0G/gVjFDfoMBsT6sNHQ
+              iIHBuIk4xc0mwLRhKtlCjNpWVjNQsjNvI0ZxBRM4PVtYthNWm21lDUn9NrYdhNR22sEzrT1bF361
+              JQ6OiBzr5NyNT22PnDJyWeAil4dbba+8K0rBwSDO1odLbb+QGwMacNeegF3tRFYPBgzgaTsJm9rJ
+              Xt4MWACXz5SpGGqnsfgyYAV+/tNnoCqNnxlgwIALBLLOQlY7O0iWAQ8I1i2fA1M6dx5LCANeEBom
+              NB8aw/LhEQyEQCRLObCgXDBP05GgUpDhshILFzn4EzYWArijomOwiQMALzHEeJ02LUgAAAAldEVY
+              dGRhdGU6Y3JlYXRlADIwMjAtMDItMjhUMTA6NDA6MTUtMDc6MDAnzQniAAAAJXRFWHRkYXRlOm1v
+              ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
+              </svg>
+      ` : `
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
+              href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+          AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
+          RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
+          FBzaguAgIoYGoaVUInYRukjioA6iDbEUdXCq0hBpJW0URL2nTUvvva9DrW3T/Nwk95lfnvNyz3fO
+          PSH2EuUqPXTQQZhf5PlEkln200s/pzjKIVyKFJljivdUoYs0TlxZ5WRU0rKyGhMOL+guW/wlzriy
+          WlFJRjllFRcOac5U0g5iJuSoHEeTwmbof24E86hiblzYxMq1Cdy8qlEQHgkAHuKtVM0tCJfRvW1d
+          R7VwhMcQw3hezdymcHdad2HyqkdB2NjLdXMLwub0lvj5RN24JNmyfeXGRApCRHnnhMMEh0ubS49F
+          32igWgjzIEyfRXd3664yohC1iEQCF0cgEsKY9vaAxascXLXwvMAbu+BaFIuBi4tQtFhcDFy8BEsW
+          mUzg4gxkQnQyH+z2rdG+xgmLb6QmA+2bhBRfAY5h+7sF/GCE4eT2IvevBya+IeI77S3mEoFoJ8VH
+          2nZ/mOMU3rSsnRXf2Xf1XKa00JJ2WWzQX2k7Y2z+aFprhMtwtUm5XeuXWos/wuNerSEcpPShYe1n
+          4XC33nxf43eqIW1WGG76OToXKDz2rX0qftLn91SeZf6WL+0dkeN8Iwf+MNMDqj0j6xoQr+lsRLs9
+          IyZdVftKrP97djXBRb7EKjwAPY2IHJea1QIcIIkzs0c7KzyecaQV7RZXyMVkJEkbGhH5yge3ud4J
+          zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
+          MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
+          LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
+          </svg>`) + `
+          
+          </div>
+        </div>
+      </td>
+    </tr>`);
+  });
+}
+
+function set_module_state(data) {
+  paused = data["module_state"]["paused"];
+  video_showing = data["module_state"]["video_showing"];
+  enabled = data["module_state"]["enabled"];
+  requests_open = data["module_state"]["requests_open"];
+  use_backup_playlist = data["module_state"]["use_backup_playlist"];
+
+  $("#video_showing_state").text(video_showing ? "Hide Video" : "Show Video" );
+  $("#requests_open_state").text(requests_open ? "Disable Requests" : "Enable Requests" );
+  $("#backup_playlist_usage_state").text(use_backup_playlist ? "Disable Backup Playlist" : "Enable Backup Playlist" );
+  $("#control_state").text(paused ? "Resume" : "Pause");
+}
+
 function initialize_player(data) {
     // volume
-    player.setVolume(data["volume"]);
-    $("#volume div").css("width", data["volume"]+"%");
-
+    set_volume(data);
     // module_state
-    paused = data["module_state"]["paused"];
-    video_showing = data["module_state"]["video_showing"];
-    enabled = data["module_state"]["enabled"];
-    requests_open = data["module_state"]["requests_open"];
-    use_backup_playlist = data["module_state"]["use_backup_playlist"];
-
-    $("#video_showing_state").text(video_showing ? "Hide Video" : "Show Video" );
-    $("#requests_open_state").text(requests_open ? "Disable Requests" : "Enable Requests" );
-    $("#backup_playlist_usage_state").text(use_backup_playlist ? "Disable Backup Playlist" : "Enable Backup Playlist" );
-    $("#control_state").text(paused ? "Resume" : "Pause");
-
+    set_module_state(data);
     // current_song
     current_song(data);
     // playlist
-    data["playlist"].forEach(function(song) {
-        $('#currentqueuebody').append(`<tr>
-        <td>
-          <div class="d-flex justify-content-between">
-            <div class="p-2 align-self-center">
-              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="28px" viewBox="0 0 48 28" enable-background="new 0 0 48 28" xml:space="preserve">  <image id="image0" width="48" height="28" x="0" y="0"
-                href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAcAgMAAABaAtRZAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAADFBMVEX///8AAABUbnr///9N
-                redqAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJ
-                TUUH5AIbBR8yv5/tPwAAAB5JREFUGNNjYCAHcK2CggXEc1hDoSCAeM5gtod0AADW6V+h4CpCKgAA
-                ACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMjozMTo1MC0wNzowMNnwhHMAAAAldEVYdGRh
-                dGU6bW9kaWZ5ADIwMjAtMDItMjdUMTI6MzE6NTAtMDc6MDCorTzPAAAAAElFTkSuQmCC" />
-              </svg>
-            </div>
-            <div class="p-2 align-self-center">
-              <div class="d-flex flex-column">
-                <div class="p-2">
-                  <span><a>`+ song["song_info"]["title"] +`</a> Duration `+ song["formatted_duration"] +`</span>
-                </div>
-                <div class="p-2">
-                  <span>-Requested By `+ song["requested_by"] +`</span>
-                </div>
-              </div>
-            </div>
-            <div class="ml-auto p-2 align-self-center">
-              <div class="dropdown dropleft">
-                <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
-                  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">  <image id="image0" width="40" height="40" x="0" y="0"
-                    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAV1BMVEUAAAAAAAAtDwwrDgsu
-                DwzAPzGVMSctDgssDwyOLyXDQTMuEAsAAADCQDOOLyUsDguNLyWUMSYuDguPMCUoDgyOLyWQMCWP
-                LyUAAADCQTMuEAznTDz///8dVoCNAAAAG3RSTlMAA65wrPnrcWnq+7IE++tv6etw623p6+oC+7Ho
-                kTMcAAAAAWJLR0QcnARBBwAAAAd0SU1FB+QCGwUtHmA31a0AAADWSURBVDjLxdTdFoIgDADgiWVa
-                KZL2y/u/ZwZBDLbVVe7KA587nrkNYO2oVE1f1KpCbrNtdpRru/3hiJy1lGw7axPpHCVfLpWqty6G
-                7Dv14M97FV4c/UGW0+dbwpxAkoQjJekIybhCsi6T0TWFQ1J0S9mm9/UQHiZNN0DMKeYrJe+wlBzA
-                fA7uIjqYr7/BWBdL9yflJIkdL2PBJ7ngyX9jOrlwbM8XTpBFv3ybo+a/c/RZAFnZQmHjArj5lcLN
-                0f0Rl4+ThpmjxDlpyLZqR+SERarxIl0lnra6MGBtol6jAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIw
-                LTAyLTI3VDEyOjQ1OjMwLTA3OjAwP084DQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMi0yN1Qx
-                Mjo0NTozMC0wNzowME4SgLEAAAAASUVORK5CYII=" />
-                </svg>
-                </a>
-              
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <a class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
-                  <a class="dropdown-item" href="#">Delete</a>
-                </div>
-              </div>
-            </div>
-            <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
-                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
-                    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABjIBqnNyvEQDPdSTngSjrPRDam
-                NytrIxxsIxzQRTZiIBl4KB/kSzvnTDx5KCB6KCB4Jx+oNyyuOS2wOi7FQTPGQTTDQDOvOi3bSDl3
-                Jx9kIRphIBmkNivcSDnaSDnZSDjBPzLAPzKaMyhSGxXeSTpzJh51Jh69PjHCQDJeHxh0Jh6QLyWV
-                MSelNiuyOy68PjG6PTCZMiijNiqHLCOUMSZ8KSCBKiFmIhviSzttJBxUHBazOy9fHxmILSOMLiTT
-                RTfmTDxpIxuSMCbiSjt9KSB+KSH////VIxNvAAAAXXRSTlMAHm242PT35bd2ICF35mwdHJ38paac
-                G1Dz8ldZTm/9/nByblganptrtdvx8NXUqlsP9RGKjBYYaAG9xAIX4+g2+TxN+1xmZEBLLO060SUI
-                ka1d+C0yBYCZCziysyKU6NSiAAAAAWJLR0Sjx9rvGgAAAAd0SU1FB+QCHAMoD+6qRREAAAG8SURB
-                VDjLY2CAAEYmZhZWNnYOTi4GOODmYeZlY2Vh5uNnQAYCgkKxcfEJiUnJKULCUClGEaHUuLTEhPi4
-                dCFRMYRacYmMzCwoyMyWlAKJSUvkIMRyJWVgamXl8rKQQL68AgODonwBsliynBLUXLn4LBRQKC+l
-                LF+EKlYsBzZbQCIvCw3kS0qWoIslS6oAFatmZGGA0lJMsTI1oKeFMrOIAplCAgxK5cSpzcqqUGfg
-                SCZWcaUGg2YRsYrjWRgkqohVXCXBoFVNrOIabQadWmIV1+ky6NUTq7hej0G/gVjFDfoMBsT6sNHQ
-                iIHBuIk4xc0mwLRhKtlCjNpWVjNQsjNvI0ZxBRM4PVtYthNWm21lDUn9NrYdhNR22sEzrT1bF361
-                JQ6OiBzr5NyNT22PnDJyWeAil4dbba+8K0rBwSDO1odLbb+QGwMacNeegF3tRFYPBgzgaTsJm9rJ
-                Xt4MWACXz5SpGGqnsfgyYAV+/tNnoCqNnxlgwIALBLLOQlY7O0iWAQ8I1i2fA1M6dx5LCANeEBom
-                NB8aw/LhEQyEQCRLObCgXDBP05GgUpDhshILFzn4EzYWArijomOwiQMALzHEeJ02LUgAAAAldEVY
-                dGRhdGU6Y3JlYXRlADIwMjAtMDItMjhUMTA6NDA6MTUtMDc6MDAnzQniAAAAJXRFWHRkYXRlOm1v
-                ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
-                </svg>
-        ` : `
-              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
-                href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-            AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
-            RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
-            FBzaguAgIoYGoaVUInYRukjioA6iDbEUdXCq0hBpJW0URL2nTUvvva9DrW3T/Nwk95lfnvNyz3fO
-            PSH2EuUqPXTQQZhf5PlEkln200s/pzjKIVyKFJljivdUoYs0TlxZ5WRU0rKyGhMOL+guW/wlzriy
-            WlFJRjllFRcOac5U0g5iJuSoHEeTwmbof24E86hiblzYxMq1Cdy8qlEQHgkAHuKtVM0tCJfRvW1d
-            R7VwhMcQw3hezdymcHdad2HyqkdB2NjLdXMLwub0lvj5RN24JNmyfeXGRApCRHnnhMMEh0ubS49F
-            32igWgjzIEyfRXd3664yohC1iEQCF0cgEsKY9vaAxascXLXwvMAbu+BaFIuBi4tQtFhcDFy8BEsW
-            mUzg4gxkQnQyH+z2rdG+xgmLb6QmA+2bhBRfAY5h+7sF/GCE4eT2IvevBya+IeI77S3mEoFoJ8VH
-            2nZ/mOMU3rSsnRXf2Xf1XKa00JJ2WWzQX2k7Y2z+aFprhMtwtUm5XeuXWos/wuNerSEcpPShYe1n
-            4XC33nxf43eqIW1WGG76OToXKDz2rX0qftLn91SeZf6WL+0dkeN8Iwf+MNMDqj0j6xoQr+lsRLs9
-            IyZdVftKrP97djXBRb7EKjwAPY2IHJea1QIcIIkzs0c7KzyecaQV7RZXyMVkJEkbGhH5yge3ud4J
-            zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
-            MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
-            LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
-            </svg>`) + `
-            
-            </div>
-          </div>
-        </td>
-      </tr>`);
-    });
+    set_playlist(data);
     // backup_playlist
-    data["backup_playlist"].forEach(function(song) {
-        $('#backupqueuebody').append(`<tr>
-        <td>
-          <div class="d-flex justify-content-between">
-            <div class="p-2 align-self-center">
-              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="28px" viewBox="0 0 48 28" enable-background="new 0 0 48 28" xml:space="preserve">  <image id="image0" width="48" height="28" x="0" y="0"
-                href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAcAgMAAABaAtRZAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAADFBMVEX///8AAABUbnr///9N
-                redqAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJ
-                TUUH5AIbBR8yv5/tPwAAAB5JREFUGNNjYCAHcK2CggXEc1hDoSCAeM5gtod0AADW6V+h4CpCKgAA
-                ACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMjozMTo1MC0wNzowMNnwhHMAAAAldEVYdGRh
-                dGU6bW9kaWZ5ADIwMjAtMDItMjdUMTI6MzE6NTAtMDc6MDCorTzPAAAAAElFTkSuQmCC" />
-              </svg>
-            </div>
-            <div class="p-2 align-self-center">
-              <div class="d-flex flex-column">
-                <div class="p-2">
-                  <span><a>`+ song["song_info"]["title"] +`</a> Duration `+ song["formatted_duration"] +`</span>
-                </div>
-                <div class="p-2">
-                  <span>-Requested By `+ song["requested_by"] +`</span>
-                </div>
-              </div>
-            </div>
-            <div class="ml-auto p-2 align-self-center">
-              <div class="dropdown dropleft">
-                <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
-                  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">  <image id="image0" width="40" height="40" x="0" y="0"
-                    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAV1BMVEUAAAAAAAAtDwwrDgsu
-                DwzAPzGVMSctDgssDwyOLyXDQTMuEAsAAADCQDOOLyUsDguNLyWUMSYuDguPMCUoDgyOLyWQMCWP
-                LyUAAADCQTMuEAznTDz///8dVoCNAAAAG3RSTlMAA65wrPnrcWnq+7IE++tv6etw623p6+oC+7Ho
-                kTMcAAAAAWJLR0QcnARBBwAAAAd0SU1FB+QCGwUtHmA31a0AAADWSURBVDjLxdTdFoIgDADgiWVa
-                KZL2y/u/ZwZBDLbVVe7KA587nrkNYO2oVE1f1KpCbrNtdpRru/3hiJy1lGw7axPpHCVfLpWqty6G
-                7Dv14M97FV4c/UGW0+dbwpxAkoQjJekIybhCsi6T0TWFQ1J0S9mm9/UQHiZNN0DMKeYrJe+wlBzA
-                fA7uIjqYr7/BWBdL9yflJIkdL2PBJ7ngyX9jOrlwbM8XTpBFv3ybo+a/c/RZAFnZQmHjArj5lcLN
-                0f0Rl4+ThpmjxDlpyLZqR+SERarxIl0lnra6MGBtol6jAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIw
-                LTAyLTI3VDEyOjQ1OjMwLTA3OjAwP084DQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMi0yN1Qx
-                Mjo0NTozMC0wNzowME4SgLEAAAAASUVORK5CYII=" />
-                </svg>
-                </a>
-              
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <a class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
-                  <a class="dropdown-item" href="#">Delete</a>
-                </div>
-              </div>
-            </div>
-            <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
-                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
-                    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABjIBqnNyvEQDPdSTngSjrPRDam
-                NytrIxxsIxzQRTZiIBl4KB/kSzvnTDx5KCB6KCB4Jx+oNyyuOS2wOi7FQTPGQTTDQDOvOi3bSDl3
-                Jx9kIRphIBmkNivcSDnaSDnZSDjBPzLAPzKaMyhSGxXeSTpzJh51Jh69PjHCQDJeHxh0Jh6QLyWV
-                MSelNiuyOy68PjG6PTCZMiijNiqHLCOUMSZ8KSCBKiFmIhviSzttJBxUHBazOy9fHxmILSOMLiTT
-                RTfmTDxpIxuSMCbiSjt9KSB+KSH////VIxNvAAAAXXRSTlMAHm242PT35bd2ICF35mwdHJ38paac
-                G1Dz8ldZTm/9/nByblganptrtdvx8NXUqlsP9RGKjBYYaAG9xAIX4+g2+TxN+1xmZEBLLO060SUI
-                ka1d+C0yBYCZCziysyKU6NSiAAAAAWJLR0Sjx9rvGgAAAAd0SU1FB+QCHAMoD+6qRREAAAG8SURB
-                VDjLY2CAAEYmZhZWNnYOTi4GOODmYeZlY2Vh5uNnQAYCgkKxcfEJiUnJKULCUClGEaHUuLTEhPi4
-                dCFRMYRacYmMzCwoyMyWlAKJSUvkIMRyJWVgamXl8rKQQL68AgODonwBsliynBLUXLn4LBRQKC+l
-                LF+EKlYsBzZbQCIvCw3kS0qWoIslS6oAFatmZGGA0lJMsTI1oKeFMrOIAplCAgxK5cSpzcqqUGfg
-                SCZWcaUGg2YRsYrjWRgkqohVXCXBoFVNrOIabQadWmIV1+ky6NUTq7hej0G/gVjFDfoMBsT6sNHQ
-                iIHBuIk4xc0mwLRhKtlCjNpWVjNQsjNvI0ZxBRM4PVtYthNWm21lDUn9NrYdhNR22sEzrT1bF361
-                JQ6OiBzr5NyNT22PnDJyWeAil4dbba+8K0rBwSDO1odLbb+QGwMacNeegF3tRFYPBgzgaTsJm9rJ
-                Xt4MWACXz5SpGGqnsfgyYAV+/tNnoCqNnxlgwIALBLLOQlY7O0iWAQ8I1i2fA1M6dx5LCANeEBom
-                NB8aw/LhEQyEQCRLObCgXDBP05GgUpDhshILFzn4EzYWArijomOwiQMALzHEeJ02LUgAAAAldEVY
-                dGRhdGU6Y3JlYXRlADIwMjAtMDItMjhUMTA6NDA6MTUtMDc6MDAnzQniAAAAJXRFWHRkYXRlOm1v
-                ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
-                </svg>
-        ` : `
-              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
-                href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-            AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
-            RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
-            FBzaguAgIoYGoaVUInYRukjioA6iDbEUdXCq0hBpJW0URL2nTUvvva9DrW3T/Nwk95lfnvNyz3fO
-            PSH2EuUqPXTQQZhf5PlEkln200s/pzjKIVyKFJljivdUoYs0TlxZ5WRU0rKyGhMOL+guW/wlzriy
-            WlFJRjllFRcOac5U0g5iJuSoHEeTwmbof24E86hiblzYxMq1Cdy8qlEQHgkAHuKtVM0tCJfRvW1d
-            R7VwhMcQw3hezdymcHdad2HyqkdB2NjLdXMLwub0lvj5RN24JNmyfeXGRApCRHnnhMMEh0ubS49F
-            32igWgjzIEyfRXd3664yohC1iEQCF0cgEsKY9vaAxascXLXwvMAbu+BaFIuBi4tQtFhcDFy8BEsW
-            mUzg4gxkQnQyH+z2rdG+xgmLb6QmA+2bhBRfAY5h+7sF/GCE4eT2IvevBya+IeI77S3mEoFoJ8VH
-            2nZ/mOMU3rSsnRXf2Xf1XKa00JJ2WWzQX2k7Y2z+aFprhMtwtUm5XeuXWos/wuNerSEcpPShYe1n
-            4XC33nxf43eqIW1WGG76OToXKDz2rX0qftLn91SeZf6WL+0dkeN8Iwf+MNMDqj0j6xoQr+lsRLs9
-            IyZdVftKrP97djXBRb7EKjwAPY2IHJea1QIcIIkzs0c7KzyecaQV7RZXyMVkJEkbGhH5yge3ud4J
-            zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
-            MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
-            LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
-            </svg>`) + `
-            
-            </div>
-          </div>
-        </td>
-      </tr>`);
-    });
+    set_backup_playlist(data);
     // history_list
-    data["history_list"].forEach(function(song) {
-        $('#historybody').append(`<tr>
-        <td>
-          <div class="d-flex justify-content-between">
-            <div class="p-2 align-self-center">
-              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="28px" viewBox="0 0 48 28" enable-background="new 0 0 48 28" xml:space="preserve">  <image id="image0" width="48" height="28" x="0" y="0"
-                href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAcAgMAAABaAtRZAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAADFBMVEX///8AAABUbnr///9N
-                redqAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJ
-                TUUH5AIbBR8yv5/tPwAAAB5JREFUGNNjYCAHcK2CggXEc1hDoSCAeM5gtod0AADW6V+h4CpCKgAA
-                ACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0wMi0yN1QxMjozMTo1MC0wNzowMNnwhHMAAAAldEVYdGRh
-                dGU6bW9kaWZ5ADIwMjAtMDItMjdUMTI6MzE6NTAtMDc6MDCorTzPAAAAAElFTkSuQmCC" />
-              </svg>
-            </div>
-            <div class="p-2 align-self-center">
-              <div class="d-flex flex-column">
-                <div class="p-2">
-                  <span><a>`+ song["song_info"]["title"] +`</a> Played for `+ song["formatted_duration"] +`</span>
-                </div>
-                <div class="p-2">
-                  <span>-Requested By `+ song["requested_by"] +`</span>
-                </div>
-              </div>
-            </div>
-            <div class="ml-auto p-2 align-self-center">
-              <div class="dropdown dropleft">
-                <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
-                  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">  <image id="image0" width="40" height="40" x="0" y="0"
-                    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAV1BMVEUAAAAAAAAtDwwrDgsu
-                DwzAPzGVMSctDgssDwyOLyXDQTMuEAsAAADCQDOOLyUsDguNLyWUMSYuDguPMCUoDgyOLyWQMCWP
-                LyUAAADCQTMuEAznTDz///8dVoCNAAAAG3RSTlMAA65wrPnrcWnq+7IE++tv6etw623p6+oC+7Ho
-                kTMcAAAAAWJLR0QcnARBBwAAAAd0SU1FB+QCGwUtHmA31a0AAADWSURBVDjLxdTdFoIgDADgiWVa
-                KZL2y/u/ZwZBDLbVVe7KA587nrkNYO2oVE1f1KpCbrNtdpRru/3hiJy1lGw7axPpHCVfLpWqty6G
-                7Dv14M97FV4c/UGW0+dbwpxAkoQjJekIybhCsi6T0TWFQ1J0S9mm9/UQHiZNN0DMKeYrJe+wlBzA
-                fA7uIjqYr7/BWBdL9yflJIkdL2PBJ7ngyX9jOrlwbM8XTpBFv3ybo+a/c/RZAFnZQmHjArj5lcLN
-                0f0Rl4+ThpmjxDlpyLZqR+SERarxIl0lnra6MGBtol6jAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIw
-                LTAyLTI3VDEyOjQ1OjMwLTA3OjAwP084DQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMi0yN1Qx
-                Mjo0NTozMC0wNzowME4SgLEAAAAASUVORK5CYII=" />
-                </svg>
-                </a>
-              
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <a class="dropdown-item" href="#">`+ (song["song_info"]["banned"] ? "Unban" : "Ban") + `</a>
-                </div>
-              </div>
-            </div>
-            <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
-                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
-                    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-                AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABjIBqnNyvEQDPdSTngSjrPRDam
-                NytrIxxsIxzQRTZiIBl4KB/kSzvnTDx5KCB6KCB4Jx+oNyyuOS2wOi7FQTPGQTTDQDOvOi3bSDl3
-                Jx9kIRphIBmkNivcSDnaSDnZSDjBPzLAPzKaMyhSGxXeSTpzJh51Jh69PjHCQDJeHxh0Jh6QLyWV
-                MSelNiuyOy68PjG6PTCZMiijNiqHLCOUMSZ8KSCBKiFmIhviSzttJBxUHBazOy9fHxmILSOMLiTT
-                RTfmTDxpIxuSMCbiSjt9KSB+KSH////VIxNvAAAAXXRSTlMAHm242PT35bd2ICF35mwdHJ38paac
-                G1Dz8ldZTm/9/nByblganptrtdvx8NXUqlsP9RGKjBYYaAG9xAIX4+g2+TxN+1xmZEBLLO060SUI
-                ka1d+C0yBYCZCziysyKU6NSiAAAAAWJLR0Sjx9rvGgAAAAd0SU1FB+QCHAMoD+6qRREAAAG8SURB
-                VDjLY2CAAEYmZhZWNnYOTi4GOODmYeZlY2Vh5uNnQAYCgkKxcfEJiUnJKULCUClGEaHUuLTEhPi4
-                dCFRMYRacYmMzCwoyMyWlAKJSUvkIMRyJWVgamXl8rKQQL68AgODonwBsliynBLUXLn4LBRQKC+l
-                LF+EKlYsBzZbQCIvCw3kS0qWoIslS6oAFatmZGGA0lJMsTI1oKeFMrOIAplCAgxK5cSpzcqqUGfg
-                SCZWcaUGg2YRsYrjWRgkqohVXCXBoFVNrOIabQadWmIV1+ky6NUTq7hej0G/gVjFDfoMBsT6sNHQ
-                iIHBuIk4xc0mwLRhKtlCjNpWVjNQsjNvI0ZxBRM4PVtYthNWm21lDUn9NrYdhNR22sEzrT1bF361
-                JQ6OiBzr5NyNT22PnDJyWeAil4dbba+8K0rBwSDO1odLbb+QGwMacNeegF3tRFYPBgzgaTsJm9rJ
-                Xt4MWACXz5SpGGqnsfgyYAV+/tNnoCqNnxlgwIALBLLOQlY7O0iWAQ8I1i2fA1M6dx5LCANeEBom
-                NB8aw/LhEQyEQCRLObCgXDBP05GgUpDhshILFzn4EzYWArijomOwiQMALzHEeJ02LUgAAAAldEVY
-                dGRhdGU6Y3JlYXRlADIwMjAtMDItMjhUMTA6NDA6MTUtMDc6MDAnzQniAAAAJXRFWHRkYXRlOm1v
-                ZGlmeQAyMDIwLTAyLTI4VDEwOjQwOjE1LTA3OjAwVpCxXgAAAABJRU5ErkJggg==" />
-                </svg>
-        ` : `
-              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
-                href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAQAAABY3hDnAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
-            AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElN
-            RQfkAhsFOBnJ5qYaAAACPElEQVRIx62WPWhTURiGn9x0soJOlkAnJ/EHpTRF6uKsm5MopYtLEUEI
-            FBzaguAgIoYGoaVUInYRukjioA6iDbEUdXCq0hBpJW0URL2nTUvvva9DrW3T/Nwk95lfnvNyz3fO
-            PSH2EuUqPXTQQZhf5PlEkln200s/pzjKIVyKFJljivdUoYs0TlxZ5WRU0rKyGhMOL+guW/wlzriy
-            WlFJRjllFRcOac5U0g5iJuSoHEeTwmbof24E86hiblzYxMq1Cdy8qlEQHgkAHuKtVM0tCJfRvW1d
-            R7VwhMcQw3hezdymcHdad2HyqkdB2NjLdXMLwub0lvj5RN24JNmyfeXGRApCRHnnhMMEh0ubS49F
-            32igWgjzIEyfRXd3664yohC1iEQCF0cgEsKY9vaAxascXLXwvMAbu+BaFIuBi4tQtFhcDFy8BEsW
-            mUzg4gxkQnQyH+z2rdG+xgmLb6QmA+2bhBRfAY5h+7sF/GCE4eT2IvevBya+IeI77S3mEoFoJ8VH
-            2nZ/mOMU3rSsnRXf2Xf1XKa00JJ2WWzQX2k7Y2z+aFprhMtwtUm5XeuXWos/wuNerSEcpPShYe1n
-            4XC33nxf43eqIW1WGG76OToXKDz2rX0qftLn91SeZf6WL+0dkeN8Iwf+MNMDqj0j6xoQr+lsRLs9
-            IyZdVftKrP97djXBRb7EKjwAPY2IHJea1QIcIIkzs0c7KzyecaQV7RZXyMVkJEkbGhH5yge3ud4J
-            zBNNiQ2mg+i6m17eMsM5v/G/N+7KqQlAhuoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDItMjdU
-            MTI6NTY6MjUtMDc6MDCLZHP3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAyLTI3VDEyOjU2OjI1
-            LTA3OjAw+jnLSwAAAABJRU5ErkJggg==" />
-            </svg>`) + `
-            
-            </div>
-          </div>
-        </td>
-      </tr>`);
-    });
-
+    set_history_list(data);
 }
 
 $(document).ready(function() {

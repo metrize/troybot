@@ -78,6 +78,7 @@ class SongrequestManager:
         if not self.module_state["requests_open"]:
             self.module_state["requests_open"] = True
             self.module_state["paused"] = False
+            self._module_state()
             if not self.current_song_id:
                 self.load_song()
             return True
@@ -88,6 +89,7 @@ class SongrequestManager:
             return False
         if self.module_state["requests_open"]:
             self.module_state["requests_open"] = False
+            self._module_state()
             return True
         return False
 
@@ -132,6 +134,7 @@ class SongrequestManager:
             return False
         if not self.module_state["paused"]:
             self.module_state["paused"] = True
+            self._module_state()
             self._pause()
             self.remove_schedule()
             with DBManager.create_session_scope() as db_session:
@@ -147,6 +150,7 @@ class SongrequestManager:
             return False
         if self.module_state["paused"]:
             self.module_state["paused"] = False
+            self._module_state()
             self._resume()
             with DBManager.create_session_scope() as db_session:
                 song = SongrequestQueue._from_id(db_session, self.current_song_id)
@@ -164,7 +168,7 @@ class SongrequestManager:
             with DBManager.create_session_scope() as db_session:
                 current_song = SongrequestQueue._from_id(db_session, self.current_song_id)
                 current_song.current_song_time = _time
-                self._seek(_time)
+                self._seek(_time, current_song.webjsonify())
             return True
         return False
 
@@ -248,6 +252,7 @@ class SongrequestManager:
             return False
         if not self.module_state["video_showing"]:
             self.module_state["video_showing"] = True
+            self._module_state()
             if not self.module_state["paused"]:
                 self._show()
             return True
@@ -258,6 +263,7 @@ class SongrequestManager:
             return False
         if self.module_state["video_showing"]:
             self.module_state["video_showing"] = False
+            self._module_state()
             self._hide()
             return True
         return False
@@ -299,6 +305,7 @@ class SongrequestManager:
         self.current_song_id = None
         self.schedule_job_id = None
         self.module_state["paused"] = False
+        self._module_state()
         self.remove_schedule()
 
         if not self.module_state["requests_open"]:
@@ -332,7 +339,11 @@ class SongrequestManager:
                         backup=True
                     )
                 db_session.commit()
-                self._playlist()
+                if current_song.requested_by_id:
+                    self._playlist()
+                else:
+                    self._backup_playlist()
+
                 return True
             if not current_song:
                 SongRequestQueueManager.update_song_playing_id("")
@@ -348,6 +359,7 @@ class SongrequestManager:
         self.bot.songrequest_websocket_manager.emit("play", {"current_song": current_song_webjsonify, "current_timestamp": str(utils.now().timestamp())})
         self.bot.websocket_manager.emit("songrequest_play", WIDGET_ID, {"video_id": video_id})
         self.module_state["paused"] = True
+        self._module_state()
         if self.module_state["video_showing"]:
             self._show()
 
@@ -356,14 +368,11 @@ class SongrequestManager:
         ScheduleManager.execute_delayed(2, self._volume)
 
     def _pause(self):
-        self.bot.songrequest_websocket_manager.emit("pause", {})
         self.bot.websocket_manager.emit("songrequest_pause", WIDGET_ID, {})
         self._hide()
 
     def _resume(self):
-        self.bot.songrequest_websocket_manager.emit("resume", {})
         self.bot.websocket_manager.emit("songrequest_resume", WIDGET_ID, {"volume": self.volume})
-        self.module_state["paused"] = False
         if self.module_state["video_showing"]:
             self._show()
 
@@ -371,10 +380,11 @@ class SongrequestManager:
         self.bot.songrequest_websocket_manager.emit("volume", {"volume": self.volume_val})
         self.bot.websocket_manager.emit("songrequest_volume", WIDGET_ID, {"volume": self.volume})
 
-    def _seek(self, _time):
-        self.bot.songrequest_websocket_manager.emit("seek", {"seek_time": _time})
+    def _seek(self, _time, current_song_webjsonify):
+        self.bot.songrequest_websocket_manager.emit("play", {"current_song": current_song_webjsonify})
         self.bot.websocket_manager.emit("songrequest_seek", WIDGET_ID, {"seek_time": _time})
         self.module_state["paused"] = True
+        self._module_state()
 
     def _show(self):
         self.bot.websocket_manager.emit("songrequest_show", WIDGET_ID, {})
@@ -389,11 +399,21 @@ class SongrequestManager:
             playlist = SongrequestQueue._get_playlist(db_session, 30)
             self.bot.songrequest_websocket_manager.emit("playlist", {"playlist": playlist})
 
+    def _backup_playlist(self):
+        with DBManager.create_session_scope() as db_session:
+            playlist = SongrequestQueue._get_backup_playlist(db_session, 30)
+            self.bot.songrequest_websocket_manager.emit("backup_playlist", {"backup_playlist": playlist})
+
     def _playlist_history(self):
         with DBManager.create_session_scope() as db_session:
             self.bot.songrequest_websocket_manager.emit(
-                "history", {"history": SongrequestHistory._get_history(db_session, 30)}
+                "history", {"history_list": SongrequestHistory._get_history(db_session, 30)}
             )
+
+    def _module_state(self):
+        self.bot.songrequest_websocket_manager.emit(
+            "module_state", {"module_state": self.module_state}
+        )
 
     def _stop_video(self):
         self.bot.songrequest_websocket_manager.emit("play", {"current_song": {}})

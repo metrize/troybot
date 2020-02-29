@@ -109,7 +109,7 @@ function set_volume(data) {
 function set_playlist(data) {
   $('#currentqueuebody').empty()
   data["playlist"].forEach(function(song) {
-      $('#currentqueuebody').append(`<tr>
+      $('#currentqueuebody').append(`<tr data-id="`+song["database_id"]+`">
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -211,7 +211,7 @@ function set_playlist(data) {
 function set_backup_playlist(data) {
   $('#backupqueuebody').empty()
   data["backup_playlist"].forEach(function(song) {
-      $('#backupqueuebody').append(`<tr>
+      $('#backupqueuebody').append(`<tr data-id="`+song["database_id"]+`">
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">

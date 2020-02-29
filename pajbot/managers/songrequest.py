@@ -242,7 +242,7 @@ class SongrequestManager:
                 song_info = song.song_info
             else:
                 song_info = SongRequestSongInfo._get(db_session, songinfo_database_id)
-            if not song.song_info.favourite:
+            if not song_info.favourite:
                 return False
 
             song_info.favourite = False
@@ -286,7 +286,7 @@ class SongrequestManager:
                 song_info = song.song_info
             else:
                 song_info = SongRequestSongInfo._get(db_session, songinfo_database_id)
-            if not song.song_info.banned:
+            if not song_info.banned:
                 return False
 
             song_info.banned = False

@@ -767,7 +767,7 @@ function delete_control(_this) {
         data: {database_id: tr.data("id")}
     })
   );
-})
+}
 
 var currentqueuebody = $('#currentqueuebody')
 currentqueuebody.sortable({

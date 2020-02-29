@@ -434,7 +434,6 @@ function onYouTubeIframeAPIReady() {
 }
 
 function onPlayerStateChange(event) {
-    adblocker()
     if (event.data == 0) {
         hide()
         socket.send(
@@ -443,6 +442,9 @@ function onPlayerStateChange(event) {
                 data: { salt: salt_value },
             })
         );
+    }
+    if (event.data == 1) {
+        adblocker()
     }
 }
 

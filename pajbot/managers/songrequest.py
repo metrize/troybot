@@ -317,12 +317,13 @@ class SongrequestManager:
                 current_song = SongrequestQueue._pop_next_song(db_session)
             if current_song:
                 SongRequestQueueManager.update_song_playing_id(current_song.id)
+                current_song.played_for = 0
+                current_song.date_resumed = utils.now()
                 self.current_song_id = current_song.id
                 self._play(
                     current_song.video_id,
                     current_song.webjsonify(),
                 )
-                current_song.date_resumed = utils.now()
                 self.schedule_job_id = random.randint(1, 100000)
                 self.current_song_schedule = ScheduleManager.execute_delayed(current_song.time_left + 10, self.load_song_schedule, args=[self.schedule_job_id])
                 if self.settings["use_spotify"]:

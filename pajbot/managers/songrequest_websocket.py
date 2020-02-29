@@ -120,37 +120,37 @@ class SongRequestWebSocketServer:
             def _close_conn(self):
                 self.sendClose()
 
-            def _pause(self, data):
+            def _pause(self, db_session, data):
                 if not self.isAuthed:
                     return False
 
                 return manager_ext.bot.songrequest_manager.pause_function()
 
-            def _resume(self, data):
+            def _resume(self, db_session, data):
                 if not self.isAuthed:
                     return False
 
                 return manager_ext.bot.songrequest_manager.resume_function()
 
-            def _next(self, data):
+            def _next(self, db_session, data):
                 if not self.isAuthed:
                     return False
 
                 return manager_ext.bot.songrequest_manager.skip_function(self.login)
 
-            def _previous(self, data):
+            def _previous(self, db_session, data):
                 if not self.isAuthed:
                     return False
 
                 return manager_ext.bot.songrequest_manager.previous_function(self.login)
 
-            def _seek(self, data):
+            def _seek(self, db_session, data):
                 if not self.isAuthed or not data.get("seek_time", False):
                     return False
 
                 return manager_ext.bot.songrequest_manager.seek_function(data.get("seek_time"))
 
-            def _volume(self, data):
+            def _volume(self, db_session, data):
                 if not self.isAuthed or not data.get("volume", False):
                     return False
 

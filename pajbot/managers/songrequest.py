@@ -139,8 +139,8 @@ class SongrequestManager:
 
             with DBManager.create_session_scope() as db_session:
                 song = SongrequestQueue._from_id(db_session, self.current_song_id)
-                song.date_resumed = None
                 song.played_for = (utils.now() - song.date_resumed).total_seconds()
+                song.date_resumed = None
             return True
 
         return False

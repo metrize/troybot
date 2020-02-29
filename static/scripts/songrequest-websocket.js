@@ -436,10 +436,14 @@ function timer() {
   $("#videocurrenttime").text(minutes+":"+('0'+seconds).slice(-2))
 }
 
+function pause() {
+  player.pauseVideo()
+}
+
 function onPlayerStateChange(event) {
   player.playVideo();
   if (paused) {
-    setTimeout(player.pauseVideo, 500);
+    setTimeout(pause, 500);
   }
   timer()
   if (event.data == YT.PlayerState.PLAYING) {

@@ -386,8 +386,8 @@ class SongRequestSongInfo(Base):
         return SongRequestSongInfo._create(db_session, video_id, title, duration, default_thumbnail)
 
     @staticmethod
-    def _get(db_session, _id):
-        return db_session.query(SongRequestSongInfo).filter_by(id=_id).one_or_none()
+    def _get(db_session, _video_id):
+        return db_session.query(SongRequestSongInfo).filter_by(video_id=_video_id).one_or_none()
 
     @staticmethod
     def _get_banned(db_session):

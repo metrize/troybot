@@ -241,7 +241,7 @@ class SongrequestManager:
                 song = SongrequestQueue._from_id(db_session, int(database_id))
                 song_info = song.song_info
             else:
-                song_info = SongRequestSongInfo._get(db_session, int(songinfo_database_id))
+                song_info = SongRequestSongInfo._get(db_session, songinfo_database_id)
             if not song.song_info.favourite:
                 return False
 
@@ -285,7 +285,7 @@ class SongrequestManager:
                 song = SongrequestQueue._from_id(db_session, int(database_id))
                 song_info = song.song_info
             else:
-                song_info = SongRequestSongInfo._get(db_session, int(songinfo_database_id))
+                song_info = SongRequestSongInfo._get(db_session, songinfo_database_id)
             if not song.song_info.banned:
                 return False
 

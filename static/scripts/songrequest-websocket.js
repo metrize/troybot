@@ -517,7 +517,7 @@ function set_banned_list(data) {
               </div>
             </div>
           </div>
-          <div class="p-2 align-self-center">` + (song["song_info"]["favourite"] ? `
+          <div class="p-2 align-self-center">` + (song_info["favourite"] ? `
               <svg onclick="favourite_control.call(this,event)" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="44px" height="36px" viewBox="0 0 44 36" enable-background="new 0 0 44 36" xml:space="preserve">  <image id="image0" width="44" height="36" x="0" y="0"
                   href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAkCAMAAADFCSheAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB7FBMVEUAAAAAAAAAAAAAAAAA

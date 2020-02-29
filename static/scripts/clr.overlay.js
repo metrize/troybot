@@ -412,7 +412,7 @@ function handleWebsocketData(json_data) {
 }
 
 function adblocker() {
-    $(".video-ads").css({"display": "none !important"})
+    $(".video-ads").addClass("hide_vid")
 }
 
 // 2. This code loads the IFrame Player API code asynchronously.

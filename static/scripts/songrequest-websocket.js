@@ -115,7 +115,7 @@ function set_volume(data) {
 function set_playlist(data) {
   $('#currentqueuebody').empty()
   data["playlist"].forEach(function(song) {
-      $('#currentqueuebody').append(`<tr data-id="`+song["database_id"]+` data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
+      $('#currentqueuebody').append(`<tr data-id="`+song["database_id"]+`" data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -217,7 +217,7 @@ function set_playlist(data) {
 function set_backup_playlist(data) {
   $('#backupqueuebody').empty()
   data["backup_playlist"].forEach(function(song) {
-      $('#backupqueuebody').append(`<tr data-id="`+song["database_id"]+` data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
+      $('#backupqueuebody').append(`<tr data-id="`+song["database_id"]+`" data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -295,7 +295,7 @@ function set_backup_playlist(data) {
 function set_history_list(data) {
   $('#historybody').empty()
   data["history_list"].forEach(function(song) {
-    $('#historybody').append(`<tr data-id="`+song["database_id"]+` data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
+    $('#historybody').append(`<tr data-id="`+song["database_id"]+`" data-favourite=`+song["song_info"]["favourite"]+` data-banned=`+song["song_info"]["banned"]+`>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -396,7 +396,7 @@ function set_history_list(data) {
 function set_favourite_list(data) {
   $('#favouritelist').empty()
   data["favourite_list"].forEach(function(song_info) {
-    $('#favouritelist').append(`<tr data-id="`+song_info["database_id"]+` data-favourite=`+song_info["favourite"]+` data-banned=`+song_info["banned"]+`>
+    $('#favouritelist').append(`<tr data-id="`+song_info["database_id"]+`" data-favourite=`+song_info["favourite"]+` data-banned=`+song_info["banned"]+`>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">
@@ -475,7 +475,7 @@ function set_favourite_list(data) {
 function set_banned_list(data) {
   $('#bannedlist').empty()
   data["banned_list"].forEach(function(song_info) {
-    $('#bannedlist').append(`<tr data-id="`+song_info["database_id"]+` data-favourite=`+song_info["favourite"]+` data-banned=`+song_info["banned"]+`>
+    $('#bannedlist').append(`<tr data-id="`+song_info["database_id"]+`" data-favourite=`+song_info["favourite"]+` data-banned=`+song_info["banned"]+`>
       <td>
         <div class="d-flex justify-content-between">
           <div class="p-2 align-self-center">

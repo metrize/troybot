@@ -39,6 +39,10 @@ body {
     height: 297px;
 }
 
+.main.container {
+    padding-left: 0%!important;
+}
+
 .btn-group {
     width: 528px;
 }

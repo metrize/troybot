@@ -155,7 +155,6 @@ class SongRequestQueueManager:
     def get_next_song():
         song_queue = SongRequestQueueManager.song_queues.get("song-queue", None)
         backup_song_queue = SongRequestQueueManager.song_queues.get("backup-song-queue", None)
-        log.info(song_queue)
         return (
             song_queue[0] if len(song_queue) != 0 else (backup_song_queue[0] if len(backup_song_queue) != 0 else None)
         )

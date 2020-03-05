@@ -56,7 +56,7 @@ class SongRequestQueueManager:
         else:
             song_queue.append(_id)
 
-        SongRequestQueueManager._update_redis(queue)
+        SongRequestQueueManager._update_redis(queue, song_queue)
         return True
 
     @staticmethod
@@ -65,7 +65,7 @@ class SongRequestQueueManager:
         if _id in song_queue:
             song_queue.pop(song_queue.index(_id))
             song_queue.insert(to_index, _id)
-        SongRequestQueueManager._update_redis("song-queue")
+        SongRequestQueueManager._update_redis("song-queue", song_queue)
         return True
 
     @staticmethod
@@ -79,7 +79,7 @@ class SongRequestQueueManager:
             return False
 
         song_queue.pop(index)
-        SongRequestQueueManager._update_redis(queue)
+        SongRequestQueueManager._update_redis(queue, song_queue)
         return True
 
     @staticmethod
@@ -89,12 +89,12 @@ class SongRequestQueueManager:
 
         if _id in song_queue:
             song_queue.remove(_id)
-            SongRequestQueueManager._update_redis("song-queue")
+            SongRequestQueueManager._update_redis("song-queue", song_queue)
             return True
 
         if _id in backup_song_queue:
             backup_song_queue.remove(_id)
-            SongRequestQueueManager._update_redis("backup-song-queue")
+            SongRequestQueueManager._update_redis("backup-song-queue", backup_song_queue)
             return True
 
         return False
@@ -121,8 +121,7 @@ class SongRequestQueueManager:
         return queue
 
     @staticmethod
-    def _update_redis(queue):
-        song_queue = SongRequestQueueManager.song_queues.get(queue, None)
+    def _update_redis(queue, song_queue):
         if song_queue is None:
             log.error(f"invalid queue {queue}")
             return

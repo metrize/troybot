@@ -169,7 +169,8 @@ class SongrequestQueue(Base):
         song = db_session.query(SongrequestQueue).filter_by(id=next_id).one_or_none()
         if not song:
             SongRequestQueueManager.remove_song_id(next_id)
-        return SongrequestQueue._get_next_song(db_session)
+            return SongrequestQueue._get_next_song(db_session)
+        return song
 
     @staticmethod
     def _all_by_video_id(db_session, _video_id):

@@ -58,15 +58,16 @@ class SocketManager:
 class SocketClientManager:
     streamer_name = None
 
-    @classmethod
-    def init(cls, streamer_name):
-        cls.streamer_name = streamer_name
+    @staticmethod
+    def init(streamer_name):
+        SocketClientManager.streamer_name = streamer_name
 
-    @classmethod
-    def send(cls, topic, data):
-        if cls.streamer_name is None:
+    @staticmethod
+    def send(topic, data):
+        if SocketClientManager.streamer_name is None:
             raise ValueError("streamer_name not set in SocketClientManager")
 
-        topic = f"{cls.streamer_name}:{topic}"
+        topic = f"{SocketClientManager.streamer_name}:{topic}"
 
         RedisManager.publish(topic, json.dumps(data))
+        return True

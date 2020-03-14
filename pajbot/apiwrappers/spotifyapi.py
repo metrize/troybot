@@ -1,5 +1,6 @@
 import logging
 import base64
+import json
 
 from pajbot.apiwrappers.base import BaseAPI
 from pajbot.apiwrappers.authentication.access_token import SpotifyAccessToken
@@ -13,24 +14,39 @@ class SpotifyApi(BaseAPI):
         self.client_id = client_id
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
+        self.device_id = None
 
     def pause(self, token_manager):
         if token_manager.token is None:
             log.error("Spotify user id is not correct!")
             return None
+
         headers = {"Authorization": "Bearer " + str(token_manager.token.access_token)}
         if token_manager.token.access_token is None:
             return False
-        self.put(endpoint="me/player/pause", headers=headers)
+
+        if not self.device_id:
+            self.state(token_manager)
+        if not self.device_id:
+            return False
+
+        self.put(endpoint="me/player", headers=headers, body=json.dumps({"device_ids":[f"{self.device_id}"], "play": False}))
 
     def play(self, token_manager):
         if token_manager.token is None:
             log.error("Spotify user id is not correct!")
             return None
+
         headers = {"Authorization": "Bearer " + str(token_manager.token.access_token)}
         if token_manager.token.access_token is None:
             return False
-        self.put(endpoint="me/player/play", headers=headers)
+
+        if not self.device_id:
+            self.state(token_manager)
+        if not self.device_id:
+            return False
+
+        self.put(endpoint="me/player", headers=headers, body=json.dumps({"device_ids":[f"{self.device_id}"], "play": True}))
 
     def state(self, token_manager):
         if token_manager.token is None:
@@ -42,6 +58,7 @@ class SpotifyApi(BaseAPI):
         data = self.get(endpoint="me/player", headers=headers)
         if data is None:
             return tuple([False, None, None])
+        self.device_id = data["device"]["id"]
         artists = []
 
         for artist in data["item"]["artists"]:

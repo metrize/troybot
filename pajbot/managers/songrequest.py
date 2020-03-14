@@ -421,6 +421,10 @@ class SongrequestManager:
         self.remove_schedule()
 
         if not self.module_state["requests_open"]:
+            if self.previously_playing_spotify:
+                self.bot.spotify_api.play(self.bot.spotify_token_manager)
+                log.info("Resumed Spotify")
+                self.previously_playing_spotify = False
             return False
 
         with DBManager.create_session_scope() as db_session:

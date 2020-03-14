@@ -461,6 +461,7 @@ class SongrequestManager:
             if self.settings["use_spotify"]:
                 if self.previously_playing_spotify:
                     self.bot.spotify_api.play(self.bot.spotify_token_manager)
+                    log.info("Resumed Spotify")
                     self.previously_playing_spotify = False
             if self.is_video_showing:
                 self._hide()

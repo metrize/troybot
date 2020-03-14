@@ -13,7 +13,7 @@
             <tr class="plItem">
                 <td class="plNum">{{song["track_number"]}}</td> 
                 <td class="plTitle"><a target="_blank" style="color:white" href={{song["link"]}}>{{song["video_title"]}}  ~  {{song["requested_by"]}}</a></td> 
-                <td class="plLength">{{song["video_length"]}} playing in ~ {{song["playing_in"]}}</td> 
+                <td class="plLength">{{song["formatted_duration"]}} playing in ~ {{song["playing_in"]}}</td> 
             </tr>
             {%endfor%} 
         </table>
@@ -25,7 +25,7 @@
             <tr class="buItem">
                 <td class="buNum">{{song["track_number"]}}</td> 
                 <td class="buTitle"><a target="_blank" style="color:white" href={{song["link"]}}>{{song["video_title"]}}  ~  {{song["requested_by"]}}</a></td> 
-                <td class="buLength">{{song["video_length"]}}</td> 
+                <td class="buLength">{{song["formatted_duration"]}}</td> 
             </tr>
             {%endfor%}
         </table>

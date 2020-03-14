@@ -35,10 +35,6 @@ def init(app):
                     if playing_in != 0
                     else ("Currently playing" if current_song else "Song Request Closed")
                 )
-                m, s = divmod(jsonify["video_length"], 60)
-                m = int(m)
-                s = int(s)
-                jsonify["video_length"] = f"{m:02d}:{s:02d}"
                 jsonify["track_number"] = track_number
                 playing_in += song.time_left
                 track_number += 1

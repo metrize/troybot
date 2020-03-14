@@ -54,10 +54,6 @@ def init(app):
                     continue
                 jsonify = song.webjsonify()
                 jsonify["track_number"] = track_number
-                m, s = divmod(jsonify["video_length"], 60)
-                m = int(m)
-                s = int(s)
-                jsonify["video_length"] = f"{m:02d}:{s:02d}"
                 track_number += 1
                 songs_history.append(jsonify)
 

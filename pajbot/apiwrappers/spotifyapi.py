@@ -29,8 +29,9 @@ class SpotifyApi(BaseAPI):
             self.state(token_manager)
         if not self.device_id:
             return False
-
-        log.info(self.put(endpoint="me/player", headers=headers, body=json.dumps({"device_ids":[f"{self.device_id}"], "play": False})))
+        body = json.dumps({"device_ids":[f"{self.device_id}"], "play": False})
+        log.info(body)
+        log.info(self.put(endpoint="me/player", headers=headers, body=body))
 
     def play(self, token_manager):
         if token_manager.token is None:

@@ -29,7 +29,7 @@ class SpotifyApi(BaseAPI):
             self.state(token_manager)
         if not self.device_id:
             return False
-        self.put(endpoint="me/player", headers=headers, json={"device_ids":[f"{self.device_id}"], "play": False})
+        self.put(endpoint="me/player", headers=headers, json={"device_ids": [f"{self.device_id}"], "play": False})
 
     def play(self, token_manager):
         if token_manager.token is None:
@@ -45,7 +45,7 @@ class SpotifyApi(BaseAPI):
         if not self.device_id:
             return False
 
-        self.put(endpoint="me/player", headers=headers, json={"device_ids":[f"{self.device_id}"], "play": True})
+        self.put(endpoint="me/player", headers=headers, json={"device_ids": [f"{self.device_id}"], "play": True})
 
     def state(self, token_manager):
         if token_manager.token is None:

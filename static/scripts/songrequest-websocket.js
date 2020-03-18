@@ -1,6 +1,5 @@
 let socket = null;
 var open = false;
-var stop_reload = false;
 
 function connect_to_ws() {
     if (socket != null) {
@@ -37,12 +36,7 @@ function connect_to_ws() {
             }: ${e.reason}`
         );
         socket = null;
-        if (!stop_reload) {
-            location.reload();
-        } else {
-            connect_to_ws();
-        }
-        stop_reload = false;
+        connect_to_ws();
     };
 }
 

@@ -25,6 +25,24 @@ class ShowEmoteModule(BaseModule):
             default=100,
             constraints={"min_value": 0, "max_value": 999999},
         ),
+        ModuleSetting(
+            key="cooldown_per_user",
+            label="Cooldown per user",
+            type="number",
+            required=True,
+            placeholder="Cooldown per user",
+            default=0,
+            constraints={"min_value": 0, "max_value": 999999},
+        ),
+        ModuleSetting(
+            key="cooldown_global",
+            label="Cooldown global",
+            type="number",
+            required=True,
+            placeholder="Cooldown global",
+            default=0,
+            constraints={"min_value": 0, "max_value": 999999},
+        ),
         ModuleSetting(key="sub_only", label="Subscribers only", type="boolean", required=True, default=False),
         ModuleSetting(
             key="can_whisper", label="Command can be whispered", type="boolean", required=True, default=False
@@ -122,6 +140,8 @@ class ShowEmoteModule(BaseModule):
             description="Show an emote on stream!",
             sub_only=self.settings["sub_only"],
             can_execute_with_whisper=self.settings["can_whisper"],
+            delay_all=self.settings["cooldown_global"],
+            delay_user=self.settings["cooldown_per_user"],
             examples=[
                 CommandExample(
                     None,

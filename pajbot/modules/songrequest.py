@@ -447,5 +447,4 @@ class SongrequestModule(BaseModule):
         if not self.bot:
             return
         self.bot.songrequest_manager.disable()
-        self.bot.songrequest_manager.disable()
         HandlerManager.remove_handler("on_stream_stop", self.bot.songrequest_manager.close_module_function)

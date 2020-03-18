@@ -212,7 +212,7 @@ class SongrequestQueue(Base):
         queued_songs = SongrequestQueue.sort(queued_song_ids, queued_unordered_songs)
         songs = []
         for song in queued_songs:
-            songs.append(songs.append(song.webjsonify()))
+            songs.append(song.webjsonify())
         return songs
 
     @staticmethod

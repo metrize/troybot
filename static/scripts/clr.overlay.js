@@ -512,6 +512,6 @@ function connect_to_ws() {
             }: ${e.reason}`
         );
         socket = null;
-        location.reload(true);
+        // location.reload(true);
     };
 }

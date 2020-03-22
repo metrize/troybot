@@ -256,14 +256,26 @@ class RaffleModule(BaseModule):
         self.raffle_points = 100
         self.raffle_length = 60
 
+        multiplier = 1
+
+        switch = {
+            "m": 1000000,
+            "k": 1000,
+            "h": 10,
+        }
+
         try:
-            if message is not None and self.settings["allow_negative_raffles"] is True:
-                self.raffle_points = int(message.split()[0])
-            if message is not None and self.settings["allow_negative_raffles"] is False:
-                if int(message.split()[0]) >= 0:
-                    self.raffle_points = int(message.split()[0])
+            multiplier = switch.get(message.split()[0][-1], 1)
+            points_part = message.split()[0]
+            if multiplier > 1:
+                points_part = points_part[:-1]
+            if int(points_part) < 0:
+                self.raffle_points = int(points_part) if self.settings["multi_allow_negative_raffles"] else points
+            else:
+                self.raffle_points = int(points_part)
         except (IndexError, ValueError, TypeError):
             pass
+        self.raffle_points *= multiplier
 
         try:
             if message is not None:
@@ -377,12 +389,23 @@ class RaffleModule(BaseModule):
             return False
 
         points = 100
+        multiplier = 1
+
+        switch = {
+            "m": 1000000,
+            "k": 1000,
+            "h": 10,
+        }
+
         try:
-            if message is not None and self.settings["multi_allow_negative_raffles"] is True:
-                points = int(message.split()[0])
-            if message is not None and self.settings["multi_allow_negative_raffles"] is False:
-                if int(message.split()[0]) >= 0:
-                    points = int(message.split()[0])
+            multiplier = switch.get(message.split()[0][-1], 1)
+            points_part = message.split()[0]
+            if multiplier > 1:
+                points_part = points_part[:-1]
+            if int(points_part) < 0:
+                points = int(points_part) if self.settings["multi_allow_negative_raffles"] else points
+            else:
+                points = int(points_part)
         except (IndexError, ValueError, TypeError):
             pass
 
@@ -394,7 +417,7 @@ class RaffleModule(BaseModule):
         except (IndexError, ValueError, TypeError):
             pass
 
-        self.multi_start_raffle(points, length)
+        self.multi_start_raffle(points*multiplier, length)
 
     def multi_end_raffle(self):
         if not self.raffle_running:

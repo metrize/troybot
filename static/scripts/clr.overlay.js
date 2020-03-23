@@ -512,6 +512,7 @@ function connect_to_ws() {
             }: ${e.reason}`
         );
         socket = null;
+        setTimeout(() => { connect_to_ws(); }, 5000);
         // location.reload(true);
     };
 }

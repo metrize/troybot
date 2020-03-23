@@ -149,7 +149,7 @@ class DuelModule(BaseModule):
             duel_price = 0
             if len(msg_split) > 1:
                 try:
-                    duel_price = source.points if msg_split[1] == "all" else int(msg_split[1])
+                    duel_price = min(source.points, user.points) if msg_split[1] == "all" else int(msg_split[1])
                     if duel_price < 0:
                         return False
                 except ValueError:

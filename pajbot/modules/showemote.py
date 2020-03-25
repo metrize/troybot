@@ -202,9 +202,9 @@ class ShowEmoteModule(BaseModule):
         )
         self.commands["disableshowemote"] = Command.raw_command(
             self.disable_showemote,
-            cost=self.settings["point_disable_cost"],
+            cost=self.settings["disable_cost"],
             description="Show an emote on stream!",
-            delay_all=self.settings["point_disable_cooldown"],
+            delay_all=self.settings["disable_cooldown"],
             examples=[
                 CommandExample(
                     None,

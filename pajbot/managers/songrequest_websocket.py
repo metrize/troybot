@@ -281,10 +281,7 @@ class SongRequestWebSocketServer:
                     "favourite_list": SongRequestSongInfo._get_favourite_list(db_session),
                     "current_timestamp": str(utils.now().timestamp()),
                 }
-                payload = {
-                    "event": "initialize",
-                    "data": data,
-                }
+                payload = {"event": "initialize", "data": data}
                 self.sendMessage(json.dumps(payload).encode("utf8"), False)
 
         factory = WebSocketServerFactory()

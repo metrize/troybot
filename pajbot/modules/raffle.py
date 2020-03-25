@@ -258,11 +258,7 @@ class RaffleModule(BaseModule):
 
         multiplier = 1
 
-        switch = {
-            "m": 1000000,
-            "k": 1000,
-            "h": 10,
-        }
+        switch = {"m": 1000000, "k": 1000, "h": 10}
 
         try:
             multiplier = switch.get(message.split()[0][-1], 1)
@@ -391,11 +387,7 @@ class RaffleModule(BaseModule):
         points = 100
         multiplier = 1
 
-        switch = {
-            "m": 1000000,
-            "k": 1000,
-            "h": 10,
-        }
+        switch = {"m": 1000000, "k": 1000, "h": 10}
 
         try:
             multiplier = switch.get(message.split()[0][-1], 1)

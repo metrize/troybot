@@ -12,7 +12,7 @@ WIDGET_ID = 1
 
 class ShowEmoteModule(BaseModule):
     ID = __name__.split(".")[-1]
-    NAME = "Showemote"
+    NAME = "Show Emote"
     DESCRIPTION = "Show a single emote on screen for a few seconds using !#showemote"
     CATEGORY = "Feature"
     SETTINGS = [

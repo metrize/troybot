@@ -81,9 +81,7 @@ class SpotifySongQuery(BaseModule):
             return False
         bot.say(
             self.settings["playing_spotify"].format(
-                username=source.username_raw,
-                song_title=name,
-                artists=", ".join([str(artist) for artist in artists]),
+                username=source.username_raw, song_title=name, artists=", ".join([str(artist) for artist in artists]),
             )
         )
         return True

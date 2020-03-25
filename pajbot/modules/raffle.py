@@ -417,7 +417,7 @@ class RaffleModule(BaseModule):
         except (IndexError, ValueError, TypeError):
             pass
 
-        self.multi_start_raffle(points*multiplier, length)
+        self.multi_start_raffle(points * multiplier, length)
 
     def multi_end_raffle(self):
         if not self.raffle_running:

@@ -128,7 +128,7 @@ class ShowEmoteModule(BaseModule):
     ]
 
     def __init__(self, bot):
-        super().__init__(self, bot)
+        super().__init__(bot)
         self.showemote_disabled = False
 
     def is_emote_allowed(self, emote_code):

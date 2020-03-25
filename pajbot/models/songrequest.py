@@ -146,7 +146,7 @@ class SongrequestQueue(Base):
     @staticmethod
     def _create(db_session, video_id, skip_after, requested_by_id, queue=None, backup=False):
         songrequestqueue = SongrequestQueue(
-            video_id=video_id, date_added=utils.now(), skip_after=skip_after, requested_by_id=requested_by_id,
+            video_id=video_id, date_added=utils.now(), skip_after=skip_after, requested_by_id=requested_by_id
         )
         db_session.add(songrequestqueue)
         db_session.commit()

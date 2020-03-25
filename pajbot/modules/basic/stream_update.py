@@ -6,6 +6,7 @@ from pajbot.managers.adminlog import AdminLogManager
 from pajbot.models.command import Command
 from pajbot.models.command import CommandExample
 from pajbot.modules import BaseModule
+from pajbot.modules import ModuleSetting
 from pajbot.modules.basic import BasicCommandsModule
 
 log = logging.getLogger(__name__)
@@ -13,12 +14,40 @@ log = logging.getLogger(__name__)
 
 class StreamUpdateModule(BaseModule):
     ID = __name__.split(".")[-1]
-    NAME = "Stream Update commands"
+    NAME = "Stream Update Commands"
     DESCRIPTION = "Update the stream game and title using commands from chat"
     CATEGORY = "Feature"
     ENABLED_DEFAULT = True
     PARENT_MODULE = BasicCommandsModule
-    SETTINGS = []
+    SETTINGS = [
+        ModuleSetting(
+            key="setgame_trigger",
+            label="Set game trigger (e.g. setgame)",
+            type="text",
+            required=True,
+            placeholder="Command (no !)",
+            default="setgame",
+            constraints={"min_str_len": 1, "max_str_len": 30},
+        ),
+        ModuleSetting(
+            key="settitle_trigger",
+            label="Set title trigger (e.g. settitle)",
+            type="text",
+            required=True,
+            placeholder="Trigger (no !)",
+            default="settitle",
+            constraints={"min_str_len": 1, "max_str_len": 30},
+        ),
+        ModuleSetting(
+            key="level",
+            label="Level required to use the commands",
+            type="number",
+            required=True,
+            placeholder="",
+            default=500,
+            constraints={"min_value": 250, "max_value": 2000},
+        ),
+    ]
 
     def generic_update(self, bot, source, message, field, api_fn):
         if not message:
@@ -41,53 +70,39 @@ class StreamUpdateModule(BaseModule):
         bot.say(log_msg)
         AdminLogManager.add_entry(f"{field.capitalize()} set", source, log_msg)
 
-    def game(self, bot, source, message, **rest):
-        if not message or source.level < 500:
-            data = bot.twitch_v5_api.get_stream_status(bot.streamer_user_id)
-            game = data["game"]
-            bot.say(f'@{source.username_raw} -> {bot.streamer} is currently playing "{game}"')
-            return
+    def update_game(self, bot, source, message, **rest):
         self.generic_update(bot, source, message, "game", self.bot.twitch_v5_api.set_game)
 
-    def title(self, bot, source, message, **rest):
-        if not message or source.level < 500:
-            data = bot.twitch_v5_api.get_stream_status(bot.streamer_user_id)
-            title = data["title"]
-            bot.say(f'@{source.username_raw} -> The current title is "{title}"')
-            return
+    def update_title(self, bot, source, message, **rest):
         self.generic_update(bot, source, message, "title", self.bot.twitch_v5_api.set_title)
 
     def load_commands(self, **options):
-        self.commands["game"] = Command.raw_command(
-            self.game,
-            level=100,
-            description="Updates or Shows the stream's game",
+        setgame_trigger = self.settings["setgame_trigger"].lower().replace("!", "").replace(" ", "")
+        self.commands[setgame_trigger] = Command.raw_command(
+            self.update_game,
+            level=self.settings["level"],
+            description="Update the stream's game",
             examples=[
                 CommandExample(
                     None,
-                    "Shows the game",
-                    chat="user:!game\n" 'bot: @user -> $(tb:broadcaster) is currently playing "Dota 2"',
-                ).parse(),
-                CommandExample(
-                    None,
-                    'Update the game to "Dota 2"',
-                    chat="user:!game Dota 2\n" 'bot: @user updated the game to "Dota 2"',
-                ).parse(),
+                    'Update the game to "World of Warcraft"',
+                    chat=f"user:!{setgame_trigger} World of Warcraft\n"
+                    'bot>user:pajlada updated the game to "World of Warcraft"',
+                ).parse()
             ],
         )
 
-        self.commands["title"] = Command.raw_command(
-            self.title,
-            level=100,
-            description="Updates or Shows  the stream's title",
+        settitle_trigger = self.settings["settitle_trigger"].lower().replace("!", "").replace(" ", "")
+        self.commands[settitle_trigger] = Command.raw_command(
+            self.update_title,
+            level=self.settings["level"],
+            description="Update the stream's title",
             examples=[
                 CommandExample(
-                    None, "Shows the title", chat="user:!title\n" 'bot: @user -> The current title is: $(tb:title)"'
-                ).parse(),
-                CommandExample(
                     None,
-                    'Update the title to "Just A Title"',
-                    chat="user:!title Just A Title\n" 'bot: @user updated the title to "Just A Title"',
-                ).parse(),
+                    'Update the title to "Games and shit"',
+                    chat=f"user:!{settitle_trigger} Games and shit\n"
+                    'bot>user:pajlada updated the title to "Games and shit"',
+                ).parse()
             ],
         )

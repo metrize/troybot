@@ -64,6 +64,7 @@ from pajbot.modules.bet import BetModule
 from pajbot.modules.spotify_streamlabs import SpotifyStreamLabs
 from pajbot.modules.discord_bot import DiscordModule
 from pajbot.modules.pnsl import PNSLModule
+from pajbot.modules.spotifyquery import SpotifySongQuery
 
 
 available_modules = [
@@ -112,6 +113,7 @@ available_modules = [
     SlotMachineModule,
     SongrequestModule,
     SpotifyStreamLabs,
+    SpotifySongQuery,
     StreamUpdateModule,
     SubAlertModule,
     SubscriberFetchModule,

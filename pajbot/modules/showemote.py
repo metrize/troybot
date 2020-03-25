@@ -4,6 +4,7 @@ from pajbot.models.command import Command
 from pajbot.models.command import CommandExample
 from pajbot.modules import BaseModule
 from pajbot.modules import ModuleSetting
+from pajbot.managers.schedule import ScheduleManager
 
 log = logging.getLogger(__name__)
 
@@ -41,6 +42,33 @@ class ShowEmoteModule(BaseModule):
             required=True,
             placeholder="Cooldown global",
             default=0,
+            constraints={"min_value": 0, "max_value": 999999},
+        ),
+        ModuleSetting(
+            key="disable_cost",
+            label="Point disable cost",
+            type="number",
+            required=True,
+            placeholder="Point disable cost",
+            default=5000,
+            constraints={"min_value": 0, "max_value": 999999},
+        ),
+        ModuleSetting(
+            key="disable_duration",
+            label="Point disable duration",
+            type="number",
+            required=True,
+            placeholder="Point disable cost",
+            default=300,
+            constraints={"min_value": 0, "max_value": 999999},
+        ),
+        ModuleSetting(
+            key="disable_cooldown",
+            label="Point disable cooldown",
+            type="number",
+            required=True,
+            placeholder="Point disable cooldown",
+            default=600,
             constraints={"min_value": 0, "max_value": 999999},
         ),
         ModuleSetting(key="sub_only", label="Subscribers only", type="boolean", required=True, default=False),
@@ -99,6 +127,10 @@ class ShowEmoteModule(BaseModule):
         ),
     ]
 
+    def __init__(self, bot):
+        super().__init__(self, bot)
+        self.showemote_disabled = False
+
     def is_emote_allowed(self, emote_code):
         if len(self.settings["emote_whitelist"].strip()) > 0:
             return emote_code in self.settings["emote_whitelist"]
@@ -106,6 +138,10 @@ class ShowEmoteModule(BaseModule):
         return emote_code not in self.settings["emote_blacklist"]
 
     def show_emote(self, bot, source, args, **rest):
+        if self.showemote_disabled:
+            bot.whisper(source, "Someone has paid to turn this off")
+            return False
+
         emote_instances = args["emote_instances"]
 
         if len(emote_instances) <= 0:
@@ -115,7 +151,7 @@ class ShowEmoteModule(BaseModule):
 
         first_emote = emote_instances[0].emote
 
-        # request to show emote is ignored but return False ensures user is refunded tokens/points
+        # request to show emote is ignored but return False ensures user is refunded points
         if not self.is_emote_allowed(first_emote.code):
             return False
 
@@ -132,6 +168,19 @@ class ShowEmoteModule(BaseModule):
         if self.settings["success_whisper"]:
             bot.whisper(source, f"Successfully sent the emote {first_emote.code} to the stream!")
 
+    def disable_showemote(self, bot, source, args, **rest):
+        if not self.showemote_disabled:
+            self.showemote_disabled = True
+            bot.whisper(source, f"Successfully disabled the show emote feature")
+            ScheduleManager.execute_delayed(self.settings["disable_duration"], self.enable_showemote)
+            return True
+
+        bot.whisper(source, f"Show emote is already disabled!")
+        return False
+
+    def enable_showemote(self):
+        self.showemote_disabled = False
+
     def load_commands(self, **options):
         self.commands["showemote"] = Command.raw_command(
             self.show_emote,
@@ -147,6 +196,20 @@ class ShowEmoteModule(BaseModule):
                     None,
                     "Show an emote on stream.",
                     chat="user:!showemote Keepo\n" "bot>user: Successfully sent the emote Keepo to the stream!",
+                    description="",
+                ).parse()
+            ],
+        )
+        self.commands["disableshowemote"] = Command.raw_command(
+            self.disable_showemote,
+            cost=self.settings["point_disable_cost"],
+            description="Show an emote on stream!",
+            delay_all=self.settings["point_disable_cooldown"],
+            examples=[
+                CommandExample(
+                    None,
+                    "Show an emote on stream.",
+                    chat="user:!#showemote Keepo\n" "bot>user: Successfully sent the emote Keepo to the stream!",
                     description="",
                 ).parse()
             ],

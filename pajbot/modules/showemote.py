@@ -203,14 +203,6 @@ class ShowEmoteModule(BaseModule):
         self.commands["disableshowemote"] = Command.raw_command(
             self.disable_showemote,
             cost=self.settings["disable_cost"],
-            description="Show an emote on stream!",
+            description="Disables show emote",
             delay_all=self.settings["disable_cooldown"],
-            examples=[
-                CommandExample(
-                    None,
-                    "Show an emote on stream.",
-                    chat="user:!#showemote Keepo\n" "bot>user: Successfully sent the emote Keepo to the stream!",
-                    description="",
-                ).parse()
-            ],
         )

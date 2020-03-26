@@ -62,7 +62,6 @@ from pajbot.modules.massping import MassPingProtectionModule
 from pajbot.modules.wolfram import WolframModule
 from pajbot.modules.bet import BetModule
 from pajbot.modules.spotify_streamlabs import SpotifyStreamLabs
-from pajbot.modules.discord_bot import DiscordModule
 from pajbot.modules.pnsl import PNSLModule
 from pajbot.modules.spotifyquery import SpotifySongQuery
 
@@ -80,7 +79,6 @@ available_modules = [
     CheckModModule,
     DBManageModule,
     DebugModule,
-    DiscordModule,
     DubtrackModule,
     DuelModule,
     DummyModule,

@@ -1,7 +1,7 @@
-import websocket
 import json
 import threading
 import logging
+import websocket
 
 from pajbot.managers.handler import HandlerManager
 from pajbot.managers.schedule import ScheduleManager
@@ -15,34 +15,34 @@ class PubSubAPI:
     def __init__(self, bot, token):
         self.bot = bot
         self.token = token
-        self.schedule = None
         self.sent_ping = False
-        try:
-            self.receiveEventsThread._stop
-        except:
-            pass
+        self.websocket = None
+        ScheduleManager.execute_now(self.check_connection)
+        self.check_connection_schedule = ScheduleManager.execute_every(30, self.check_connection)
+        self.ping_schedule = ScheduleManager.execute_every(60, self.ping_server)
 
-        self.ws = websocket.WebSocketApp(
+    def initialize_socket(self):
+        self.websocket = websocket.WebSocketApp(
             "wss://pubsub-edge.twitch.tv",
-            on_message=lambda ws, msg: self.on_message(ws, msg),
-            on_error=lambda ws, msg: self.on_error(ws, msg),
-            on_close=lambda ws: self.on_close(ws),
-            on_open=lambda ws: self.on_open(ws),
+            on_message=self.on_message,
+            on_error=self.on_error,
+            on_close=self.on_close,
+            on_open=self.on_open,
         )
 
-        self.receiveEventsThread = threading.Thread(target=self._receiveEventsThread)
-        self.receiveEventsThread.daemon = True
-        self.receiveEventsThread.start()
+        thread = threading.Thread(target=self._receiveEventsThread)
+        thread.daemon = True
+        thread.start()
 
     def _receiveEventsThread(self):
-        self.ws.run_forever()
+        self.websocket.run_forever()
 
     def on_message(self, ws, message):
         msg = json.loads(message)
         if msg["type"].lower() == "pong":
             self.sent_ping = False
         elif msg["type"].lower() == "reconnect":
-            ScheduleManager.execute_now(self.reset)
+            self.reset()
         elif msg["type"].lower() == "message":
             if msg["data"]["topic"] == "channel-bits-events-v2." + self.bot.streamer_user_id:
                 messageR = json.loads(msg["data"]["message"])
@@ -57,8 +57,8 @@ class PubSubAPI:
         log.error(f"pubsubapi : {error}")
 
     def on_close(self, ws):
-        log.error("Socket disconnected. Donations no longer monitored")
-        ScheduleManager.execute_delayed(10, self.reset)
+        log.error("Pubsub stopped")
+        self.reset()
 
     def on_open(self, ws):
         log.info("Pubsub Started!")
@@ -71,25 +71,34 @@ class PubSubAPI:
                 },
             }
         )
-        self.schedule = ScheduleManager.execute_every(120, self.check_connection)
+
+    def ping_server(self):
+        if self.sent_ping:
+            return
+
+        self.sendData({"type": "PONG"})
+        self.sent_ping = True
+        ScheduleManager.execute_delayed(10, self.check_ping)
 
     def check_connection(self):
-        if not self.sent_ping:
-            self.sendData({"type": "PING"})
-            self.sent_ping = True
-            ScheduleManager.execute_delayed(15, self.check_ping)
+        if self.websocket is None:
+            self.initialize_socket()
 
     def check_ping(self):
         if self.sent_ping:
             log.error("Pubsub connection timed out")
-            ScheduleManager.execute_now(self.reset)
+            self.reset()
 
     def sendData(self, message):
         try:
-            self.ws.send(json.dumps(message))
+            self.websocket.send(json.dumps(message))
         except Exception as e:
             log.error(e)
 
     def reset(self):
-        self.schedule.remove()
-        self.__init__(self.bot, self.token)
+        self.schedule.pause()
+        try:
+            self.websocket.close()
+        except:
+            pass
+        self.websocket = None

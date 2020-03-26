@@ -37,7 +37,7 @@ class PubSubAPI:
     def _receiveEventsThread(self):
         self.websocket.run_forever()
 
-    def on_message(self, ws, message):
+    def on_message(self, message):
         msg = json.loads(message)
         if msg["type"].lower() == "pong":
             self.sent_ping = False
@@ -53,14 +53,14 @@ class PubSubAPI:
                     if user is not None:
                         HandlerManager.trigger("on_cheer", True, user=user, bits_cheered=bits_cheered)
 
-    def on_error(self, ws, error):
+    def on_error(self, error):
         log.error(f"pubsubapi : {error}")
 
-    def on_close(self, ws):
+    def on_close(self):
         log.error("Pubsub stopped")
         self.reset()
 
-    def on_open(self, ws):
+    def on_open(self):
         log.info("Pubsub Started!")
         self.sendData(
             {

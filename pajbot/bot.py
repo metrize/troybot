@@ -45,7 +45,6 @@ from pajbot.managers.user_ranks_refresh import UserRanksRefreshManager
 from pajbot.managers.songrequest_websocket import SongRequestWebSocketManager
 from pajbot.managers.websocket import WebSocketManager
 from pajbot.managers.spotify_streamlabs import SpotifyStreamLabsManager
-from pajbot.managers.discord_bot import DiscordBotManager
 from pajbot.managers.songrequest_queue_manager import SongRequestQueueManager
 from pajbot.migration.db import DatabaseMigratable
 from pajbot.migration.migrate import Migration
@@ -259,7 +258,6 @@ class Bot:
             self.twitter_manager = PBTwitterManager(self)
         else:
             self.twitter_manager = TwitterManager(self)
-        self.discord_bot_manager = DiscordBotManager(self, RedisManager.get())
         self.module_manager = ModuleManager(self.socket_manager, bot=self).load()
         self.commands = CommandManager(
             socket_manager=self.socket_manager, module_manager=self.module_manager, bot=self

@@ -41,8 +41,10 @@ class PubSubAPI:
         msg = json.loads(message)
         if msg["type"].lower() == "pong":
             self.sent_ping = False
+            return
         elif msg["type"].lower() == "reconnect":
             self.reset()
+            return
         elif msg["type"].lower() == "message":
             if msg["data"]["topic"] == "channel-bits-events-v2." + self.bot.streamer_user_id:
                 messageR = json.loads(msg["data"]["message"])
@@ -52,6 +54,8 @@ class PubSubAPI:
                     user = User.find_by_id(db_session, user_id_of_cheer)
                     if user is not None:
                         HandlerManager.trigger("on_cheer", True, user=user, bits_cheered=bits_cheered)
+                return
+        log.warning(msg)
 
     def on_error(self, error):
         log.error(f"pubsubapi : {error}")
@@ -96,7 +100,6 @@ class PubSubAPI:
             log.error(e)
 
     def reset(self):
-        self.check_connection_schedule.pause()
         self.ping_schedule.pause()
         try:
             self.websocket.close()

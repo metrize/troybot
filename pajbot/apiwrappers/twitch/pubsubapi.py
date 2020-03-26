@@ -96,7 +96,8 @@ class PubSubAPI:
             log.error(e)
 
     def reset(self):
-        self.schedule.pause()
+        self.check_connection_schedule.pause()
+        self.ping_schedule.pause()
         try:
             self.websocket.close()
         except:

@@ -33,6 +33,7 @@ class PubSubAPI:
         thread = threading.Thread(target=self._receiveEventsThread)
         thread.daemon = True
         thread.start()
+        self.ping_schedule.resume()
 
     def _receiveEventsThread(self):
         self.websocket.run_forever()

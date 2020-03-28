@@ -225,8 +225,8 @@ class LinkCheckerModule(BaseModule):
         if not bot:
             return
 
-        pajbot.managers.handler.HandlerManager.remove_handler("on_message", self.on_message)
-        pajbot.managers.handler.HandlerManager.remove_handler("on_commit", self.on_commit)
+        HandlerManager.remove_handler("on_message", self.on_message)
+        HandlerManager.remove_handler("on_commit", self.on_commit)
 
         if self.db_session is not None:
             self.db_session.commit()
@@ -275,6 +275,13 @@ class LinkCheckerModule(BaseModule):
                     if whitelisted is False and self.is_whitelisted(url):
                         whitelisted = True
                     if whitelisted is False:
+                        try:
+                            requests.head(
+                                url, allow_redirects=True, timeout=2, headers={"User-Agent": self.bot.user_agent}
+                            )
+                        except:
+                            self.cache_url(url, True)
+                            continue
                         self.bot.timeout(source, self.settings["timeout_length"], reason=ban_reason)
                         if source.time_in_chat_online >= timedelta(hours=1):
                             self.bot.whisper(source, whisper_reason)

@@ -598,7 +598,7 @@ class Bot:
             message += f" {reason}"
         self.privmsg(message)
 
-    def timeout(self, user, duration, reason=None, once=False):
+    def timeout(self, user, duration, reason=None, once=True):
         self._timeout(user.login, duration, reason)
         if not once:
             self.execute_delayed(1, self._timeout, user.login, duration, reason)

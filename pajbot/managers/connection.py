@@ -133,7 +133,7 @@ class ConnectionManager:
         if (not whisper and (conn is None or not conn.can_send())) or (
             whisper and (conn is None or not conn.can_send_whisper())
         ):
-            log.error(f"No available connections to send messages from. Delaying message a few seconds.")
+            log.warning(f"No available connections to send messages from. Delaying message a few seconds.")
             self.bot.execute_delayed(2, self.privmsg, channel, message, increase_message, whisper)
             return
 

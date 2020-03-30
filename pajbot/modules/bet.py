@@ -196,8 +196,9 @@ class BetModule(BaseModule):
                 current_game = BetGame()
                 db_session.add(current_game)
                 db_session.flush()
-            elif current_game.betting_open is True:
+            elif not current_game.betting_open:
                 current_game.bets_closed = False
+                openString = "The betting has been reopened for this game"
             else:
                 self.bot.say("Betting is already open Pepega")
                 return False
@@ -214,7 +215,20 @@ class BetModule(BaseModule):
             if not self.spectating:
                 self.bot.websocket_manager.emit(event="bet_new_game", widget_id=WIDGET_ID)
 
+            current_points = current_game.get_points_by_outcome(db_session)
+            current_bets = current_game.get_bets_by_outcome(db_session)
+
+            payload = {
+                "win_points": current_points[BetGameOutcome.win],
+                "loss_points": current_points[BetGameOutcome.loss],
+                "win_betters": current_bets[BetGameOutcome.win],
+                "loss_betters": current_bets[BetGameOutcome.loss],
+            }
+
+            self.bot.websocket_manager.emit(event="bet_update_data", widget_id=WIDGET_ID, data=payload)
+
             self.bot.me(openString)
+            return True
 
     def command_open(self, message, **rest):
         openString = "A new game has begun! Vote with !bet win/lose POINTS"
@@ -223,7 +237,7 @@ class BetModule(BaseModule):
             self.spectating = True
             openString += ". Reminder to bet with radiant/dire instead of win/loss"
 
-        self.start_game(openString)
+        return self.start_game(openString)
 
     def command_stats(self, bot, **rest):
         with DBManager.create_session_scope() as db_session:
@@ -406,15 +420,11 @@ class BetModule(BaseModule):
             source.points = source.points - points
             current_points = current_game.get_points_by_outcome(db_session)
             current_bets = current_game.get_bets_by_outcome(db_session)
-            win_points = current_points[BetGameOutcome.win] + (points if bet_for == BetGameOutcome.win else 0)
-            loss_points = current_points[BetGameOutcome.loss] + (points if bet_for == BetGameOutcome.loss else 0)
-            win_betters = current_bets[BetGameOutcome.win] + (1 if bet_for == BetGameOutcome.win else 0)
-            loss_betters = current_bets[BetGameOutcome.loss] + (1 if bet_for == BetGameOutcome.loss else 0)
             payload = {
-                "win_points": win_points,
-                "loss_points": loss_points,
-                "win_betters": win_betters,
-                "loss_betters": loss_betters,
+                "win_points": current_points[BetGameOutcome.win] + (points if bet_for == BetGameOutcome.win else 0),
+                "loss_points": current_points[BetGameOutcome.loss] + (points if bet_for == BetGameOutcome.loss else 0),
+                "win_betters": current_bets[BetGameOutcome.win] + (1 if bet_for == BetGameOutcome.win else 0),
+                "loss_betters": current_bets[BetGameOutcome.loss] + (1 if bet_for == BetGameOutcome.loss else 0),
             }
 
             bot.websocket_manager.emit(event="bet_update_data", widget_id=WIDGET_ID, data=payload)

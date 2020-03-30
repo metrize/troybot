@@ -304,13 +304,13 @@ function bet_show_bets() {
     bet_el.show();
 }
 function bet_update_data({
-    win_betters,
-    loss_betters,
+    win_bettors,
+    loss_bettors,
     win_points,
     loss_points,
 }) {
-    $('#winbetters').text(win_betters);
-    $('#lossbetters').text(loss_betters);
+    $('#winbettors').text(win_bettors);
+    $('#lossbettors').text(loss_bettors);
     $('#winpoints').text(win_points);
     $('#losspoints').text(loss_points);
 }
@@ -323,8 +323,8 @@ function bet_new_game() {
 
     bet_el.hide();
 
-    $('#winbetters').text('0');
-    $('#lossbetters').text('0');
+    $('#winbettors').text('0');
+    $('#lossbettors').text('0');
     $('#winpoints').text('0');
     $('#losspoints').text('0');
 
@@ -340,8 +340,8 @@ function bet_reload() {
         opacity: 1,
     });
     bet_el.hide();
-    $('#winbetters').text('0');
-    $('#lossbetters').text('0');
+    $('#winbettors').text('0');
+    $('#lossbettors').text('0');
     $('#winpoints').text('0');
     $('#losspoints').text('0');
 }

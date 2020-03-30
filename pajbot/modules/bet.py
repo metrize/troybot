@@ -221,8 +221,8 @@ class BetModule(BaseModule):
             payload = {
                 "win_points": current_points[BetGameOutcome.win],
                 "loss_points": current_points[BetGameOutcome.loss],
-                "win_betters": current_bets[BetGameOutcome.win],
-                "loss_betters": current_bets[BetGameOutcome.loss],
+                "win_bettors": current_bets[BetGameOutcome.win],
+                "loss_bettors": current_bets[BetGameOutcome.loss],
             }
 
             self.bot.websocket_manager.emit(event="bet_update_data", widget_id=WIDGET_ID, data=payload)
@@ -423,8 +423,8 @@ class BetModule(BaseModule):
             payload = {
                 "win_points": current_points[BetGameOutcome.win] + (points if bet_for == BetGameOutcome.win else 0),
                 "loss_points": current_points[BetGameOutcome.loss] + (points if bet_for == BetGameOutcome.loss else 0),
-                "win_betters": current_bets[BetGameOutcome.win] + (1 if bet_for == BetGameOutcome.win else 0),
-                "loss_betters": current_bets[BetGameOutcome.loss] + (1 if bet_for == BetGameOutcome.loss else 0),
+                "win_bettors": current_bets[BetGameOutcome.win] + (1 if bet_for == BetGameOutcome.win else 0),
+                "loss_bettors": current_bets[BetGameOutcome.loss] + (1 if bet_for == BetGameOutcome.loss else 0),
             }
 
             bot.websocket_manager.emit(event="bet_update_data", widget_id=WIDGET_ID, data=payload)

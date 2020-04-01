@@ -732,13 +732,17 @@ class LinkCheckerModule(BaseModule):
     def permit_link(self, bot, source, message, **rest):
         parts = message.split(" ")
         user = User.find_or_create_from_user_input(self.db_session, self.bot.twitch_helix_api, parts[0])
-        length = parts[1] if len(parts) > 1 else 300
+        try:
+            length = int(parts[1] if len(parts) > 1 else 300)
+        except:
+            length = 300
+
         if user.id in self.permitted_users:
             self.bot.say(f"{user} is already permitted")
             return False
 
         self.permitted_users.append(user.id)
-        self.bot.say(f"{user} has been permitted to post links for {length} seconds")
+        self.bot.say(f"@{user} has been permitted to post links for {length} seconds (@{source})")
         self.bot.execute_delayed(length, lambda: self.permitted_users.remove(user.id))
 
     def add_link_blacklist(self, bot, source, message, **rest):

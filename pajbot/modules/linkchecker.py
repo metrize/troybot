@@ -431,13 +431,13 @@ class LinkCheckerModule(BaseModule):
                 return self.RET_BAD_LINK
             return self.RET_GOOD_LINK
 
-        if self.is_blacklisted(url.url, url.parsed, sublink):
-            self.counteract_bad_url(url, action, want_to_blacklist=False)
-            return self.RET_BAD_LINK
-
         if self.is_whitelisted(url.url, url.parsed):
             self.cache_url(url.url, True)
             return self.RET_GOOD_LINK
+
+        if self.is_blacklisted(url.url, url.parsed, sublink):
+            self.counteract_bad_url(url, action, want_to_blacklist=False)
+            return self.RET_BAD_LINK
 
         return self.RET_FURTHER_ANALYSIS
 

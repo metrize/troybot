@@ -19,6 +19,7 @@ from pajbot.models.command import Command
 from pajbot.models.command import CommandExample
 from pajbot.modules import BaseModule
 from pajbot.modules import ModuleSetting
+from pajbot.models.user import User
 
 log = logging.getLogger(__name__)
 
@@ -190,6 +191,7 @@ class LinkCheckerModule(BaseModule):
 
         self.blacklisted_links = []
         self.whitelisted_links = []
+        self.permitted_users = []
 
         self.cache = LinkCheckerCache()  # cache[url] = True means url is safe, False means the link is bad
 
@@ -246,7 +248,7 @@ class LinkCheckerModule(BaseModule):
         if whisper:
             return
 
-        if source.level >= self.settings["bypass_level"] or source.moderator is True:
+        if source.level >= self.settings["bypass_level"] or source.moderator is True or source.id in self.permitted_users:
             return
 
         if len(urls) > 0:
@@ -718,6 +720,26 @@ class LinkCheckerModule(BaseModule):
                 )
             },
         )
+
+        self.commands["permit"] = Command.raw_command(
+            self.permit_link,
+            level=500,
+            delay_all=0,
+            delay_user=0,
+            description="Permit's a user to post links",
+        )
+
+    def permit_link(self, bot, source, message, **rest):
+        parts = message.split(" ")
+        user = User.find_or_create_from_user_input(self.db_session, self.bot.twitch_helix_api, parts[0])
+        length = parts[1] if len(parts) > 1 else 300
+        if user.id in self.permitted_users:
+            self.bot.say(f"{user} is already permitted")
+            return False
+
+        self.permitted_users.append(user.id)
+        self.bot.say(f"{user} has been permitted to post links for {length} seconds")
+        self.bot.execute_delayed(length, lambda: self.permitted_users.remove(user.id))
 
     def add_link_blacklist(self, bot, source, message, **rest):
         options, new_links = self.parse_link_blacklist_arguments(message)

@@ -57,7 +57,7 @@ class PubSubAPI:
                         HandlerManager.trigger("on_cheer", True, user=user, bits_cheered=bits_cheered)
                 return
         elif msg["type"].lower() == "response":
-            if not msg['error']:
+            if not msg["error"]:
                 return
         log.warning(msg)
 

@@ -248,7 +248,11 @@ class LinkCheckerModule(BaseModule):
         if whisper:
             return
 
-        if source.level >= self.settings["bypass_level"] or source.moderator is True or source.id in self.permitted_users:
+        if (
+            source.level >= self.settings["bypass_level"]
+            or source.moderator is True
+            or source.id in self.permitted_users
+        ):
             return
 
         if len(urls) > 0:
@@ -722,11 +726,7 @@ class LinkCheckerModule(BaseModule):
         )
 
         self.commands["permit"] = Command.raw_command(
-            self.permit_link,
-            level=500,
-            delay_all=0,
-            delay_user=0,
-            description="Permit's a user to post links",
+            self.permit_link, level=500, delay_all=0, delay_user=0, description="Permit's a user to post links"
         )
 
     def permit_link(self, bot, source, message, **rest):

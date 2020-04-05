@@ -92,6 +92,4 @@ def init(app):
                     "winrate_str": f"{winrate * 100:.2f}%",
                     "roulette_base_winrate": roulette_base_winrate,
                 }
-            return render_template(
-                "user.html", user=user, roulette_stats=roulette_stats, roulettes=roulettes
-            )
+            return render_template("user.html", user=user, roulette_stats=roulette_stats, roulettes=roulettes)

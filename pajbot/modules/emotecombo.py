@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 WIDGET_ID = 5
 
--
+
 class EmoteComboModule(BaseModule):
     ID = __name__.split(".")[-1]
     NAME = "Emote Combos - Overlay"

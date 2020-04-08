@@ -37,7 +37,7 @@ class EmoteComboModule(BaseModule):
             self.bot.websocket_manager.emit(
                 event="emote_combo",
                 data={"emote": self.current_emote.jsonify(), "count": self.emote_count},
-                widget_id=WIDGET_ID
+                widget_id=WIDGET_ID,
             )
 
     def reset(self):

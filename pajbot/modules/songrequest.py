@@ -422,14 +422,14 @@ class SongrequestModule(BaseModule):
         if not self.bot:
             return
 
-        import apiclient
-        from apiclient.discovery import build
+        import googleapiclient
+        from googleapiclient.discovery import build
 
         def build_request(_, *args, **kwargs):
             import httplib2
 
             new_http = httplib2.Http()
-            return apiclient.http.HttpRequest(new_http, *args, **kwargs)
+            return googleapiclient.http.HttpRequest(new_http, *args, **kwargs)
 
         self.youtube = build("youtube", "v3", developerKey=self.settings["youtube_key"], requestBuilder=build_request)
 

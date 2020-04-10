@@ -117,6 +117,9 @@ class SongRequestWebSocketServer:
                             "DELETE": self._delete,
                         }
                         method = switcher.get(json_msg["event"], None)
+                        if not manager_ext.bot.songrequest_manager.module_state["enabled"]:
+                            return
+
                         if not method or not method(db_session, json_msg.get("data", None)):
                             self._close_conn()
                             return

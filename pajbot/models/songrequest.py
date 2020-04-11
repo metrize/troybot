@@ -372,7 +372,7 @@ class SongRequestSongInfo(Base):
             return song_info
 
         import isodate
-        from googleapiclient.errors import HttpError
+        from apiclient.errors import HttpError
 
         if youtube is None:
             log.warning("youtube was not initialized")

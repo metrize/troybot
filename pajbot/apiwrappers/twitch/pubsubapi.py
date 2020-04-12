@@ -65,10 +65,10 @@ class PubSubAPI:
                         "on_redeem",
                         redeemer=UserBasics(userDict["id"], userDict["login"], userDict["display_name"]),
                         redeemed_id=message_message["data"]["redemption"]["reward"]["id"],
-                        user_input=message_message["data"]["redemption"]["user_input"] or "",
+                        user_input=message_message["data"]["redemption"].get("user_input", ""),
                     )
             except Exception as e:
-                pass
+                log.error(e)
         elif msg["type"].lower() == "response":
             if not msg["error"]:
                 return

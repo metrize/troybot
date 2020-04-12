@@ -64,6 +64,7 @@ from pajbot.modules.bet import BetModule
 from pajbot.modules.spotify_streamlabs import SpotifyStreamLabs
 from pajbot.modules.pnsl import PNSLModule
 from pajbot.modules.spotifyquery import SpotifySongQuery
+from pajbot.modules.reward_tts import RewardTTSModule
 
 
 available_modules = [
@@ -89,6 +90,7 @@ available_modules = [
     FollowAgeModule,
     GetTimedOutQuestModule,
     GivePointsModule,
+    RewardTTSModule,
     IgnoreModule,
     LastfmModule,
     LineFarmingModule,

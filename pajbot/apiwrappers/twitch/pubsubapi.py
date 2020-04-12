@@ -7,6 +7,7 @@ from pajbot.managers.handler import HandlerManager
 from pajbot.managers.schedule import ScheduleManager
 from pajbot.managers.db import DBManager
 from pajbot.models.user import User
+from pajbot.models.user import UserBasics
 
 log = logging.getLogger(__name__)
 
@@ -59,6 +60,14 @@ class PubSubAPI:
         elif msg["type"].lower() == "response":
             if not msg["error"]:
                 return
+        elif msg["type"].lower() == "reward-redeemed":
+            userDict = msg["data"]["redemption"]["user"]
+            HandlerManager.trigger(
+                "on_redeem",
+                redeemer=UserBasics(userDict["id"], userDict["login"], userDict["display_name"]),
+                redeemed_id=msg["data"]["redemption"]["reward"]["id"],
+                user_input=msg["data"]["redemption"]["user_input"] or "",
+            )
         log.warning(msg)
 
     def on_error(self, error):

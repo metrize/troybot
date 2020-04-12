@@ -139,10 +139,10 @@ function show_custom_image(data) {
 
 var message_id = 0;
 
-function add_notification({ message }) {
-    var new_notification = $('<div>' + message + '</div>').prependTo(
-        'div.notifications'
-    );
+function add_notification({ message, length, extra_classes }) {
+    var new_notification = $(
+        `<div class="${extra_classes}">${message}</div>`
+    ).prependTo('div.notifications');
     new_notification.textillate({
         autostart: false,
         in: {
@@ -171,13 +171,15 @@ function add_notification({ message }) {
                 },
                 1000
             );
-        }, 2000);
+        }, length * 1000);
     });
     new_notification.on('outAnimationEnd.tlt', function() {
         setTimeout(function() {
             new_notification.remove();
         }, 250);
     });
+
+    return new_notification;
 }
 
 function refresh_combo_count(count) {
@@ -408,6 +410,12 @@ function handleWebsocketData(json_data) {
         case 'songrequest_stop':
             stop();
             break;
+        case 'highlight':
+            receive_highlight(data);
+            break;
+        case 'skip_highlight':
+            skip_highlight();
+            break;
     }
 }
 
@@ -456,6 +464,76 @@ function stop() {
     player.source = null;
     player.stop();
 }
+
+let highlightQueue = [];
+let notificationMessage = null;
+let playAudio = new Audio();
+
+playAudio.addEventListener('canplaythrough', function() {
+    setTimeout(function() {
+        playAudio.play();
+    }, 1000);
+});
+
+playAudio.addEventListener('ended', function() {
+    var currentNotif = notificationMessage;
+    setTimeout(function() {
+        currentNotif.textillate('out');
+        currentNotif.animate(
+            {
+                height: 0,
+                opacity: 0,
+            },
+            1000
+        );
+
+        if (highlightQueue.length > 0) {
+            PlayHighlights();
+        }
+    }, 2000);
+});
+
+function PlayHighlights() {
+    if (!playAudio.ended && !(playAudio.src == '' || playAudio.src == '#')) {
+        return;
+    }
+
+    var currentHighlight = highlightQueue.shift();
+    playAudio.src = 'data:audio/mp3;base64,' + currentHighlight.speech;
+    playAudio.load();
+
+    // playAudio.duration is sometimes infinite for some reason
+    notificationMessage = add_notification({
+        message: `<span class="user">${currentHighlight.user}</span> <span style="color: orange;">(${currentHighlight.voice})</span>: ${currentHighlight.message}`,
+        length: 500,
+        extra_classes: 'tts',
+    });
+}
+
+function receive_highlight(data) {
+    highlightQueue.push(data);
+    if (highlightQueue.length == 1) {
+        PlayHighlights();
+    }
+}
+
+function skip_highlight() {
+    playAudio.pause();
+    playAudio.src = '#';
+    notificationMessage.textillate('out');
+    notificationMessage.animate(
+        {
+            height: 0,
+            opacity: 0,
+        },
+        1000
+    );
+
+    if (highlightQueue.length > 0) {
+        PlayHighlights();
+    }
+}
+
 
 // This is the bare minimum JavaScript. You can opt to pass no arguments to setup.
 jQuery(function($) {

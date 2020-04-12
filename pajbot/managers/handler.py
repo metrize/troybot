@@ -106,6 +106,9 @@ class HandlerManager:
         # change_state()
         HandlerManager.create_handler("change_state")
 
+        # on_redeem(redeemer, redeemed_id, user_input)
+        HandlerManager.create_handler("on_redeem")
+
     @staticmethod
     def create_handler(event):
         """ Create an empty list for the given event """

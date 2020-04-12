@@ -113,14 +113,10 @@ class RewardTTSModule(BaseModule):
         voiceResult = voiceSearch.search(message)
         if voiceResult is not None:
             ttsVoice = voiceResult.group()[:-1]
-            _message = message[len(ttsVoice) + 1 :]
+            if ttsVoice in allVoices:
+                message = message[len(ttsVoice) + 1 :]
         else:
             ttsVoice = random.choice(allVoices) if self.settings["random_voice"] else self.settings["tts_voice"]
-
-        if ttsVoice not in allVoices:
-            ttsVoice = "Joanna"
-        else:
-            message = _message
 
         synthArgs = {
             "Engine": "neural" if ttsVoice in neuralVoices else "standard",

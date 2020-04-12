@@ -57,17 +57,21 @@ class PubSubAPI:
                     if user is not None:
                         HandlerManager.trigger("on_cheer", True, user=user, bits_cheered=bits_cheered)
                 return
+            try:
+                message_message = json.loads(msg["data"]["message"])
+                if message_message["type"] == "reward-redeemed":
+                    userDict = message_message["data"]["redemption"]["user"]
+                    HandlerManager.trigger(
+                        "on_redeem",
+                        redeemer=UserBasics(userDict["id"], userDict["login"], userDict["display_name"]),
+                        redeemed_id=message_message["data"]["redemption"]["reward"]["id"],
+                        user_input=message_message["data"]["redemption"]["user_input"] or "",
+                    )
+            except:
+                pass
         elif msg["type"].lower() == "response":
             if not msg["error"]:
                 return
-        elif msg["type"].lower() == "reward-redeemed":
-            userDict = msg["data"]["redemption"]["user"]
-            HandlerManager.trigger(
-                "on_redeem",
-                redeemer=UserBasics(userDict["id"], userDict["login"], userDict["display_name"]),
-                redeemed_id=msg["data"]["redemption"]["reward"]["id"],
-                user_input=msg["data"]["redemption"]["user_input"] or "",
-            )
         log.warning(msg)
 
     def on_error(self, error):

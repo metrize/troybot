@@ -108,9 +108,6 @@ class RewardTTSModule(BaseModule):
 
     def generateTTS(self, username, message):
         if self.bot.is_bad_message(message):
-            # Yikes
-            self.bot.whisper_login("ales_", f"User {username} tried to do TTS for a banned message: {message}")
-            self.bot.whisper_login("datguy1", f"User {username} tried to do TTS for a banned message: {message}")
             return
 
         voiceResult = voiceSearch.search(message)

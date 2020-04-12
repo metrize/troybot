@@ -252,46 +252,43 @@ class LinkCheckerModule(BaseModule):
             source.level >= self.settings["bypass_level"]
             or source.moderator is True
             or source.id in self.permitted_users
+            or len(urls) == 0
         ):
             return
 
-        if len(urls) > 0:
-            do_timeout = False
-            ban_reason = "You are not allowed to post links in chat"
-            whisper_reason = "??? KKona"
+        do_timeout = False
+        ban_reason = "You are not allowed to post links in chat"
+        whisper_reason = "You cannot post non-verified links in chat if you're not a subscriber." if self.settings["ban_pleb_links"] is True and source.subscriber is False else "You cannot post non-verified links in chat if you're a subscriber"
+        do_timeout = (self.settings["ban_pleb_links"] is True and source.subscriber is False) or (self.settings["ban_sub_links"] is True and source.subscriber is True)
 
-            if self.settings["ban_pleb_links"] is True and source.subscriber is False:
-                do_timeout = True
-                whisper_reason = "You cannot post non-verified links in chat if you're not a subscriber."
-            elif self.settings["ban_sub_links"] is True and source.subscriber is True:
-                do_timeout = True
-                whisper_reason = "You cannot post non-verified links in chat if you're a subscriber"
-
-            if do_timeout is True:
-                # Check if the links are in our super-whitelist. i.e. on the pajlada.se domain o forsen.tv
-                for url in urls:
-                    parsed_url = Url(url)
-                    if len(parsed_url.parsed.netloc.split(".")) < 2:
-                        continue
-                    whitelisted = False
-                    for whitelist in self.super_whitelist:
-                        if is_subdomain(parsed_url.parsed.netloc, whitelist):
-                            whitelisted = True
-                            break
-                    if whitelisted is False and self.is_whitelisted(url):
+        if do_timeout:
+            # Check if the links are in our super-whitelist. i.e. on the pajlada.se domain o forsen.tv
+            for url in urls:
+                parsed_url = Url(url)
+                if len(parsed_url.parsed.netloc.split(".")) < 2:
+                    continue
+                whitelisted = False
+                for whitelist in self.super_whitelist:
+                    if is_subdomain(parsed_url.parsed.netloc, whitelist):
                         whitelisted = True
-                    if whitelisted is False:
-                        try:
-                            requests.head(
-                                url, allow_redirects=True, timeout=2, headers={"User-Agent": self.bot.user_agent}
-                            )
-                        except:
-                            self.cache_url(url, True)
-                            continue
-                        self.bot.timeout(source, self.settings["timeout_length"], reason=ban_reason)
-                        if source.time_in_chat_online >= timedelta(hours=1):
-                            self.bot.whisper(source, whisper_reason)
-                        return False
+                        break
+                if whitelisted:
+                    continue
+
+                if self.is_whitelisted(url):
+                    continue
+
+                try:
+                    requests.head(
+                        url, allow_redirects=True, timeout=2, headers={"User-Agent": self.bot.user_agent}
+                    )
+                except:
+                    self.cache_url(url, True)
+                    continue
+                self.bot.timeout(source, self.settings["timeout_length"], reason=ban_reason)
+                if source.time_in_chat_online >= timedelta(hours=1):
+                    self.bot.whisper(source, whisper_reason)
+                return False
 
         for url in urls:
             # Action which will be taken when a bad link is found

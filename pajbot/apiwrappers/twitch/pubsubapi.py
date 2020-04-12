@@ -18,9 +18,9 @@ class PubSubAPI:
         self.token = token
         self.sent_ping = False
         self.websocket = None
-        ScheduleManager.execute_now(self.check_connection)
         self.ping_schedule = ScheduleManager.execute_every(60, self.ping_server)
         self.check_connection_schedule = ScheduleManager.execute_every(30, self.check_connection)
+        ScheduleManager.execute_now(self.check_connection)
 
     def initialize_socket(self):
         self.websocket = websocket.WebSocketApp(

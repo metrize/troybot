@@ -93,9 +93,9 @@ class PubSubAPI:
         if self.sent_ping:
             return
 
-        self.sendData({"type": "PONG"})
+        self.sendData({"type": "PING"})
         self.sent_ping = True
-        ScheduleManager.execute_delayed(10, self.check_ping)
+        ScheduleManager.execute_delayed(30, self.check_ping)
 
     def check_connection(self):
         if self.websocket is None:

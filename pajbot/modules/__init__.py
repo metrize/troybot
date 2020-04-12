@@ -65,6 +65,7 @@ from pajbot.modules.spotify_streamlabs import SpotifyStreamLabs
 from pajbot.modules.pnsl import PNSLModule
 from pajbot.modules.spotifyquery import SpotifySongQuery
 from pajbot.modules.reward_tts import RewardTTSModule
+from pajbot.modules.convert_points import ConvertPoints
 
 
 available_modules = [
@@ -78,6 +79,7 @@ available_modules = [
     CaseCheckerModule,
     ChattersRefreshModule,
     CheckModModule,
+    ConvertPoints,
     DBManageModule,
     DebugModule,
     DubtrackModule,

@@ -118,8 +118,8 @@ class RewardTTSModule(BaseModule):
             ttsVoice = random.choice(allVoices) if self.settings["random_voice"] else self.settings["tts_voice"]
 
         if ttsVoice not in allVoices:
-            ttsVoice = "Joanne"
-            self.bot.whisper_login(username, f"Voice {ttsVoice} was not recognised, falling back to Joanne")
+            self.bot.whisper_login(username, f"Voice {ttsVoice} was not recognised, falling back to Joanna")
+            ttsVoice = "Joanna"
 
         synthArgs = {
             "Engine": "neural" if ttsVoice in neuralVoices else "standard",

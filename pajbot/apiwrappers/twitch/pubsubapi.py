@@ -67,7 +67,7 @@ class PubSubAPI:
                         redeemed_id=message_message["data"]["redemption"]["reward"]["id"],
                         user_input=message_message["data"]["redemption"]["user_input"] or "",
                     )
-            except:
+            except Exception as e:
                 pass
         elif msg["type"].lower() == "response":
             if not msg["error"]:

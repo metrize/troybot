@@ -127,7 +127,6 @@ class RewardTTSModule(BaseModule):
             "Text": f"<speak>{message}</speak>",
             "TextType": "ssml",
             "VoiceId": ttsVoice,
-            "LexiconNames": ["twitchLex"],
         }
 
         message = re.sub(r"<.*?>", "", message)

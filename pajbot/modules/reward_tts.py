@@ -73,6 +73,7 @@ normalVoices = [
 allVoices = neuralVoices + normalVoices
 voiceSearch = re.compile(r"^\w*:")
 
+WIDGET_ID = 6
 
 class RewardTTSModule(BaseModule):
     ID = __name__.split(".")[-1]
@@ -103,7 +104,7 @@ class RewardTTSModule(BaseModule):
     ]
 
     def command_skip(self, bot, **rest):
-        bot.websocket_manager.emit("skip_highlight")
+        bot.websocket_manager.emit(widget_id=WIDGET_ID, event="skip_highlight")
 
     def generateTTS(self, username, message):
         if self.bot.is_bad_message(message):
@@ -153,7 +154,7 @@ class RewardTTSModule(BaseModule):
             "user": username,
             "message": message,
         }
-        self.bot.websocket_manager.emit("highlight", payload)
+        self.bot.websocket_manager.emit(widget_id=WIDGET_ID, event="highlight", data=payload)
 
     def isHighlightedMessage(self, event):
         for eventTag in event.tags:

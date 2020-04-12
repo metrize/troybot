@@ -71,7 +71,7 @@ normalVoices = [
     "Zhiyu",
 ]
 allVoices = neuralVoices + normalVoices
-voiceSearch = re.compile(r"^\w*:")
+voiceSearch = re.compile(r"^\w+:")
 
 WIDGET_ID = 6
 
@@ -113,13 +113,14 @@ class RewardTTSModule(BaseModule):
         voiceResult = voiceSearch.search(message)
         if voiceResult is not None:
             ttsVoice = voiceResult.group()[:-1]
-            message = message[len(ttsVoice) + 1 :]
+            _message = message[len(ttsVoice) + 1 :]
         else:
             ttsVoice = random.choice(allVoices) if self.settings["random_voice"] else self.settings["tts_voice"]
 
         if ttsVoice not in allVoices:
-            self.bot.whisper_login(username, f"Voice {ttsVoice} was not recognised, falling back to Joanna")
             ttsVoice = "Joanna"
+        else:
+            message = _message
 
         synthArgs = {
             "Engine": "neural" if ttsVoice in neuralVoices else "standard",

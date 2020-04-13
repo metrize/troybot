@@ -15,12 +15,12 @@ if [ ! -d venv ]; then
 fi
 
 # Upgrade pip
-./venv/bin/python3 -m pip install pip --upgrade
+./venv/bin/python -m pip install pip --upgrade
 
 # Install requirements.txt
-./venv/bin/python3 -m pip install -r requirements.txt
+./venv/bin/python -m pip install -r requirements.txt
 
 # Install dev dependencies
 if [ "$1" = "--dev" ]; then
-    ./venv/bin/pyhon3 -m pip install -r requirements-dev.txt
+    ./venv/bin/pyhon -m pip install -r requirements-dev.txt
 fi

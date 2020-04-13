@@ -57,7 +57,7 @@ img.absemote {
   position: absolute;
 }
 
-div.notifications :not(.tts) {
+div.notifications:not(div.notification.tts) {
   position: absolute;
   bottom: 5px;
   left: 5px;
@@ -76,14 +76,14 @@ div.notifications div {
 div.notifications div span.word1 {
   color: #dfffdf;
 }
-div.notifications div span.word4 {
+div.notifications:not(div.notifications.tts) div span.word4 {
   color: #ffdfdf;
 }
 #hsbet div.left {
   float: left;
 }
 
-div.notifications .tts {
+div.notifications.tts {
   font-size: 1.2em;
   position: absolute;
   top: 5px;

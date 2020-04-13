@@ -265,10 +265,11 @@ class RaffleModule(BaseModule):
             points_part = message.split()[0]
             if multiplier > 1:
                 points_part = points_part[:-1]
-            if int(points_part) < 0:
-                self.raffle_points = int(points_part) if self.settings["multi_allow_negative_raffles"] else points
+            points_part = int(points_part)
+            if points_part < 0:
+                self.raffle_points = points_part if self.settings["multi_allow_negative_raffles"] else self.raffle_points
             else:
-                self.raffle_points = int(points_part)
+                self.raffle_points = points_part
         except (IndexError, ValueError, TypeError):
             pass
         self.raffle_points *= multiplier

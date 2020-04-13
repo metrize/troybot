@@ -1,6 +1,5 @@
 import logging
 import base64
-import json
 
 from pajbot.apiwrappers.base import BaseAPI
 from pajbot.apiwrappers.authentication.access_token import SpotifyAccessToken

@@ -13,7 +13,6 @@ from pajbot.models.songrequest import SongrequestQueue
 from pajbot.models.songrequest import SongRequestSongInfo
 from pajbot.modules import BaseModule
 from pajbot.modules import ModuleSetting
-from pajbot.streamhelper import StreamHelper
 
 log = logging.getLogger(__name__)
 

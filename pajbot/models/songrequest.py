@@ -1,12 +1,10 @@
 import logging
-import json
 
 from sqlalchemy import Column, INT, TEXT, BOOLEAN, REAL
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_utc import UtcDateTime
-from sqlalchemy import func
 
 from pajbot import utils
 from pajbot.managers.db import Base
@@ -372,7 +370,6 @@ class SongRequestSongInfo(Base):
             return song_info
 
         import isodate
-        from apiclient.errors import HttpError
 
         if youtube is None:
             log.warning("youtube was not initialized")

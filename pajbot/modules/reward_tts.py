@@ -75,6 +75,7 @@ voiceSearch = re.compile(r"^\w+:")
 
 WIDGET_ID = 6
 
+
 class RewardTTSModule(BaseModule):
     ID = __name__.split(".")[-1]
     NAME = "Reward TTS"
@@ -90,9 +91,7 @@ class RewardTTSModule(BaseModule):
             options=normalVoices,
         ),
         ModuleSetting(key="random_voice", label="Use random voice", type="boolean", required=True, default=False,),
-        ModuleSetting(
-            key="sub_only", label="Subscriber Only", type="boolean", required=True, default=True,
-        ),
+        ModuleSetting(key="sub_only", label="Subscriber Only", type="boolean", required=True, default=True,),
         ModuleSetting(
             key="redeemed_id",
             label="ID of redemeed prize",

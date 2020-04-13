@@ -87,7 +87,10 @@ class PubSubAPI:
             {
                 "type": "LISTEN",
                 "data": {
-                    "topics": [f"channel-bits-events-v2.{self.bot.streamer_user_id}", f"channel-points-channel-v1.{self.bot.streamer_user_id}"],
+                    "topics": [
+                        f"channel-bits-events-v2.{self.bot.streamer_user_id}",
+                        f"channel-points-channel-v1.{self.bot.streamer_user_id}",
+                    ],
                     "auth_token": self.token.token.access_token,
                 },
             }

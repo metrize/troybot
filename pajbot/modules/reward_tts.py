@@ -90,8 +90,8 @@ class RewardTTSModule(BaseModule):
             default="Nicole",
             options=normalVoices,
         ),
-        ModuleSetting(key="random_voice", label="Use random voice", type="boolean", required=True, default=False,),
-        ModuleSetting(key="sub_only", label="Subscriber Only", type="boolean", required=True, default=True,),
+        ModuleSetting(key="random_voice", label="Use random voice", type="boolean", required=True, default=False),
+        ModuleSetting(key="sub_only", label="Subscriber Only", type="boolean", required=True, default=True),
         ModuleSetting(
             key="redeemed_id",
             label="ID of redemeed prize",

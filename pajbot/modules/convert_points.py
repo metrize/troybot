@@ -23,7 +23,7 @@ class ConvertPoints(BaseModule):
             default="",
             constraints={"min_str_len": 36, "max_str_len": 36},
         ),
-        ModuleSetting(key="points", label="Number of points", type="number", required=True, default=10000,),
+        ModuleSetting(key="points", label="Number of points", type="number", required=True, default=10000),
     ]
 
     def on_redeem(self, redeemer, redeemed_id, user_input):

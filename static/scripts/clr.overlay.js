@@ -494,7 +494,7 @@ playAudio.addEventListener('ended', function() {
 });
 
 function PlayHighlights() {
-    if (!playAudio.ended && !(playAudio.src == '' || playAudio.src == '#')) {
+    if (!playAudio.ended && !playAudio.paused) {
         return;
     }
 
@@ -504,7 +504,7 @@ function PlayHighlights() {
 
     // playAudio.duration is sometimes infinite for some reason
     notificationMessage = add_notification({
-        message: `<span class="user">${currentHighlight.user}</span> <span style="color: orange;">(${currentHighlight.voice})</span>: ${currentHighlight.message}`,
+        message: `<span class="user">${currentHighlight.user}</span>: ${currentHighlight.message}`,
         length: 500,
         extra_classes: 'tts',
     });

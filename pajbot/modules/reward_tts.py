@@ -88,7 +88,7 @@ class RewardTTSModule(BaseModule):
             type="options",
             required=True,
             default="Nicole",
-            options=normalVoices,
+            options=allVoices,
         ),
         ModuleSetting(key="random_voice", label="Use random voice", type="boolean", required=True, default=False),
         ModuleSetting(key="sub_only", label="Subscriber Only", type="boolean", required=True, default=True),

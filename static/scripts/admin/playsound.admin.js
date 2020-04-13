@@ -88,8 +88,9 @@ $(window).on('load', function() {
                     if (isNaN(val)) {
                         val = null;
                     }
-                    return obj;
+                    obj[item.name] = val;
                 }
+                return obj;
             }, {});
 
         // if the checkbox is checked, 'enabled' becomes 'on'

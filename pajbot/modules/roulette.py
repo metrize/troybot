@@ -156,7 +156,7 @@ class RouletteModule(BaseModule):
                 ).parse()
             ],
         )
-        for name in self.settings["command_name"]:
+        for name in self.settings["command_name"].split("|"):
             self.commands[name] = roulette
 
     def rigged_random_result(self):

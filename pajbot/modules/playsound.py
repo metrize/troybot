@@ -29,6 +29,14 @@ class PlaysoundModule(BaseModule):
             constraints={"min_value": 0, "max_value": 999999},
         ),
         ModuleSetting(
+            key="command_name",
+            label="Name of command",
+            type="text",
+            required=True,
+            placeholder="playsound",
+            default="playsound",
+        ),
+        ModuleSetting(
             key="global_cd",
             label="Global playsound cooldown (seconds)",
             type="number",
@@ -433,7 +441,7 @@ class PlaysoundModule(BaseModule):
         from pajbot.models.command import Command
         from pajbot.models.command import CommandExample
 
-        self.commands["playsound"] = Command.raw_command(
+        playsound_command = Command.raw_command(
             self.play_sound,
             cost=0,
             sub_only=self.settings["sub_only"],
@@ -450,7 +458,10 @@ class PlaysoundModule(BaseModule):
             ],
         )
 
-        self.commands["playsound"].long_description = 'Playsounds can be tried out <a href="/playsounds">here</a>'
+        playsound_command.long_description = 'Playsounds can be tried out <a href="/playsounds">here</a>'
+
+        for name in self.settings["command_name"].split("|"):
+            self.commands[name] = playsound_command
 
         self.commands["add"] = Command.multiaction_command(
             level=100,

@@ -10,7 +10,7 @@ from pajbot.models.user import User
 log = logging.getLogger(__name__)
 
 
-class ConvertPoints(BaseModule):
+class RandomRedeem(BaseModule):
     ID = __name__.split(".")[-1]
     NAME = "Random Redeems"
     DESCRIPTION = "Gives a random number of points when they redeem a reward"

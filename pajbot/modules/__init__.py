@@ -66,6 +66,8 @@ from pajbot.modules.pnsl import PNSLModule
 from pajbot.modules.spotifyquery import SpotifySongQuery
 from pajbot.modules.reward_tts import RewardTTSModule
 from pajbot.modules.convert_points import ConvertPoints
+from pajbot.modules.paidtimeout import PaidTimeoutModule
+from pajbot.modules.random_redeem_points import RandomRedeem
 
 
 available_modules = [
@@ -102,6 +104,7 @@ available_modules = [
     MathModule,
     MaxMsgLengthModule,
     ModeratorsRefreshModule,
+    PaidTimeoutModule,
     PermabanModule,
     PlaysoundModule,
     PointLotteryModule,
@@ -109,6 +112,7 @@ available_modules = [
     PyramidModule,
     QuestModule,
     RaffleModule,
+    RandomRedeem,
     RepspamModule,
     RouletteModule,
     ShowEmoteModule,

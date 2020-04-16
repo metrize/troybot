@@ -27,7 +27,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="Command name (no !)",
             default="timeout",
-            constraints={"min_str_len": 2, "max_str_len": 15},
         ),
         ModuleSetting(
             key="timeout_length",
@@ -36,7 +35,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="Timeout length in seconds",
             default=60,
-            constraints={"min_value": 1, "max_value": 3600},
         ),
         ModuleSetting(
             key="cost",
@@ -45,7 +43,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="Point cost",
             default=400,
-            constraints={"min_value": 1, "max_value": 1000000},
         ),
         ModuleSetting(
             key="second_command", label="Enable a second timeout command", type="boolean", required=True, default=False
@@ -57,7 +54,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="Command name (no !)",
             default="timeout5",
-            constraints={"min_str_len": 2, "max_str_len": 15},
         ),
         ModuleSetting(
             key="timeout_length2",
@@ -66,7 +62,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="Timeout length in seconds",
             default=60,
-            constraints={"min_value": 1, "max_value": 3600},
         ),
         ModuleSetting(
             key="cost2",
@@ -75,7 +70,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="Point cost",
             default=400,
-            constraints={"min_value": 1, "max_value": 1000000},
         ),
         ModuleSetting(
             key="third_command", label="Enable a third timeout command", type="boolean", required=True, default=False
@@ -87,7 +81,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="Command name (no !)",
             default="timeout5",
-            constraints={"min_str_len": 2, "max_str_len": 15},
         ),
         ModuleSetting(
             key="timeout_length3",
@@ -96,7 +89,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="Timeout length in seconds",
             default=60,
-            constraints={"min_value": 1, "max_value": 3600},
         ),
         ModuleSetting(
             key="cost3",
@@ -105,7 +97,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="Point cost",
             default=400,
-            constraints={"min_value": 1, "max_value": 1000000},
         ),
         ModuleSetting(
             key="forth_command", label="Enable a forth timeout command", type="boolean", required=True, default=False
@@ -126,7 +117,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="Timeout length in seconds",
             default=60,
-            constraints={"min_value": 1, "max_value": 3600},
         ),
         ModuleSetting(
             key="cost4",
@@ -135,7 +125,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="Point cost",
             default=400,
-            constraints={"min_value": 1, "max_value": 1000000},
         ),
         ModuleSetting(
             key="bypass_level",
@@ -144,7 +133,6 @@ class PaidTimeoutModule(BaseModule):
             required=True,
             placeholder="",
             default=500,
-            constraints={"min_value": 100, "max_value": 1000},
         ),
     ]
 
@@ -188,16 +176,13 @@ class PaidTimeoutModule(BaseModule):
                 bot.whisper(source, f"You just used {_cost} points to time out {victim} for {_time} seconds.")
                 bot.whisper(
                     victim,
-                    f"{source} just timed you out for {_time} seconds. /w {bot.nickname} !$unbanme to unban yourself for points forsenMoney",
+                    f"{source} just timed you out for {_time} seconds.",
                 )
                 bot.timeout(victim, _time, reason=f"Timed out by {source}")
                 victim.timeout_end = now + datetime.timedelta(seconds=_time)
 
-            if self.settings["show_on_clr"]:
-                payload = {"user": source.name, "victim": victim.name}
-                bot.websocket_manager.emit("timeout", payload)
-
             HandlerManager.trigger("on_paid_timeout", source=source, victim=victim, cost=_cost, stop_on_false=False)
+            return True
 
     def paid_timeout(self, bot, source, message, **rest):
         _time = self.settings["timeout_length"]

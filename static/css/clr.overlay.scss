@@ -64,7 +64,9 @@ div.notifications:not(div.notification.tts) {
   font-size: 1.25em;
   font-weight: 600;
 }
-div.notifications div {
+div.notifications:not(div.notification.tts) div {
+  position: absolute;
+  bottom: 5px;
   color: white;
   font-size: 1.25em;
   font-weight: bold;

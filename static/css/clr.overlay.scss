@@ -57,14 +57,15 @@ img.absemote {
   position: absolute;
 }
 
-div.notifications {
+div.notifications:not(div.notification.tts) div{
   position: absolute;
   bottom: 5px;
   left: 5px;
   font-size: 1.25em;
   font-weight: 600;
 }
-div.notifications:not(div.notification.tts) div {
+
+div.notifications div {
   color: white;
   font-size: 1.25em;
   font-weight: bold;
@@ -74,25 +75,27 @@ div.notifications:not(div.notification.tts) div {
     1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   word-break: break-all;
 }
+
 div.notifications div span.word1 {
   color: #dfffdf;
 }
+
 div.notifications:not(div.notifications.tts) div span.word4 {
   color: #ffdfdf;
 }
+
 #hsbet div.left {
   float: left;
 }
 
-div.notifications.tts div {
-  color: white;
+div.notifications.tts div{
+  font-size: 1.2em;
+  position: absolute;
+  top: 5px;
+  left: 5px;
   font-size: 1.25em;
-  font-weight: bold;
-  font-family: "Comic Sans MS";
-  -webkit-text-stroke: 1px black;
-  text-shadow: 3px 3px 0 #000, 2px 2px 0 #000, -2px 2px 0 #000, -1px -1px 0 #000,
-    1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  word-break: break-all;
+  font-weight: 600;
+  max-width: 100%;
 }
 
 #hsbet div.right {
@@ -100,6 +103,7 @@ div.notifications.tts div {
   bottom: 0;
   right: 50;
 }
+
 #bet {
   width: 500px;
   position: absolute;
@@ -107,45 +111,56 @@ div.notifications.tts div {
   left: 20px;
   display: none;
 }
+
 #bet td,
 #bet div {
   font-size: 1.6em;
   font-weight: bold;
   font-family: "Roboto";
 }
+
 #hsbet .chart {
   width: 70%;
 }
+
 #bet #winbettors {
   color: #fff;
   -webkit-text-stroke: 1px black;
 }
+
 #bet #lossbettors {
   color: #fff;
   -webkit-text-stroke: 1px black;
 }
+
 #bet #winpoints {
   color: #fff;
   -webkit-text-stroke: 1px black;
 }
+
 #bet #losspoints {
   color: #fff;
   -webkit-text-stroke: 1px black;
 }
+
 #bet .win {
   color: #7cd444;
 }
+
 #bet .lose {
   color: #d62727;
 }
+
 #bet div.left {
   float: left;
 }
+
 #bet div.right {
   position: absolute;
   bottom: 0;
   right: 50;
 }
+
 #songrequest {
   display: none;
   position: fixed;

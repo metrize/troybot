@@ -21,12 +21,12 @@ class PlaysoundAPI(Resource):
             return {"error": "Invalid `link` parameter."}, 400
 
         with DBManager.create_session_scope() as db_session:
-            count = db_session.query(Playsound).filter(Playsound.name == playsound_name).count()
+            count = db_session.query(Playsound).filter(Playsound.name == playsound_name.lower()).count()
             if count >= 1:
                 return "Playsound already exists", 400
 
             # the rest of the parameters are initialized with defaults
-            playsound = Playsound(name=playsound_name, link=link)
+            playsound = Playsound(name=playsound_name.lower(), link=link)
             db_session.add(playsound)
 
             return "OK", 200
@@ -65,7 +65,7 @@ class PlaysoundAPI(Resource):
             return "Bad enabled argument", 400
 
         with DBManager.create_session_scope() as db_session:
-            playsound = db_session.query(Playsound).filter(Playsound.name == playsound_name).one_or_none()
+            playsound = db_session.query(Playsound).filter(Playsound.name == playsound_name.lower()).one_or_none()
 
             if playsound is None:
                 return "Playsound does not exist", 404
@@ -83,7 +83,7 @@ class PlaysoundAPI(Resource):
     @requires_level(500)
     def delete(self, playsound_name, **options):
         with DBManager.create_session_scope() as db_session:
-            playsound = db_session.query(Playsound).filter(Playsound.name == playsound_name).one_or_none()
+            playsound = db_session.query(Playsound).filter(Playsound.name == playsound_name.lower()).one_or_none()
 
             if playsound is None:
                 return "Playsound does not exist", 404
@@ -97,7 +97,7 @@ class PlayPlaysoundAPI(Resource):
     @requires_level(500)
     def post(self, playsound_name, **options):
         with DBManager.create_session_scope() as db_session:
-            count = db_session.query(Playsound).filter(Playsound.name == playsound_name).count()
+            count = db_session.query(Playsound).filter(Playsound.name == playsound_name.lower()).count()
 
             if count <= 0:
                 return "Playsound does not exist", 404

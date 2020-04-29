@@ -323,7 +323,7 @@ class PlaysoundModule(BaseModule):
             return
 
         with DBManager.create_session_scope() as session:
-            count = session.query(Playsound).filter(Playsound.name == name).count()
+            count = session.query(Playsound).filter(Playsound.name == name.lower()).count()
             if count > 0:
                 bot.whisper(
                     source,
@@ -332,7 +332,7 @@ class PlaysoundModule(BaseModule):
                 )
                 return
 
-            playsound = Playsound(name=name)
+            playsound = Playsound(name=name.lower())
 
             if not self.update_link(bot, source, playsound, link):
                 return
@@ -369,7 +369,7 @@ class PlaysoundModule(BaseModule):
             return
 
         with DBManager.create_session_scope() as session:
-            playsound = session.query(Playsound).filter(Playsound.name == name).one_or_none()
+            playsound = session.query(Playsound).filter(Playsound.name == name.lower()).one_or_none()
             if playsound is None:
                 bot.whisper(
                     source,

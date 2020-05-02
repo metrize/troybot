@@ -93,6 +93,12 @@ class Taxation(BaseModule):
     ]
 
     def process_tax(self, bot, source, message, **rest):
+        self._process_tax(message)
+
+    def calculate_tax(self, bot, source, message, **rest):
+        self._process_tax(message, execute=False)
+
+    def _process_tax(self, message, execute=True):
         message_split = message.split() if message else []
         process_time = 0
         if message_split:
@@ -155,25 +161,31 @@ class Taxation(BaseModule):
                         new_timeout = self.settings["timeout_duration"]
                     new_timeout = int(60*60*24*14 if new_timeout > 60*60*24*14 else new_timeout)
                     if new_timeout > 0:
-                        self.bot.timeout(user, new_timeout, "Failed to pay taxes")
+                        if execute:
+                            self.bot.timeout(user, new_timeout, "Failed to pay taxes")
                         number_of_timeouts += 1
                 action_messages.append(f"Timedout {number_of_timeouts} users for not paying tax.")
 
             if self.settings["number_points_tax"]:
                 for user in users_to_award:
-                    user.points += self.settings["number_points_tax"]
+                    if execute:
+                        user.points += self.settings["number_points_tax"]
                 action_messages.append(f"Awarded {len(users_to_award)} users {self.settings['number_points_tax']} points for paying tax.")
 
             if self.settings["number_points_top"]:
                 top_user = users_dict[max(user_taxes_dict, key=user_taxes_dict.get)]
                 min_tax = self.settings[f"minimum_taxes{'_subs' if user.subscriber else ''}"]
                 if user_taxes_dict[top_user.id] > min_tax:
-                    top_user.points += self.settings["number_points_top"]
+                    if execute:
+                        top_user.points += self.settings["number_points_top"]
                     action_messages.append(f"Awarded {top_user}, {self.settings['number_points_tax']} points for paying the most tax.")
 
             self.bot.me(" ".join(action_messages))
 
     def load_commands(self, **options):
         self.commands["processtax"] = Command.raw_command(
-            self.process_tax, level=1000, description="Processes the tax for the last 7 days"
+            self.process_tax, level=1000, description=f"Processes the tax for the last {self.settings['default_process_time_days']} days"
+        )
+        self.commands["calculatetax"] = Command.raw_command(
+            self.calculate_tax, level=1000, description=f"Calculates the tax for the last {self.settings['default_process_time_days']} days"
         )

@@ -83,8 +83,8 @@ class Taxation(BaseModule):
             constraints={"min_value": 0},
         ),
         ModuleSetting(
-            key="redeemed_id",
-            label="ID of redemeed prize",
+            key="reward_id",
+            label="ID of tax redeem reward",
             type="text",
             required=True,
             default="",
@@ -93,12 +93,13 @@ class Taxation(BaseModule):
     ]
 
     def process_tax(self, bot, source, message, **rest):
-        message_split = message.split()
+        message_split = message.split() if message else []
+        process_time = 0
         if message_split:
             try:
                 process_time = int(message_split[0])
             except ValueError:
-                process_time = 0
+                pass
 
         process_time = process_time if process_time > 0 and process_time < 30 else self.settings["default_process_time_days"]
 
@@ -164,9 +165,11 @@ class Taxation(BaseModule):
                 action_messages.append(f"Awarded {len(users_to_award)} users {self.settings['number_points_tax']} points for paying tax.")
 
             if self.settings["number_points_top"]:
-                top_user = max(user_taxes_dict, key=user_taxes_dict.get)
-                top_user.points += self.settings["number_points_top"]
-                action_messages.append(f"Awarded {top_user}, {self.settings['number_points_tax']} points for paying the most tax.")
+                top_user = users_dict[max(user_taxes_dict, key=user_taxes_dict.get)]
+                min_tax = self.settings[f"minimum_taxes{'_subs' if user.subscriber else ''}"]
+                if user_taxes_dict[top_user.id] > min_tax:
+                    top_user.points += self.settings["number_points_top"]
+                    action_messages.append(f"Awarded {top_user}, {self.settings['number_points_tax']} points for paying the most tax.")
 
             self.bot.me(" ".join(action_messages))
 

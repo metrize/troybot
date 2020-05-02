@@ -28,13 +28,17 @@ def init(args):
 
     from flask import request
     from flask import session
+    from flask import g
     from flask_scrypt import generate_random_salt
 
     import pajbot.utils
     import pajbot.web.common
     import pajbot.web.routes
+
     from pajbot.managers.db import DBManager
     from pajbot.managers.redis import RedisManager
+    from pajbot.managers.schedule import ScheduleManager
+    from pajbot.managers.songrequest_queue_manager import SongRequestQueueManager
     from pajbot.models.module import ModuleManager
     from pajbot.models.sock import SocketClientManager
     from pajbot.streamhelper import StreamHelper
@@ -43,8 +47,10 @@ def init(args):
     from pajbot.web.utils import download_logo
     from pajbot.web.utils import download_sub_badge
 
-    config = load_config(args.config)
+    ScheduleManager.init()
 
+    config = load_config(args.config)
+    # ScheduleManager.init()
     api_client_credentials = ClientCredentials(
         config["twitchapi"]["client_id"], config["twitchapi"]["client_secret"], config["twitchapi"]["redirect_uri"]
     )
@@ -72,6 +78,7 @@ def init(args):
             config.write(configfile)
 
     streamer = config["main"]["streamer"]
+    SongRequestQueueManager.init(streamer)
     streamer_user_id = twitch_helix_api.get_user_id(streamer)
     if streamer_user_id is None:
         raise ValueError("The streamer login name you entered under [main] does not exist on twitch.")
@@ -135,6 +142,11 @@ def init(args):
             "domain": config["web"]["domain"],
             "deck_tab_images": config.getboolean("web", "deck_tab_images"),
             "websocket": {"host": config["websocket"].get("host", f"wss://{config['web']['domain']}/clrsocket")},
+            "songrequestWS": {
+                "host": config["songrequest-websocket"].get(
+                    "host", f"wss://{config['web']['domain']}/songrequest_websocket"
+                )
+            },
         },
         "streamer": {"name": config["web"]["streamer_name"], "full_name": config["main"]["streamer"]},
         "modules": app.bot_modules,

@@ -79,7 +79,11 @@ $(window).on('load', function() {
             .reduce((obj, item) => {
                 obj[item.name] = item.value;
 
-                if (item.name === 'volume' || item.name === 'cooldown') {
+                if (
+                    item.name === 'volume' ||
+                    item.name === 'cooldown' ||
+                    item.name == 'cost'
+                ) {
                     let val = parseInt(item.value);
                     if (isNaN(val)) {
                         val = null;

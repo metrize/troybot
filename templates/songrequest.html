@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% set active_page = 'songrequest' %}
+{% block title %}Songrequest History{% endblock %}
+{% block body %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/static/css/songrequest-websocket.css">
+
+<div class="main-container container">
+    <div class="custom-left-css">
+        <table id="plList">
+            <caption><h1>Song Request Queue</h1></caption>
+            {%for song in songs_queue%} 
+            <tr class="plItem">
+                <td class="plNum">{{song["track_number"]}}</td> 
+                <td class="plTitle"><a target="_blank" style="color:white" href={{'https://youtu.be/' + song["song_info"]["video_id"]}}>{{song["song_info"]["title"]}}  ~  {{song["requested_by"]}}</a></td> 
+                <td class="plLength">{{song["formatted_duration"]}} playing in ~ {{song["playing_in"]}}</td> 
+            </tr>
+            {%endfor%} 
+        </table>
+    </div>
+    <div class="custom-right-css">
+        <table id="buList">
+            <caption><h1>Song History Queue</h1></caption>
+            {%for song in songs_history%} 
+            <tr class="buItem">
+                <td class="buNum">{{song["track_number"]}}</td> 
+                <td class="buTitle"><a target="_blank" style="color:white" href={{'https://youtu.be/' + song["song_info"]["video_id"]}}>{{song["song_info"]["title"]}}  ~  {{song["requested_by"]}}</a></td> 
+                <td class="buLength">{{song["formatted_duration"]}}</td> 
+            </tr>
+            {%endfor%}
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block footer %}
+{% endblock %}

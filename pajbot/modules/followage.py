@@ -68,29 +68,29 @@ class FollowAgeModule(BaseModule):
                 CommandExample(
                     None,
                     "Check your own follow age",
-                    chat="user:!followage\n" "bot:pajlada, you have been following Karl_Kons for 4 months and 24 days",
+                    chat="user:!followage\n" "bot:troydota, you have been following Karl_Kons for 4 months and 24 days",
                     description="Check how long you have been following the current streamer (Karl_Kons in this case)",
                 ).parse(),
                 CommandExample(
                     None,
                     "Check someone elses follow age",
                     chat="user:!followage NightNacht\n"
-                    "bot:pajlada, NightNacht has been following Karl_Kons for 5 months and 4 days",
+                    "bot:troydota, NightNacht has been following Karl_Kons for 5 months and 4 days",
                     description="Check how long any user has been following the current streamer (Karl_Kons in this case)",
                 ).parse(),
                 CommandExample(
                     None,
                     "Check someones follow age for a certain streamer",
-                    chat="user:!followage NightNacht forsen\n"
-                    "bot:pajlada, NightNacht has been following forsen for 1 year and 4 months",
-                    description="Check how long NightNacht has been following forsen",
+                    chat="user:!followage NightNacht forsenlol\n"
+                    "bot:troydota, NightNacht has been following forsenlol for 1 year and 4 months",
+                    description="Check how long NightNacht has been following forsenlol",
                 ).parse(),
                 CommandExample(
                     None,
                     "Check your own follow age for a certain streamer",
-                    chat="user:!followage pajlada forsen\n"
-                    "bot:pajlada, you have been following forsen for 1 year and 3 months",
-                    description="Check how long you have been following forsen",
+                    chat="user:!followage troydota forsenlol\n"
+                    "bot:troydota, you have been following forsenlol for 1 year and 3 months",
+                    description="Check how long you have been following forsenlol",
                 ).parse(),
             ],
         )
@@ -106,29 +106,29 @@ class FollowAgeModule(BaseModule):
                     None,
                     "Check your own follow since",
                     chat="user:!followsince\n"
-                    "bot:pajlada, you have been following Karl_Kons since 04 March 2015, 07:02:01 UTC",
+                    "bot:troydota, you have been following Karl_Kons since 04 March 2015, 07:02:01 UTC",
                     description="Check when you first followed the current streamer (Karl_Kons in this case)",
                 ).parse(),
                 CommandExample(
                     None,
                     "Check someone elses follow since",
                     chat="user:!followsince NightNacht\n"
-                    "bot:pajlada, NightNacht has been following Karl_Kons since 03 July 2014, 04:12:42 UTC",
+                    "bot:troydota, NightNacht has been following Karl_Kons since 03 July 2014, 04:12:42 UTC",
                     description="Check when NightNacht first followed the current streamer (Karl_Kons in this case)",
                 ).parse(),
                 CommandExample(
                     None,
                     "Check someone elses follow since for another streamer",
-                    chat="user:!followsince NightNacht forsen\n"
-                    "bot:pajlada, NightNacht has been following forsen since 13 June 2013, 13:10:51 UTC",
-                    description="Check when NightNacht first followed the given streamer (forsen)",
+                    chat="user:!followsince NightNacht forsenlol\n"
+                    "bot:troydota, NightNacht has been following forsenlol since 13 June 2013, 13:10:51 UTC",
+                    description="Check when NightNacht first followed the given streamer (forsenlol)",
                 ).parse(),
                 CommandExample(
                     None,
                     "Check your follow since for another streamer",
-                    chat="user:!followsince pajlada forsen\n"
-                    "bot:pajlada, you have been following forsen since 16 December 1990, 03:06:51 UTC",
-                    description="Check when you first followed the given streamer (forsen)",
+                    chat="user:!followsince troydota forsenlol\n"
+                    "bot:troydota, you have been following forsenlol since 16 December 1990, 03:06:51 UTC",
+                    description="Check when you first followed the given streamer (forsenlol)",
                 ).parse(),
             ],
         )

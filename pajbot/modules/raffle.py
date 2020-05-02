@@ -80,7 +80,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=3000,
-            constraints={"min_value": 0, "max_value": 35000},
         ),
         ModuleSetting(
             key="max_length",
@@ -89,7 +88,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=120,
-            constraints={"min_value": 0, "max_value": 1200},
         ),
         ModuleSetting(
             key="allow_negative_raffles", label="Allow negative raffles", type="boolean", required=True, default=True
@@ -101,7 +99,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=3000,
-            constraints={"min_value": 1, "max_value": 35000},
         ),
         ModuleSetting(
             key="multi_enabled",
@@ -117,7 +114,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=100000,
-            constraints={"min_value": 0, "max_value": 1000000},
         ),
         ModuleSetting(
             key="multi_max_length",
@@ -126,7 +122,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=600,
-            constraints={"min_value": 0, "max_value": 1200},
         ),
         ModuleSetting(
             key="multi_allow_negative_raffles",
@@ -142,7 +137,6 @@ class RaffleModule(BaseModule):
             required=True,
             placeholder="",
             default=10000,
-            constraints={"min_value": 1, "max_value": 100000},
         ),
         ModuleSetting(
             key="multi_raffle_on_sub",
@@ -162,6 +156,14 @@ class RaffleModule(BaseModule):
         ModuleSetting(
             key="show_on_clr", label="Show raffles on the clr overlay", type="boolean", required=True, default=True
         ),
+        ModuleSetting(
+            key="global_cooldown",
+            label="Cooldown for making a new raffle",
+            type="number",
+            required=True,
+            placeholder="",
+            default=0,
+        ),
     ]
 
     def __init__(self, bot):
@@ -175,7 +177,7 @@ class RaffleModule(BaseModule):
     def load_commands(self, **options):
         self.commands["singleraffle"] = Command.raw_command(
             self.raffle,
-            delay_all=0,
+            delay_all=int(self.settings["global_cooldown"]),
             delay_user=0,
             level=500,
             description="Start a raffle for points",
@@ -215,7 +217,7 @@ class RaffleModule(BaseModule):
         if self.settings["multi_enabled"]:
             self.commands["multiraffle"] = Command.raw_command(
                 self.multi_raffle,
-                delay_all=0,
+                delay_all=int(self.settings["global_cooldown"]),
                 delay_user=0,
                 level=500,
                 description="Start a multi-raffle for points",
@@ -254,14 +256,25 @@ class RaffleModule(BaseModule):
         self.raffle_points = 100
         self.raffle_length = 60
 
+        multiplier = 1
+
+        switch = {"m": 1000000, "k": 1000, "h": 10}
+
         try:
-            if message is not None and self.settings["allow_negative_raffles"] is True:
-                self.raffle_points = int(message.split()[0])
-            if message is not None and self.settings["allow_negative_raffles"] is False:
-                if int(message.split()[0]) >= 0:
-                    self.raffle_points = int(message.split()[0])
+            multiplier = switch.get(message.split()[0][-1], 1)
+            points_part = message.split()[0]
+            if multiplier > 1:
+                points_part = points_part[:-1]
+            points_part = int(points_part)
+            if points_part < 0:
+                self.raffle_points = (
+                    points_part if self.settings["multi_allow_negative_raffles"] else self.raffle_points
+                )
+            else:
+                self.raffle_points = points_part
         except (IndexError, ValueError, TypeError):
             pass
+        self.raffle_points *= multiplier
 
         try:
             if message is not None:
@@ -324,8 +337,7 @@ class RaffleModule(BaseModule):
                 self.bot.websocket_manager.emit(
                     "notification", {"message": f"{winner} {format_win(self.raffle_points)} points in the raffle!"}
                 )
-
-            self.bot.me(f"The raffle has finished! {winner} {format_win(self.raffle_points)} points! PogChamp")
+                self.bot.me(f"The raffle has finished! {winner} {format_win(self.raffle_points)} points! PogChamp")
 
             winner.points += self.raffle_points
 
@@ -376,12 +388,19 @@ class RaffleModule(BaseModule):
             return False
 
         points = 100
+        multiplier = 1
+
+        switch = {"m": 1000000, "k": 1000, "h": 10}
+
         try:
-            if message is not None and self.settings["multi_allow_negative_raffles"] is True:
-                points = int(message.split()[0])
-            if message is not None and self.settings["multi_allow_negative_raffles"] is False:
-                if int(message.split()[0]) >= 0:
-                    points = int(message.split()[0])
+            multiplier = switch.get(message.split()[0][-1], 1)
+            points_part = message.split()[0]
+            if multiplier > 1:
+                points_part = points_part[:-1]
+            if int(points_part) < 0:
+                points = int(points_part) if self.settings["multi_allow_negative_raffles"] else points
+            else:
+                points = int(points_part)
         except (IndexError, ValueError, TypeError):
             pass
 
@@ -393,7 +412,7 @@ class RaffleModule(BaseModule):
         except (IndexError, ValueError, TypeError):
             pass
 
-        self.multi_start_raffle(points, length)
+        self.multi_start_raffle(points * multiplier, length)
 
     def multi_end_raffle(self):
         if not self.raffle_running:

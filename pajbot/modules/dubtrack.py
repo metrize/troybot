@@ -39,8 +39,8 @@ class DubtrackModule(BaseModule):
             label="Dubtrack room name. No spaces. Use the string after /join/ in the URL",
             type="text",
             required=True,
-            placeholder="Dubtrack room name (i.e. pajlada)",
-            default="pajlada",
+            placeholder="Dubtrack room name (i.e. troydota)",
+            default="troydota",
             constraints={"min_str_len": 1, "max_str_len": 70},
         ),
         ModuleSetting(
@@ -333,7 +333,7 @@ class DubtrackModule(BaseModule):
                     CommandExample(
                         None,
                         "Ask bot for dubtrack link",
-                        chat="user:!dubtrack link\n" "bot:Request your songs at https://dubtrack.fm/join/pajlada",
+                        chat="user:!dubtrack link\n" "bot:Request your songs at https://dubtrack.fm/join/troydota",
                     ).parse()
                 ],
             ),

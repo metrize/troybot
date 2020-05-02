@@ -46,13 +46,12 @@ class ScheduleManager:
         return ScheduledJob(job)
 
     @staticmethod
-    def execute_delayed(delay, method, args=[], kwargs={}, scheduler=None):
+    def execute_delayed(delay, method, args=[], kwargs={}, scheduler=None, pass_job_id=False):
         if scheduler is None:
             scheduler = ScheduleManager.base_scheduler
 
         if scheduler is None:
             raise ValueError("No scheduler available")
-
         job = scheduler.add_job(
             method, "date", run_date=utils.now() + datetime.timedelta(seconds=delay), args=args, kwargs=kwargs
         )

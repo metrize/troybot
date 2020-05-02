@@ -306,10 +306,8 @@ class LinkCheckerModule(BaseModule):
                         break
                 if whitelisted:
                     continue
-
                 if self.is_whitelisted(url):
                     continue
-
                 try:
                     requests.head(url, allow_redirects=True, timeout=2, headers={"User-Agent": self.bot.user_agent})
                 except:

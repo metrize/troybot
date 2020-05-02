@@ -69,6 +69,7 @@ from pajbot.modules.convert_points import ConvertPoints
 from pajbot.modules.paidtimeout import PaidTimeoutModule
 from pajbot.modules.random_redeem_points import RandomRedeem
 from pajbot.modules.taxation import Taxation
+from pajbot.modules.emote_limit import EmoteLimitModule
 
 available_modules = [
     AbCommandModule,
@@ -89,6 +90,7 @@ available_modules = [
     DummyModule,
     EightBallModule,
     EmoteComboModule,
+    EmoteLimitModule,
     EmotesModule,
     EmoteTimeoutModule,
     FollowAgeModule,

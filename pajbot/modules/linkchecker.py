@@ -4,7 +4,6 @@ import urllib.parse
 
 import requests
 from bs4 import BeautifulSoup
-from datetime import timedelta
 from sqlalchemy import Column, INT, TEXT
 
 import pajbot.managers
@@ -182,6 +181,33 @@ class LinkCheckerModule(BaseModule):
             default=500,
             constraints={"min_value": 100, "max_value": 1000},
         ),
+        ModuleSetting(
+            key="banned_link_timeout_reason",
+            label="Banned Link Timeout Reason",
+            type="text",
+            required=False,
+            placeholder="",
+            default="You have been timed out for posting a banned link in chat",
+            constraints={},
+        ),
+        ModuleSetting(
+            key="pleb_timeout_reason",
+            label="Pleb Timeout Reason",
+            type="text",
+            required=False,
+            placeholder="",
+            default="You cannot post non-verified links in chat if you're a pleb",
+            constraints={},
+        ),
+        ModuleSetting(
+            key="sub_timeout_reason",
+            label="Subscriber Timeout Reason",
+            type="text",
+            required=False,
+            placeholder="",
+            default="You cannot post non-verified links in chat if you're a subscriber",
+            constraints={},
+        ),
     ]
 
     def __init__(self, bot):
@@ -259,9 +285,9 @@ class LinkCheckerModule(BaseModule):
         do_timeout = False
         ban_reason = "You are not allowed to post links in chat"
         whisper_reason = (
-            "You cannot post non-verified links in chat if you're not a subscriber."
+            self.settings["pleb_timeout_reason"]
             if self.settings["ban_pleb_links"] is True and source.subscriber is False
-            else "You cannot post non-verified links in chat if you're a subscriber"
+            else self.settings["sub_timeout_reason"]
         )
         do_timeout = (self.settings["ban_pleb_links"] is True and source.subscriber is False) or (
             self.settings["ban_sub_links"] is True and source.subscriber is True
@@ -280,10 +306,8 @@ class LinkCheckerModule(BaseModule):
                         break
                 if whitelisted:
                     continue
-
                 if self.is_whitelisted(url):
                     continue
-
                 try:
                     requests.head(url, allow_redirects=True, timeout=2, headers={"User-Agent": self.bot.user_agent})
                 except:
@@ -297,7 +321,7 @@ class LinkCheckerModule(BaseModule):
         for url in urls:
             # Action which will be taken when a bad link is found
             def action():
-                self.bot.timeout(source, self.settings["timeout_length"], reason="Banned link")
+                self.bot.timeout(source, self.settings["timeout_length"], reason=self.settings["banned_link_timeout_reason"])
 
             # First we perform a basic check
             if self.simple_check(url, action) == self.RET_FURTHER_ANALYSIS:

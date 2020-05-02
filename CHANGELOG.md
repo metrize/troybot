@@ -2,6 +2,16 @@
 
 ## Unversioned
 
+- Minor: Added timeout reason customization to various moderation modules
+- Minor: Added new module for simple emote spam moderation
+- Minor: You can now allow users with level 420 to use the `!runpnsl` command (could only be set as low as 500 before). Default level requirement remains at 750. (#830)
+- Minor: Enlarged emotes on the CLR are no longer blurry
+- Minor: Remove the logs option from the user page (due to the termination of overrustlelogs)
+- Minor: Updated semantic-ui css and js dependencies
+- Bugfix: Fixed warnings in the admin playsounds page
+- Bugfix: Fixed scrollbar appearing on CLR overlay (#832)
+- Bugfix: The modules list no longer incorrectly shows as sorted on page load
+
 ## v1.43
 
 - Minor: Updated response of `!checkmod` command to reflect the regular moderators refresh feature introduced in v1.38.

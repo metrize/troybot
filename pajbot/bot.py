@@ -178,11 +178,13 @@ class Bot:
         if self.streamer_user_id is None:
             raise ValueError("The streamer login name you entered under [main] does not exist on twitch.")
 
+        self.streamer_access_token_manager = UserAccessTokenManager(
+            api=self.twitch_id_api, redis=RedisManager.get(), username=self.streamer, user_id=self.streamer_user_id
+        )
+
         self.pubsub_api = PubSubAPI(
             self,
-            UserAccessTokenManager(
-                api=self.twitch_id_api, redis=RedisManager.get(), username=self.streamer, user_id=self.streamer_user_id
-            ),
+            self.streamer_access_token_manager,
         )
 
         StreamHelper.init_streamer(self.streamer, self.streamer_user_id)

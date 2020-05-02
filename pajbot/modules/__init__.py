@@ -68,7 +68,7 @@ from pajbot.modules.reward_tts import RewardTTSModule
 from pajbot.modules.convert_points import ConvertPoints
 from pajbot.modules.paidtimeout import PaidTimeoutModule
 from pajbot.modules.random_redeem_points import RandomRedeem
-
+from pajbot.modules.taxation import Taxation
 
 available_modules = [
     AbCommandModule,
@@ -123,6 +123,7 @@ available_modules = [
     StreamUpdateModule,
     SubAlertModule,
     SubscriberFetchModule,
+    Taxation
     TopModule,
     TriviaModule,
     TypeEmoteQuestModule,

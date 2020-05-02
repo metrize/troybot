@@ -199,6 +199,24 @@ class TwitchHelixAPI(BaseTwitchAPI):
 
         return all_entries
 
+    def bulk_fetch_user_bans(self, key_type, lookup_keys, streamer_id, access_token):
+        all_entries = {}
+
+        # We can fetch a maximum of 100 users on each helix request
+        # so we do it in chunks of 100
+        for lookup_keys_chunk in iterate_in_chunks(lookup_keys, 100):
+            response = self.get("/moderation/banned", {"broadcaster_id": streamer_id, key_type: lookup_keys_chunk}, authorization=access_token)
+
+            # using a response map means we don't rely on twitch returning the data entries in the exact
+            # order we requested them
+            response_map = {response_entry[key_type]: response_entry for response_entry in response["data"]}
+
+            # then fill in the gaps with None
+            for lookup_key in lookup_keys_chunk:
+                all_entries[lookup_key] = response_map.get(lookup_key, None)
+
+        return all_entries
+
     def bulk_get_user_data_by_id(self, user_ids):
         return self.cache.cache_bulk_fetch_fn(
             user_ids,

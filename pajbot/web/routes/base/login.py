@@ -83,6 +83,7 @@ def init(app):
         "channel:read:redemptions",
         "bits:read",
         "channel_subscriptions",
+        "moderation:read",
     ]
 
     """Request these scopes on /streamer_login"""

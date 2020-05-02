@@ -123,7 +123,7 @@ available_modules = [
     StreamUpdateModule,
     SubAlertModule,
     SubscriberFetchModule,
-    Taxation
+    Taxation,
     TopModule,
     TriviaModule,
     TypeEmoteQuestModule,

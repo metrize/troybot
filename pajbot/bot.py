@@ -588,11 +588,11 @@ class Bot:
         self.timeout(user, 30, reason, once=True)
         self.execute_delayed(1, self._ban, user.login, reason)
 
-    def unban(self, user, reason=None):
-        self.privmsg(f"/unban {user.login}{' ' + reason if reason else ''}")
+    def unban(self, user):
+        self.privmsg(f"/unban {user.login}")
 
-    def untimeout(self, user, reason=None):
-        self.privmsg(f"/untimeout {user.login}{' ' + reason if reason else ''}")
+    def untimeout(self, user):
+        self.privmsg(f"/untimeout {user.login}")
 
     def _timeout(self, login, duration, reason=None):
         message = f"/timeout {login} {duration}"

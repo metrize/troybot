@@ -454,7 +454,7 @@ class Dispatch:
             if user is None:
                 bot.say(f"That user was not found in the user database")
 
-        bot.ban(user, " ".join(message[1:]))
+        bot.execute_delayed(1, bot.ban, user, " ".join(message[1:]))
 
     @staticmethod
     def timeout(bot, source, message, event, args):
@@ -473,8 +473,9 @@ class Dispatch:
 
             if user is None:
                 bot.say(f"That user was not found in the user database")
+                return False
 
-        bot.timeout(user, message[1], " ".join(message[2:]))
+        bot.execute_delayed(1, bot.timeout, user, message[1], " ".join(message[2:]))
 
     @staticmethod
     def unban(bot, source, message, event, args):
@@ -489,4 +490,4 @@ class Dispatch:
             if user is None:
                 bot.say(f"That user was not found in the user database")
 
-        bot.unban(user, " ".join(message[1:]))
+        bot.execute_delayed(1, bot.unban, user)

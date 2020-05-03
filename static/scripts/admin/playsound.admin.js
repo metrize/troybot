@@ -81,8 +81,9 @@ $(window).on('load', function() {
 
                 if (
                     item.name === 'volume' ||
+                    item.name === 'cost' ||
                     item.name === 'cooldown' ||
-                    item.name == 'cost'
+                    item.name === 'tier'
                 ) {
                     let val = parseInt(item.value);
                     if (isNaN(val)) {

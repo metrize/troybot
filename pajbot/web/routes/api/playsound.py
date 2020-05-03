@@ -21,12 +21,12 @@ class PlaysoundAPI(Resource):
             return {"error": "Invalid `link` parameter."}, 400
 
         with DBManager.create_session_scope() as db_session:
-            count = db_session.query(Playsound).filter(Playsound.name == playsound_name.lower()).count()
+            count = db_session.query(Playsound).filter(Playsound.name == playsound_name).count()
             if count >= 1:
                 return "Playsound already exists", 400
 
             # the rest of the parameters are initialized with defaults
-            playsound = Playsound(name=playsound_name.lower(), link=link)
+            playsound = Playsound(name=playsound_name, link=link)
             db_session.add(playsound)
 
             return "OK", 200
@@ -35,13 +35,18 @@ class PlaysoundAPI(Resource):
     def post(self, playsound_name, **options):
         # require JSON so the cooldown can be null
         post_parser = RequestParser()
+
+        post_parser.add_argument("rename", required=False)
         post_parser.add_argument("link", required=True)
         post_parser.add_argument("volume", type=int, required=True)
         post_parser.add_argument("cooldown", type=int, required=False)
         post_parser.add_argument("cost", type=int, required=False)
+        post_parser.add_argument("tier", type=int, required=False)
         post_parser.add_argument("enabled", type=bool, required=False)
 
         args = post_parser.parse_args()
+
+        rename = args["rename"]
 
         link = args["link"]
         if not PlaysoundModule.validate_link(link):
@@ -60,20 +65,34 @@ class PlaysoundAPI(Resource):
         if not PlaysoundModule.validate_cooldown(cooldown):
             return "Bad cooldown argument", 400
 
+        # tier is allowed to be empty or > 0 but <= 3
+        tier = args.get("tier", None) or None
+        if not PlaysoundModule.validate_tier(tier):
+            return "Bad tier argument", 400
+
         enabled = args["enabled"]
         if enabled is None:
             return "Bad enabled argument", 400
 
         with DBManager.create_session_scope() as db_session:
-            playsound = db_session.query(Playsound).filter(Playsound.name == playsound_name.lower()).one_or_none()
+            playsound = db_session.query(Playsound).filter(Playsound.name == playsound_name).one_or_none()
 
             if playsound is None:
                 return "Playsound does not exist", 404
+
+            if rename:
+                count = db_session.query(Playsound).filter(Playsound.name == rename).count()
+                if count > 0:
+                    return "Playsound already exists", 400
+
+                playsound.name = rename
+
             # TODO admin audit logs
             playsound.link = link
             playsound.volume = volume
             playsound.cost = cost
             playsound.cooldown = cooldown
+            playsound.tier = tier
             playsound.enabled = enabled
 
             db_session.add(playsound)
@@ -83,7 +102,7 @@ class PlaysoundAPI(Resource):
     @requires_level(500)
     def delete(self, playsound_name, **options):
         with DBManager.create_session_scope() as db_session:
-            playsound = db_session.query(Playsound).filter(Playsound.name == playsound_name.lower()).one_or_none()
+            playsound = db_session.query(Playsound).filter(Playsound.name == playsound_name).one_or_none()
 
             if playsound is None:
                 return "Playsound does not exist", 404
@@ -97,7 +116,7 @@ class PlayPlaysoundAPI(Resource):
     @requires_level(500)
     def post(self, playsound_name, **options):
         with DBManager.create_session_scope() as db_session:
-            count = db_session.query(Playsound).filter(Playsound.name == playsound_name.lower()).count()
+            count = db_session.query(Playsound).filter(Playsound.name == playsound_name).count()
 
             if count <= 0:
                 return "Playsound does not exist", 404

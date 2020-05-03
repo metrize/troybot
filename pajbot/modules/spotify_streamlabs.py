@@ -74,17 +74,16 @@ class SpotifyStreamLabs(BaseModule):
             description="Displayes the current song",
         )
 
-    def __init__(self, bot):
-        super().__init__(bot)
-
     def current_song(self, bot, source, message, **rest):
         if bot.stream_manager.current_stream is None or bot.stream_manager.current_stream.id is None:
             bot.say(self.settings["stream_offline"].format(username=source.username_raw))
             return False
+
         return_song_data = bot.spotify_streamlabs_manager.getCurrentSong()
         if not return_song_data["playing"]:
             bot.say(self.settings["no_song_playing"].format(username=source.username_raw))
             return False
+
         if return_song_data["spotify"]:
             bot.say(
                 self.settings["playing_spotify"].format(
@@ -94,9 +93,10 @@ class SpotifyStreamLabs(BaseModule):
                 )
             )
             return False
+
         bot.say(
             self.settings["playing_streamlabs_media_message_layout"].format(
-                username=source.username_raw, song_title=return_song_data["title"]
+                username=source.username_raw, song_title=return_song_data["title"], requestor=return_song_data["requestor"]
             )
         )
         return False

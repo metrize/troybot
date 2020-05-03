@@ -100,7 +100,7 @@ class HandlerManager:
         # resume_spotify()
         HandlerManager.create_handler("resume_spotify")
 
-        # pause_spotify()
+        # pause_spotify(username, title)
         HandlerManager.create_handler("pause_spotify")
 
         # change_state()

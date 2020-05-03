@@ -7,7 +7,7 @@ log = logging.getLogger("pajbot")
 class SpotifyStreamLabsManager:
     def __init__(self, bot):
         self.bot = bot
-        self.currentSong = {"title": None}
+        self.currentSong = {"title": None, "requestor": None}
         # Handlers
         HandlerManager.add_handler("resume_spotify", self.play_spotify)
         HandlerManager.add_handler("pause_spotify", self.pause_spotify)
@@ -24,10 +24,11 @@ class SpotifyStreamLabsManager:
             self.currentSong["requestedBy"] = None
             self.bot.spotify_api.play(self.bot.spotify_token_manager)
 
-    def pause_spotify(self, title):
+    def pause_spotify(self, requestor, title):
         isPlaying, name, artists = self.bot.spotify_api.state(self.bot.spotify_token_manager)
         self.spotifyPreviouslyPlaying = isPlaying or self.spotifyPreviouslyPlaying
         self.currentSong["title"] = title
+        self.currentSong["requestor"] = requestor
         self.bot.spotify_api.pause(self.bot.spotify_token_manager)
 
     def getCurrentSong(self):
@@ -36,11 +37,14 @@ class SpotifyStreamLabsManager:
             isPlaying, name, artists = self.bot.spotify_api.state(self.bot.spotify_token_manager)
             if not isPlaying:
                 return return_song_data
+
             return_song_data["playing"] = True
             return_song_data["spotify"] = True
             return_song_data["title"] = name
             return_song_data["artists"] = artists
             return return_song_data
+
         return_song_data["playing"] = True
         return_song_data["title"] = self.currentSong["title"]
+        return_song_data["requestor"] = self.currentSong["requestor"]
         return return_song_data

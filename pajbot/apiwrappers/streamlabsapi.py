@@ -33,18 +33,15 @@ class MyCustomNamespace(socketio.ClientNamespace):
             except Exception as e:
                 log.error(e)
         if "message" in data and "event" in data["message"]:
-            if data["message"]["event"] == "pop":  # new song request pause : pause spotify
-                username = data["message"]["media"]["action_by"]
-                title = data["message"]["media"]["media_title"]
-                HandlerManager.trigger("pause_spotify", title=title)
-            elif data["message"]["event"] == "play":  # on resume:
-                HandlerManager.trigger("change_state", state=False)
-            elif data["message"]["event"] == "pause":  # on pause:
-                HandlerManager.trigger("change_state", state=True)
-            elif (
-                data["message"]["event"] == "next" and data["message"]["media"] is None
-            ):  # no new songs requested : resume spotify
-                HandlerManager.trigger("resume_spotify")
+            if data["message"]["event"] == "play":
+                if data["message"]["media"] is None: # no new song
+                    HandlerManager.trigger("resume_spotify")
+                else: # a new song
+                    username = data["message"]["media"]["action_by"]
+                    title = data["message"]["media"]["media_title"]
+                    HandlerManager.trigger("pause_spotify", requestor=username, title=title)
+            elif data["message"]["event"] == "updateControls":  # On play or pause on streamlabs
+                HandlerManager.trigger("change_state", state=not data["message"]["controls"]["play"]) 
 
     def on_disconnect(self):
         log.error("Disconnected from steam elements")

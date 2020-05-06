@@ -5,6 +5,9 @@ from pajbot.modules.linkchecker import BlacklistedLink
 from pajbot.modules.linkchecker import WhitelistedLink
 from pajbot.modules.linktracker import LinkTrackerLink
 
+
+
+from pajbot.modules.analogy import AnalogyModule
 from pajbot.modules.ascii import AsciiProtectionModule
 from pajbot.modules.banphrase import BanphraseModule
 from pajbot.modules.basic import BasicCommandsModule

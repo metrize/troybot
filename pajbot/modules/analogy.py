@@ -44,7 +44,7 @@ class AnalogyModule(BaseModule):
             default="https://clips.twitch.tv/BetterTenuousVultureCorgiDerp,https://clips.twitch.tv/SuperZealousSpaghettiBatChest",
 
         )
-    
+    ]
 
     def analogy_command(self, bot, source, message, **rest):
         analogyArray = self.key.analogies.split(",")

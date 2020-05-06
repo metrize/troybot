@@ -35,7 +35,7 @@ class AnalogyModule(BaseModule):
             default=30,
             constraints={"min_value": 0, "max_value": 240},
         ),
-    ]
+    
 
     def __init__(self, bot):
         super().__init__(bot)
@@ -43,12 +43,9 @@ class AnalogyModule(BaseModule):
             "https://clips.twitch.tv/BetterTenuousVultureCorgiDerp"
             "https://clips.twitch.tv/SuperZealousSpaghettiBatChest"
         ]
-
+    ]
 
     def analogy_command(self, bot, source, message, **rest):
-        if not message or len(message) <= 0:
-            return False
-
         analogy = random.choice(self.analogies)
         bot.say(f"{source}, {analogy}")
 
@@ -57,7 +54,7 @@ class AnalogyModule(BaseModule):
             self.analogy_command,
             delay_all=self.settings["online_global_cd"],
             delay_user=self.settings["online_user_cd"],
-            description="Outputs a random analogy from luki",
+            description=f"Outputs a random analogy from {self.bot.streamer}",
             examples=[
                 CommandExample(
                     None,

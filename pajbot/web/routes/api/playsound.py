@@ -80,7 +80,7 @@ class PlaysoundAPI(Resource):
             if playsound is None:
                 return "Playsound does not exist", 404
 
-            if rename:
+            if rename and rename != playsound_name:
                 count = db_session.query(Playsound).filter(Playsound.name == rename).count()
                 if count > 0:
                     return "Playsound already exists", 400

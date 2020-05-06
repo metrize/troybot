@@ -9,7 +9,6 @@ from pajbot.modules import ModuleSetting
 
 log = logging.getLogger(__name__)
 
-
 class AnalogyModule(BaseModule):
 
     ID = __name__.split(".")[-1]
@@ -38,9 +37,9 @@ class AnalogyModule(BaseModule):
         ModuleSetting(
             key="analogies",
             label="List of analogies (separated by comma)",
-            type="string",
+            type="text",
             required=True,
-            placeholder="",
+            placeholder="https://clips.twitch.tv/BetterTenuousVultureCorgiDerp,https://clips.twitch.tv/SuperZealousSpaghettiBatChest",
             default="https://clips.twitch.tv/BetterTenuousVultureCorgiDerp,https://clips.twitch.tv/SuperZealousSpaghettiBatChest",
 
         )
@@ -50,7 +49,6 @@ class AnalogyModule(BaseModule):
         analogyArray = self.settings["analogies"].split(",")
         analogy = random.choice(analogyArray)
         bot.say(f"{source}, {analogy}")
-    
 
     def load_commands(self, **options):
         self.commands["analogy"] = Command.raw_command(

@@ -133,7 +133,7 @@ class PlaysoundModule(BaseModule):
                 return False
 
             playsoundTier = playsound.tier or 0
-            if source.tier < playsoundTier and source.level < 500:
+            if int(source.tier) < playsoundTier and source.level < 500:
                 bot.whisper(source, f"This playsound is specific for tier {playsoundTier} and up subs")
                 return False
 

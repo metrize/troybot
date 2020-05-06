@@ -47,7 +47,7 @@ class AnalogyModule(BaseModule):
     ]
 
     def analogy_command(self, bot, source, message, **rest):
-        analogyArray = self.key.analogies.split(",")
+        analogyArray = self.settings["analogies"].split(",")
         analogy = random.choice(analogyArray)
         bot.say(f"{source}, {analogy}")
     

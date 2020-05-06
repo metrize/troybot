@@ -40,8 +40,8 @@ class AnalogyModule(BaseModule):
             label="List of analogies (separated by comma)",
             type="string",
             required=True,
-            placeholder=""
-            default="https://clips.twitch.tv/BetterTenuousVultureCorgiDerp,https://clips.twitch.tv/SuperZealousSpaghettiBatChest"
+            placeholder="",
+            default="https://clips.twitch.tv/BetterTenuousVultureCorgiDerp,https://clips.twitch.tv/SuperZealousSpaghettiBatChest",
 
         )
     
@@ -50,6 +50,7 @@ class AnalogyModule(BaseModule):
         analogyArray = self.key.analogies.split(",")
         analogy = random.choice(analogyArray)
         bot.say(f"{source}, {analogy}")
+    
 
     def load_commands(self, **options):
         self.commands["analogy"] = Command.raw_command(

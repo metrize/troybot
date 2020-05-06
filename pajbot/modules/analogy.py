@@ -35,18 +35,20 @@ class AnalogyModule(BaseModule):
             default=30,
             constraints={"min_value": 0, "max_value": 240},
         ),
+        ModuleSetting(
+            key="analogies",
+            label="List of analogies (separated by comma)",
+            type="string",
+            required=True,
+            placeholder=""
+            default="https://clips.twitch.tv/BetterTenuousVultureCorgiDerp,https://clips.twitch.tv/SuperZealousSpaghettiBatChest"
+
+        )
     
 
-    def __init__(self, bot):
-        super().__init__(bot)
-        self.analogies = [
-            "https://clips.twitch.tv/BetterTenuousVultureCorgiDerp"
-            "https://clips.twitch.tv/SuperZealousSpaghettiBatChest"
-        ]
-    ]
-
     def analogy_command(self, bot, source, message, **rest):
-        analogy = random.choice(self.analogies)
+        analogyArray = self.key.analogies.split(",")
+        analogy = random.choice(analogyArray)
         bot.say(f"{source}, {analogy}")
 
     def load_commands(self, **options):
